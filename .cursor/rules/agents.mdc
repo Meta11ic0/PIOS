@@ -1,0 +1,10 @@
+---
+description: PIOS 跨工具入口 AGENTS.md 的 Cursor 引用层
+alwaysApply: true
+---
+
+# AGENTS（引用层）
+
+本规则正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+
+会话中须先 **Read** [`AGENTS.md`](../../AGENTS.md)，再按该文件全文遵守；随后按其中要求读取 `prompts/`，任务相关时再读取 `skills/`。

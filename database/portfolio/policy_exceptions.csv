@@ -1,0 +1,1 @@
+exception_id,ips_id,decision_id,review_id,status,created_at,effective_from,expires_at,affected_allocation_id,constraint_type,impact_limit,approval_reference,approved_by,approved_at,authorization_evidence,source_id,verification_status,invalidation_condition,return_path,closed_at,closure_evidence,review_at,notes

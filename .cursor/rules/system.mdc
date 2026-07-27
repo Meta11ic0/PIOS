@@ -1,0 +1,10 @@
+---
+description: PIOS 的目标、边界与核心决策原则
+alwaysApply: true
+---
+
+# PIOS Core（引用层）
+
+本规则正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+
+会话中须先 **Read** [`prompts/system.md`](../../prompts/system.md)，再按该文件全文遵守。

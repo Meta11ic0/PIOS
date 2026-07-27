@@ -1,0 +1,2 @@
+source_id,scope,status,source_tier,publisher,title,source_url_or_file_ref,published_at,retrieved_at,content_hash,hash_status,locator,raw_material_path,material_type,distillation_status,collector,collection_method,license_or_access_note,notes
+source-demo-committee-v1,demo_only,secondary,PIOS demo,Non-action committee input,demo://no-external-fact,,2026-07-27T15:51:00+08:00,,unavailable,,raw_material/demo/source-demo-committee-v1.md,excerpt,rejected,self,manual,not_for-external-use,Demo only; contains no external fact or investment input.

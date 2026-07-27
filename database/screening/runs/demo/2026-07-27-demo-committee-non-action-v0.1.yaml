@@ -1,0 +1,29 @@
+run_id: run-demo-committee-non-action-v1
+scope: demo_only
+model_version: etf_model_v0.1
+pipeline_version: review-pipeline-v1
+input_as_of: null
+created_at: 2026-07-27T15:51:00+08:00
+universe: []
+input_manifest:
+  source_ids:
+    - source-demo-committee-v1
+  data_files:
+    - database/portfolio/investment_policy.md
+    - database/portfolio/holdings.csv
+    - database/portfolio/target_allocation.csv
+    - database/portfolio/allocation_snapshots.csv
+    - database/products/history/etf_metrics.csv
+  knowledge_ids: []
+hard_gate_results:
+  - gate: committee_input_package
+    status: unknown
+    reason: 演示没有真实 IPS、持仓、目标配置、候选产品或动态事实。
+field_comparison: []
+dimension_scores: null
+total_score: null
+limitations:
+  - 演示仅验证委员会阻断逻辑；不包含真实产品、组合、市场或绩效数据。
+verification_status: unknown
+supersedes_run_id:
+notes: 停止/预检证明：关键输入缺失 → unknown。不代表委员会或 Modeling 通过；不得进入排序、推荐或行动建议。

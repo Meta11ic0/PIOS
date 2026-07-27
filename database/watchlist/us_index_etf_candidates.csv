@@ -1,0 +1,10 @@
+product_id,asset_type,name,market,exchange,ticker,underlying_id,verification_status,coverage_status,notes
+CN:513100,ETF,,CN,,513100,NASDAQ-100,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:159941,ETF,,CN,,159941,NASDAQ-100,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:513300,ETF,,CN,,513300,NASDAQ-100,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:513390,ETF,,CN,,513390,NASDAQ-100,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:159696,ETF,,CN,,159696,NASDAQ-100,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:513870,ETF,,CN,,513870,NASDAQ-100,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:513500,ETF,,CN,,513500,SP-500,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:513650,ETF,,CN,,513650,SP-500,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备
+CN:159612,ETF,,CN,,159612,SP-500,pending,seed_pending,来自前期对话的候选代码；使用前须以交易所和基金公司资料核验；观察池非完备

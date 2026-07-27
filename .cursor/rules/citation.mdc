@@ -1,0 +1,10 @@
+---
+description: PIOS 数据来源、时效与引用规则
+alwaysApply: true
+---
+
+# Evidence and Citation（引用层）
+
+本规则正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+
+会话中须先 **Read** [`prompts/citation.md`](../../prompts/citation.md)，再按该文件全文遵守。

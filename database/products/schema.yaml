@@ -1,0 +1,147 @@
+# schema_version 0.4.0：在 0.3.0 基础上补齐跨境 ETF 币种/额度与动态指标口径，
+# 并区分「基础字段」与「动态字段」边界。动态历史不得用本文件单行覆盖，见 products/history/。
+schema_version: 0.4.0
+entity: investment_product
+required:
+  - product_id
+  - asset_type
+  - name
+  - market
+  - currency
+  - verification_status
+# 基础字段：身份、费率、成立/上市、跟踪对象等；按公告低频更新。
+# 动态字段：规模、成交额、价差、IOPV/NAV、折溢价、跟踪偏离、申赎/交易状态等；
+# 每次观测必须带 as_of，历史按 products/history/ 追加，不在基础表原地覆盖。
+fields:
+  # —— 目录 / 基础 ——
+  product_id:
+    type: string
+    description: 市场与证券代码组成的稳定唯一标识
+  asset_type:
+    type: enum
+    values: [ETF, Stock, Fund, Bond, REIT, Crypto, Other]
+  name:
+    type: string
+  legal_name:
+    type: string
+  market:
+    type: string
+  exchange:
+    type: string
+  ticker:
+    type: string
+  currency:
+    type: string
+    description: 交易或基金计价币种；跨境产品另填 fund_currency 与 underlying_exposure_currency
+  fund_currency:
+    type: string
+    description: 基金资产净值计价币种；与交易币种不同时必填
+  underlying_exposure_currency:
+    type: string
+    description: 底层资产主要风险暴露币种；可多币种时在 notes 说明
+  cross_border_structure:
+    type: enum
+    values: [none, QDII, mutual_recognition, offshore, other, unknown]
+  issuer:
+    type: string
+  underlying_id:
+    type: string
+    description: 所跟踪指数或底层资产的 ID
+  inception_date:
+    type: date
+  listing_date:
+    type: date
+  management_fee_rate:
+    type: decimal
+  custody_fee_rate:
+    type: decimal
+  risk_level:
+    type: enum
+    values: [Low, Medium, High, Critical, Unknown]
+  rating:
+    type: decimal
+    description: 可选外部评级；非 PIOS 模型自动评分
+  # —— 动态（快照字段；正式历史见 products/history/）——
+  size:
+    type: decimal
+    category: dynamic
+    description: 基金规模；须配合 size_unit 与 as_of
+  size_unit:
+    type: string
+    category: dynamic
+  turnover:
+    type: decimal
+    category: dynamic
+    description: 成交额（观测窗口须在 notes 或口径字段说明）
+  turnover_unit:
+    type: string
+    category: dynamic
+  bid_ask_spread:
+    type: decimal
+    category: dynamic
+    description: 买卖价差；口径（相对/绝对）须说明
+  iopv:
+    type: decimal
+    category: dynamic
+  nav:
+    type: decimal
+    category: dynamic
+  premium_discount_rate:
+    type: decimal
+    category: dynamic
+    description: 折溢价率；（市价相对 IOPV 或 NAV 的口径须说明）
+  tracking_error:
+    type: decimal
+    category: dynamic
+    description: 跟踪误差；统计区间须说明
+  tracking_difference:
+    type: decimal
+    category: dynamic
+    description: 跟踪差额；统计区间须说明
+  creation_redemption_status:
+    type: string
+    category: dynamic
+    description: 申赎状态（如正常/暂停申购/暂停赎回等，以官方口径为准）
+  qdii_quota_status:
+    type: string
+    category: dynamic
+    description: QDII 额度、限购或暂停申赎状态；非 QDII 产品填写 not_applicable
+  trading_status:
+    type: string
+    category: dynamic
+    description: 场内交易状态（如正常/停牌等）
+  # —— 溯源 ——
+  source_url:
+    type: uri
+  source_id:
+    type: string
+    description: database/sources.csv 中可复用的来源记录 ID
+  source_tier:
+    type: enum
+    values: [primary, secondary]
+  published_at:
+    type: datetime
+    description: 来源发布或披露时点；使用带时区的 RFC 3339
+  as_of:
+    type: datetime
+    description: 本条快照适用时点；动态字段必填
+  retrieved_at:
+    type: datetime
+    description: PIOS 取得来源或事实的时点；使用带时区的 RFC 3339
+  source_locator:
+    type: string
+    description: 来源中的页码、表格、字段或段落位置
+  record_id:
+    type: string
+    description: 动态快照或修订记录的稳定 ID
+  supersedes_record_id:
+    type: string
+    description: 更正记录替代的旧记录 ID；更正仅追加
+  correction_reason:
+    type: string
+    description: 更正原因；非更正记录留空
+  verification_status:
+    type: enum
+    values: [verified, conflicting, missing, pending]
+  notes:
+    type: string
