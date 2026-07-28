@@ -17,7 +17,7 @@
 3. **确定指数**：比较指数规则、集中度、币种和长期风险。
 4. **发现产品**：从交易所、基金公司或可靠行情工具获取完整候选集。
 5. **委员会触发**：新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序时，必须先执行 [Committee Skill](../skills/committee/SKILL.md)；不适用时在 Review 中记录理由。
-6. **过审**：按 [Review Pipeline](../prompts/review_pipeline.md) 执行八步；各步读对应 `skills/*/SKILL.md`。Modeling 在 draft 阶段只做字段对比与否决项（见 [etf_model_v0.1](../database/screening/etf_model_v0.1.md)）。Challenge 须 Skill 全文。Documentation 在真正执行前完成（见 [OPERATIONS.md](../OPERATIONS.md) §6.4–6.5）。
+6. **过审**：按 [Review Pipeline](../prompts/review_pipeline.md) 执行八步；各步读对应 `skills/*/SKILL.md`。Modeling 在 draft 阶段只做字段对比与否决项；见 [etf_model_v0.1](../database/screening/etf_model_v0.1.md)。Challenge 须 Skill 全文。Documentation 在真正执行前完成；见 [OPERATIONS.md](../OPERATIONS.md)「§6.4」「§6.5」。
 7. **执行前检查**：核对代码、市场、价格、订单类型、数量、费用、交易/计价/底层暴露币种、QDII 额度、申赎状态、底层市场时差和估值滞后。
 8. **用户执行**：仅当 Decision 为有效 `act`、`user_authorization: approved` 绑定本轮对象/方向/金额/有效期且执行条件仍成立时，向用户呈现清单。Agent 不得下单；用户在券商完成交易后再记录结果。
 

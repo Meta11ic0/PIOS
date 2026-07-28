@@ -1,509 +1,259 @@
-# 外部参考：相关产品与文章
+# 外部参考分析：Austin Xu 的 Wealth LLM Wiki 系列
 
-> 调研日期：2026-07-27  
-> 用途：梳理与 PIOS 相邻的开源产品与方法论，便于对照定位。不构成投资建议。  
-> 元数据：GitHub API（同日拉取）+ 各仓库 README / 官方站点。
-
-## 与 PIOS 的关系（总览）
-
-| 参考 | 一句话 | 与 PIOS |
-|------|--------|---------|
-| [AI Berkshire](#1-ai-berkshire) | Claude Code / Codex 价值投资研究 Skill 框架 | 最接近：Agent 规则、多视角对抗、可复盘流程；偏个股深度研究 |
-| [Austin 文：Wealth LLM Wiki](#2-文章用-claude-code-构建个人理财知识库) | LLM Wiki + Claude Code 搭建个人理财知识库 | 方法论接近：三层知识流与隐私分层；目录可对照，隐私策略并不相同 |
-| [Wealthfolio](#3-wealthfolio) | Local-first 个人财务 / 组合追踪（桌面为主，兼 iOS / Docker Web） | 互补：持仓记账与净值可视化；不含决策纪律流水线 |
-| [Ghostfolio](#4-ghostfolio) | 自托管财富管理 Web 应用 | 互补：多账户绩效与导入；偏运营型组合仪表盘 |
-
-**PIOS 自身定位（对照基准）**：证据驱动、可复盘的个人投资决策操作系统。规则与 Skill 在 `prompts/`、`skills/`，另有审查流水线、知识库与决策日志。它不是券商同步 App，也不是单纯「问 AI 买不买」。
+> 分析日期：2026-07-28
+> 分析依据：Building Your Personal Finance Knowledge Base with Claude Code (Part 1)、From LLM Wiki to Investment Agent (Part 2)、The Investment Operating System (Part 3)、wealth-llm-wiki GitHub 仓库、Karpathy LLM Wiki Gist
 
 ---
 
-## 1. AI Berkshire
+## 一、三层知识模型对比
 
-### 定位与一句话摘要
+### 1.1 结构对照
 
-面向 Claude Code / Codex 的价值投资研究 Skill 合集（GitHub 简介称「AI 时代的伯克希尔」）。把巴菲特、芒格、段永平、李录四位大师的方法论结构化，用多 Agent 并行与对抗提高分析质量与决策纪律。
+| 层级 | Austin wealth-llm-wiki | PIOS 当前 | 差异 |
+|------|----------------------|-----------|------|
+| L1 - 原始材料 | `raw_material/` — 按分类放调研文章，统一 frontmatter | `raw_material/` — 存在但基本为空（仅 demo），无 frontmatter schema | PIOS 的 raw_material 尚未启用真实内容 |
+| L2 - 结构化知识 | `wiki/` — 按 9 个分类组织，统一 frontmatter，Obsidian MOC | `knowledge/` — 按资产类别分 9+ 子目录 | PIOS 是静态 Markdown，Austin 是 Obsidian wiki（带 frontmatter+DQL） |
+| L3a - 输出/报告 | `publish/` — 虚构案例分析（公开）<br>`output/` — 个人建议（gitignored） | `reports/` — 决策输出（公开） | Austin 区分公开案例和私有建议，PIOS 的报告就是公开产出 |
+| L3b - 决策记录 | 无独立记录层，靠 `/wealth-log` 写投资日志 | `decision_log/` — 结构化决策记录 | PIOS 的 Decision 四结论体系是该层亮点 |
+| 数据库 | 无 | `database/` — ETF screening, portfolio 数据 | PIOS 独有的结构化数据层 |
 
-> 一个人 + Claude Code / Codex ≈ 一个投研团队。
+### 1.2 隐私分层策略
 
-### 核心功能 / 架构特点
+Austin 的隐私模型：
+- `output/` 被 `.gitignore` 完全拒绝入库
+- `wiki/` + `raw_material/` + `publish/` 完全公开，不含个人数据
+- 个人数据（持仓金额、成本、账户余额）只能放在 `output/`
+- CLAUDE.md 硬性规则阻止 AI 把个人数据写入公开目录
+- `.gitignore` 还额外忽略 `.claude/*`、`.obsidian/workspace.json` 等
 
-- **三层架构**：Skill 层（README 列出 20 个场景入口）→ Agent 层（Team Lead 调度四大师视角）→ 工具层（精确计算、交叉验证、报告抽检）。轻量 Skill 可不经 Agent 层。
-- **深度研究**：`/investment-research`、`/investment-team`、管理层纵深、未上市公司研究、长文系列等。
-- **财报 / 行业 / 持仓**：财报精读与团队解读、产业链扫描、漏斗筛选、组合复核、投资论文追踪与漂移检测、股价异动归因等。
-- **反偏见机制**：信息丰富度 A/B/C、芒格式逆向检验、快速否决清单、反共识检查、留白（灰色地带）、强制结论（通过 / 不通过 / 灰色）与价格区间分层建议。
-- **金融严谨性**：Python `decimal.Decimal` 手算校验市值 / 估值；关键数据要求多源交叉验证。
-- **多客户端入口**：同一套 canonical workflow。`skills/*.md` 为 Claude Code 源文件；`codex-skills/` 由脚本从前者生成；另有可选的 `codex-prompts/` slash prompt 兼容层。
+PIOS 的隐私策略：
+- 整个仓库是私有仓库（git 层面）
+- 无细粒度的目录级隐私标记
+- `.gitignore` 有 `database/products/history/` 等忽略模式
 
-### 技术栈
+**评估**：PIOS 当前靠"私有仓库"整体控制，缺乏 Austin 的细粒度隔离。这本身不一定是问题——私有仓库已经提供了足够保护。但如果 PIOS 未来有**公开分享**需求（如发布 screening 模型、知识条目），则需要引入 Austin 的目录级隐私策略。
 
-- 以 Markdown Skill / Prompt 与脚本为主，不是完整 SaaS 应用。
-- 辅助工具：Python（如 `tools/financial_rigor.py`）。
-- 运行时依赖：Claude Code 或 OpenAI Codex CLI。
+### 1.3 元数据 Schema 对比
 
-### 与「个人投资知识库 / 投资操作系统」的关系
-
-属于 **AI 投研 Skill 框架（研究侧）**：流程强、对抗强、报告产出强；仓库叙事里有 `reports/`、实盘记录等。重点是「如何高质量研究一家公司 / 一个行业」，不是本地记账 UI。作者宣传口径里有公开实盘收益；PIOS 不应把未经验证的外部账户数据当决策输入。
-
-### 与 PIOS 的可比点
-
-| 相似 | 差异 |
-|------|------|
-| Agent 入口文件（`AGENTS.md` / `CLAUDE.md`）、Skill 分场景、反方挑战、可复现结构 | 方法论绑定「四大师」个股价值投资；PIOS 偏个人组合、ETF / 配置与八阶段 Review Pipeline |
-| 强调「不能直接问 AI」、要结论与证据 | README 示例会输出激进 / 稳健 / 保守建仓区间；PIOS 在数据骨架未就绪时明确限制 `act` |
-| 多 Agent 并行对抗 | PIOS 的 Committee / Challenge 是配置审查辅助，不是四大师并行搜网 |
-
-**可借鉴**：强制结论格式、信息丰富度评级、财务验算工具、Skill 安装与多客户端同步方式。  
-**不宜照搬**：公开实盘收益宣传口径；未经验证的个人账户数据不要当作 PIOS 决策输入。
-
-### 关键信息（截至 2026-07-27）
-
-| 项 | 值 |
-|----|-----|
-| Stars | 14,318（约 14.3k） |
-| Forks | 2,026（约 2.0k） |
-| License | MIT |
-| 主语言 | Python（GitHub 主语言；主体大量为 Markdown Skill） |
-| 活跃度 | 活跃（`pushed_at` 2026-07-26） |
-| 创建 | 2026-04-07 |
-
-### 来源链接
-
-- 仓库：https://github.com/xbtlin/ai-berkshire  
-- README（中）：仓库根目录 `README.md`  
-- 相关公众号（作者侧精选）：「复利炼丹炉」（见项目 README，非 PIOS 背书）
-
+Austin 的 raw_material frontmatter:
+```yaml
 ---
-
-## 2. 文章：用 Claude Code 构建个人理财知识库
-
-> **原文标题**：Building Your Personal Finance Knowledge Base with Claude Code  
-> **作者**：Austin Xu  
-> **日期**：2026-05-04  
-> **链接**：https://austinxyz.github.io/blogs/blog/2026/05/04/wealth-llm-wiki  
-> **系列**：AI Wealth Management 系列第 1 部分  
-> **说明**：以下为简体中文译文，保留原文结构与要点；措辞按中文技术文习惯整理，不增补原文没有的事实。
-
+title: 文件主题
+collected: YYYY-MM-DD
+source_url:
+  - https://...
+freshness: evergreen | annual | volatile
+valid_until: YYYY-MM-DD
+tax_year: YYYY
 ---
-
-### 译文正文
-
-这是「AI 财富管理」系列的第 1 部分，讲怎么用 Claude Code 和 LLM Wiki 做个人投资相关的知识管理。
-
-多数真正有专长的人（金融、法律、移民或其他领域）把知识放在脑子里：既帮不到别人，也无法复利积累。这篇文章想改变这一点：搭一套结构化知识库，让 AI 能直接在其上推理，以后或许还能服务他人或产生收入。
-
-示例领域是个人理财。北美理财确实复杂（401K、Roth IRA、HSA、Wash Sale Rule、FBAR、跨境合规），值得系统化。但方法本身与领域无关：凡是你已积累专长的领域，同一套做法都适用。
-
----
-
-#### 两件工具：Claude Code 与 LLM Wiki
-
-##### Claude Code
-
-Claude Code 是 Anthropic 的命令行 AI 助手。和浏览器聊天的关键差别在于：它跑在你的终端里，能直接读写本机文件。
-
-这一点会改变「个性化建议」的含义。聊天型 AI 不了解你的处境，只能给通用答案。Claude Code 可以读到描述你真实 401K 余额、税率档次与当前持仓的文件，从而给出贴合具体情况的建议。
-
-你不需要会写代码，用自然语言下指令即可。
-
-##### LLM Wiki 方法
-
-Karpathy 的 LLM Wiki 概念提出三层知识结构：
-
-```text
-raw_material/    ← 原始材料：你收集的文章、笔记、链接
-wiki/            ← 蒸馏知识：结构化、可长期复用的参考条目
-output/          ← 综合产出：基于你个人处境的分析
 ```
 
-流程是：你把原材料喂给 AI，它蒸馏成 wiki 条目。需要做决策时，AI 阅读 wiki，再加上 `output/` 里的个人上下文，给出具体、有根据的建议。
-
-##### 为什么要组合使用
-
-没有结构化知识库的 Claude Code，只会给你通用答案，因为 AI 不知道你知道什么。没有 Claude Code 的 LLM Wiki，则一切都要自己手工维护。合在一起时，Claude Code 成为知识的操作系统，知识库则让每个答案都贴合你的真实处境。
-
+Austin 的 wiki 条目 frontmatter:
+```yaml
 ---
-
-#### 搭建项目
-
-##### 安装工具
-
-你需要三样东西。
-
-**VS Code**：查看和编辑 Markdown。下载：code.visualstudio.com。
-
-**Claude Code**：用 npm 安装：
-
-```bash
-npm install -g @anthropic-ai/claude-code
+title: 条目名称
+category: 账户类型 | 税务策略 | ...
+tags: [tag1, tag2]
+source: "[[raw_material/...]]"
+updated: YYYY-MM-DD
+status: draft | stable | outdated
+---
 ```
 
-需要 Node.js（nodejs.org）以及 Claude Pro 订阅（约每月 $20）。若不想用 CLI，Claude.ai 的 Projects 也能做类似工作；但在文件操作与 Skill 自动化方面，Claude Code 更强。
+PIOS 当前无统一的 frontmatter schema。`knowledge/` 下文件无元数据标记。
 
-**Git + GitHub**：知识库的版本控制。安装 Git（git-scm.com），并在 github.com 注册免费账号。若是 Git 新手，从 GitHub 官方入门指南开始即可。
+### 1.4 策略建议
 
-##### 用一段提示词初始化
+**PIOS 不需要照搬 Austin 的结构**，但可以借鉴以下点：
 
-创建文件夹 `wealth-llm-wiki`，在其中打开 Claude Code：
-
-```bash
-cd ~/Documents/wealth-llm-wiki
-claude
-```
-
-然后粘贴这段初始化提示：
-
-```text
-Initialize a personal finance knowledge base using the LLM Wiki three-layer structure.
-Reference Karpathy's LLM Wiki methodology: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
-
-Create:
-1. Directory structure:
-   - raw_material/ (source articles, notes, links)
-   - wiki/ (distilled knowledge entries, organized by topic)
-   - output/ (personal data and analysis — never committed to Git)
-2. README.md in each directory explaining its purpose and conventions
-3. CLAUDE.md (instructions for Claude Code itself) including:
-   - Project overview: personal finance knowledge base
-   - Directory structure
-   - Writing conventions: technical terms in English, explanations in plain language
-   - Privacy rules:
-     * Never put personal account balances, specific holdings, or dollar amounts in raw_material/ or wiki/
-     * All personal data goes in output/ (git-ignored)
-     * Wiki entries use general examples, not personal data
-4. .gitignore that excludes output/ and *.private files
-5. git init
-
-Confirm the directory structure and that CLAUDE.md includes the full privacy rules.
-```
-
-Claude Code 跑完后，项目大致如下：
-
-```text
-wealth-llm-wiki/
-├── CLAUDE.md
-├── .gitignore
-├── raw_material/
-│   └── README.md
-├── wiki/
-│   └── README.md
-└── output/
-    └── README.md
-```
-
-`CLAUDE.md` 是关键：每次在该项目中打开 Claude Code，都会自动读取它。你不必反复解释项目上下文。
+1. **raw_material 的 freshness 标记** — PIOS 的 raw_material 可以引入 freshness 分级（evergreen / annual / volatile），帮助团队判断引用时效
+2. **知识条目的 source 追溯** — knowledge/ 文件如果来自外部调研，建议标注 source URL
+3. **status 标记** — 给 knowledge/ 条目加 draft / stable / outdated 状态，防止使用过期知识
 
 ---
 
-#### 建设知识库
+## 二、Skill 自动化设计
 
-##### 步骤 1：搭好知识骨架
+### 2.1 Austin 的 Skill 体系
 
-先脚手架化 wiki 结构：先有分类与条目清单，再填内容。
+wealth-llm-wiki 共有 5 个核心 skill：
 
-```text
-Create the directory structure and outline for a North American personal finance
-knowledge base under wiki/.
+| Skill | 类型 | 功能 | 适用场景 |
+|-------|------|------|---------|
+| `/wealth-advise` | 面向用户 | 读取 wiki + output/ 生成个性化建议 | 日常使用 |
+| `/wealth-extract` | 维护型 | raw_material → wiki 提炼 | 作者维护 |
+| `/wealth-sync` | 维护型 | raw_material 增量回补 wiki | 作者维护 |
+| `/wealth-audit` | 质量型 | 四维质量审计 | 质量保证 |
+| `/wealth-freshness` | 维护型 | 时效扫描与更新 | 知识保鲜 |
 
-Categories:
-1. financial-basics/ — account types, credit system, net worth calculation
-2. investing/ — ETF vs active funds, US stocks, asset allocation, brokerage accounts
-3. tax/ — federal tax brackets, capital gains, Wash Sale Rule, FBAR/FATCA
-4. retirement/ — 401K, Roth IRA vs Traditional IRA, Mega Backdoor Roth, 401K Rollover
-5. cross-border/ — US-China wire transfers, foreign account reporting, FX risk
-6. education/ — 529 Plan basics, 529 vs Roth IRA for education
+rwh-overlay 另有 14 个投资操作命令（见下文 2.3）。
 
-For each category: create the folder and an index.md listing the entries to build.
-```
+### 2.2 PIOS 当前 Skill 体系
 
-##### 步骤 2：按需填充条目
+PIOS 有 10 个 skill，按功能分：
+- **决策类**：committee, decision, reasoning, challenge, risk
+- **研究类**：research
+- **质量类**：validation
+- **支持类**：documentation, modeling, humanizer-zh
 
-不必一次填完。需要时再建条目。以「401K Rollover」为例的完整模式：
+对比来看，Austin 有**运维型 skill**（extract, sync, freshness），PIOS 则全是**认知/决策型 skill**。
 
-先收集原材料：去 IRS.gov、Investopedia 等你信任的来源，把相关内容粘贴到 `raw_material/retirement/401k-rollover-sources.md`，并附上来源链接。
+### 2.3 rwh-overlay 的 14 个命令
 
-然后让 Claude Code 蒸馏：
+Austin 在 Part 2 中列出了 rwh-overlay 的全部命令，分为五个职能组：
 
-```text
-Read raw_material/retirement/401k-rollover-sources.md and distill it into a
-wiki entry at wiki/retirement/401k-rollover.md.
+| 职能 | 命令 | 说明 |
+|------|------|------|
+| 知识维护 | `/kb-sync` | 合并上游 RWH wiki + 自己的 overlay 分析 |
+| 个股研究 | `/stock-analyze`, `/stock-refresh`, `/stock-entry` | 全管线研究 pipeline |
+| 日常监控 | `/morning-check`, `/morning-check ALL` | 开盘前决策检查 |
+| ETF 分析 | `/etf-analyze`, `/etf-check` | ETF 深度分析及板块 DCA 决策 |
+| 信息整合 | `/chen-integrate`, `/chen-validate` | 第三方分析交叉验证 |
+| 周期报告 | `/market-daily`, `/market-weekly`, `/market-monthly`, `/market-quarterly` | 定期审计报告 |
 
-Requirements:
-- Structure: Overview → Options → Comparison → Key rules → Common mistakes
-- Use general examples, no personal dollar amounts
-- Link related concepts with [[Wiki Links]] (e.g., [[Traditional IRA]], [[Roth IRA]])
-- Add YAML frontmatter: tags: [retirement, 401k, rollover]
-```
+这 14 个命令加上 5 个核心 skill，形成了完整的工作流体系。
 
-产出会是结构化条目，覆盖四类 rollover 选项（留在旧计划 / 滚入新 401K / 滚入 IRA / 兑现）、60 天规则、Direct vs Indirect 机制，以及最常见错误。
+### 2.4 PIOS 可借鉴的 Skill 类型
 
----
+**高优先级——引入运维型 Skill：**
 
-#### 用 Obsidian 浏览
+1. **`/knowledge-sync`** — 扫描 raw_material/ 中的新文件，与 knowledge/ 对比，输出未处理材料清单（类似 Austin 的 `/wealth-sync`）
+2. **`/knowledge-extract`** — 从 raw_material 文章提炼 knowledge/ 条目（类似 `/wealth-extract`）
+3. **`/knowledge-audit`** — 检查 knowledge/ 条目的质量、完整性、时效性（类似 `/wealth-audit`）
+4. **`/portfolio-refresh`** — 扫描 portfolio 数据库，检查数据完整性，报告异常值（类似 rwh-overlay 的周期命令）
 
-Obsidian 是原生 Markdown 知识工具，浏览 wiki 比普通文件管理器舒服得多。
+**中优先级——引入投资操作命令：**
 
-把整个 `wealth-llm-wiki` 文件夹作为 Obsidian vault 打开（根目录，而不只是 `wiki/`），这样可以同时看到 `raw_material/`、`wiki/` 和 `output/`。
+1. **`/asset-analyze <TICKER>`** — 全管线研究 pipeline，调用 research → modeling → reasoning → risk → challenge，输出结构化 thesis（对应 PIOS 的 8 阶段 Pipeline）
+2. **`/dca-check`** — DCA 条件检查，比对目标配置偏离度、市场环境、限价可用性（对应 workflow/dca.md 的自动化版本）
+3. **`/rebalance-scan`** — 扫描当前持仓 vs 目标配置，生成调仓候选列表（对应 workflow/rebalance.md 的自动化版本）
 
-安装两个社区插件：
+### 2.5 CLAUDE.md 内容结构对比
 
-- **Dataview**：像数据库一样查询 wiki（例如「列出所有标记为 `retirement` 的条目」）
-- **Templater**：为 `output/` 里的个人处境文件做模板，保持记录结构一致
+| 维度 | Austin wealth-llm-wiki | PIOS |
+|------|----------------------|------|
+| 核心概念 | 三层知识库说明 + 隐私规则 + schema 定义 | 通过 AGENTS.md 引用 prompts/ 和 skills/ |
+| Schema | raw_material 和 wiki 条目的 frontmatter 完全定义 | 无统一 frontmatter schema，依赖 data_contracts.md |
+| 隐私规则 | 硬性规则（什么不能做）+ git push 前检查 | 依赖仓库级别管理 |
+| Skill 矩阵 | 3+ 个 skill 的触发条件速查 | 通过 AGENTS.md 引用，CLAUDE.md 自身轻量 |
 
-随着 wiki 增长，Graph View 能可视化知识连接。
-
----
-
-#### 用 Skills 做自动化
-
-Claude Code Skill 是存成文件、用斜杠命令调用的结构化提示。建好之后，调用 Skill 即可，不必每次从零写提示。Claude Code 也能帮你生成 Skill。
-
-对本知识库特别有用的两个：
-
-**`/wealth-extract`**：把新的源文件蒸馏成 wiki 条目。
-
-```text
-Create a skill named wealth-extract.
-Function:
-- Accept a file path in raw_material/ as an argument
-- Identify the relevant finance topic
-- Distill into a standard wiki entry (structured, [[wiki links]], YAML frontmatter)
-- Save to the appropriate wiki/ subdirectory
-```
-
-用法：`/wealth-extract raw_material/tax/roth-conversion-article.md`
-
-**`/wealth-sync`**：审计尚未处理的内容。
-
-```text
-Create a skill named wealth-sync.
-Function:
-- Scan all files in raw_material/
-- Compare against wiki/ to find unprocessed source material
-- Output a Markdown table: file name, inferred topic, suggested wiki destination
-```
-
-每周跑一次 `/wealth-sync`，就能看到原材料堆里还有什么等待蒸馏。
+**借鉴点**：PIOS 的 CLAUDE.md 设计理念不同——它专注于入口和引用，把规则正文下放到 prompts/ 和 skills/。这是合理的设计，不需要改为 Austin 的模式。但可以在 CLAUDE.md 中增加一个"可执行 skill 速查表"，简化会话启动时的认知负担。
 
 ---
 
-#### 私有数据层
+## 三、知识增长路径
 
-`output/` 目录是「通用知识变成个人建议」的地方。
+### 3.1 "先脚手架再填内容"策略
 
-创建 `output/my-situation.md`，写入你的真实细节：
+Austin 的构建顺序：
+1. 用一条 prompt 初始化目录结构和 CLAUDE.md
+2. 创建知识骨架：先建目录和 index.md（MOC 页），列出待建条目
+3. 按需填充：有研究需求时才填充具体条目
 
-```markdown
-# Personal Financial Situation
+这与 PIOS 当前策略一致——PIOS 已经建立了目录结构和框架。差异在于：
+- PIOS 的 knowledge/ 条目没有统一的 frontmatter 和 MOC 索引
+- PIOS 的 raw_material/ 还没有填充真实内容
 
-## Employment
-- Software engineer at a tech company, changed jobs this year
-- 401K: employer matches 50% up to 6%
-- Tax filing: MFJ, 22% federal bracket, ~$X AGI
+### 3.2 Obsidian 集成
 
-## Accounts
-- Roth IRA at Fidelity: $X balance
-- Previous employer 401K to roll over: $X
-- Taxable brokerage: mostly index funds
+Austin 将整个仓库作为 Obsidian vault 直接打开，利用：
+- Dataview 插件 — 用 DQL 查询 wiki（"列出所有 tagged retirement 的条目"）
+- Templater 插件 — 个人 situation 文件的模板
+- Graph View — 可视化知识关联
+- WikiLink — `[[wiki/分类/文件名]]` 的内部链接
 
-## China assets
-- Bank deposits over $10,000 — annual FBAR filing required
-- Annual transfers within $10K limit
+PIOS 的 knowledge/ 是普通 Markdown 文件，不支持 Obsidian 原生浏览。
 
-## Family
-- Married, one child, planning 529 contributions
-```
+**思考**：PIOS 是否需要 Obsidian 集成？取决于使用习惯。如果 PIOS 的主要交互发生在 Claude Code 终端，Obsidian 的价值有限。但如果用户希望_阅读_知识条目时获得更好的浏览体验，Obsidian 集成值得考虑——Cost 很低（只是 Markdown 格式兼容），Benefit 很高（免费图谱浏览）。
 
-该文件被列入 `.gitignore`，按原文说法「永远不离开你的电脑」（指不提交到 Git）。但只要它在上下文范围内，当你问「今年该不该做 Roth conversion？」时，Claude Code 读的是你真实的税率档与账户规模，而不是通用例子。
+### 3.3 Quartz 发布策略
 
-文件越具体，建议越有用。
+Austin 用 Quartz 将 wiki/ 内容发布为静态网站：
+- 仅发布 wiki/，output/ 保持私有
+- WikiLink 需要完整路径以兼容 Quartz 渲染
+- 可选的发布粒度：仅 wiki，或 wiki+raw_material
 
----
+PIOS 暂无发布需求。如果未来需要公开 knowledge/ 或 screening 模型，Quartz 路线值得参考。
 
-#### 用 Quartz 发布
+### 3.4 知识保鲜机制
 
-若 wiki 内容扎实、想对外分享，Quartz 可以把 Obsidian 风格 Markdown 转成带可用 wiki 链接与搜索的静态网站，部署到 GitHub Pages 或云平台（Vercel、Cloudflare Pages 等）。
+Austin 的 freshness 体系是一个亮点：
+- `freshness` 三级分类 (evergreen / annual / volatile)
+- `valid_until` 日期标记
+- `/wealth-freshness` skill 定时扫描过期条目
+- wiki 条目的 freshness 从 raw_material 源头继承（多来源取最不稳定档）
 
-你控制发布范围：只发 `wiki/`，或连同 `raw_material/` 一起展示研究过程。`output/` 始终保持私有，仓库级 `.gitignore` 强制这一点。
+PIOS 当前没有知识保鲜机制。随着 knowledge/ 增长，这个问题会越来越突出。
 
----
-
-#### 这套东西可以长成什么
-
-框架本意是可生长的，取决于你的目标：
-
-**自用**：更好的决策、更快的研究，以及在真正咨询 CPA / 顾问时问出更清楚的问题。
-
-**分享 raw + wiki**：你的知识劳动成为公共资源，在领域内积累声誉。
-
-**部分分享**：公开 wiki，保留深度分析私有。公开内容证明专长；需要个性化分析的人会找到你。
-
-**客户目录**：建立 `output/clients/` 结构。用同一知识库服务多人，每位客户数据隔离在自己的文件夹。产出保持私有；wiki 是共享地基。
-
-**专家 Agent**：服务足够多客户后，模式会重复。把你的分析框架固化成 Claude Code Skill，让它做初稿；你负责审阅与定稿。
+**借鉴点**：引入一个轻量的 freshness 标记体系（不需要像 Austin 那样严格），定期扫描 outdated 条目。
 
 ---
 
-#### 延伸阅读（原文链接）
+## 四、可借鉴清单（优先级排序）
 
-- Part 2: From LLM Wiki to Investment Agent — Lessons from Building rwh-overlay
-- Part 3: The Investment Operating System — Full Workflow Walkthrough
-- Karpathy's LLM Wiki Gist：https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
-- wealth-llm-wiki on GitHub（见原文站内链接）
-
----
-
-### 与 PIOS 的对照（文章 → 仓库）
-
-| Austin / LLM Wiki | PIOS |
-|-------------------|------|
-| `raw_material/` | `raw_material/`（待蒸馏原始材料） |
-| `wiki/` | `knowledge/`（稳定知识与术语） |
-| `output/` + gitignore（个人数据默认不入库） | 个人持仓 / 决策可落在 `database/portfolio/`、`decision_log/`、`reports/`；当前私人仓库策略下这些路径**可以**入库。更接近「不入库」的是 `private/`、`*.local.md` |
-| `CLAUDE.md` | `CLAUDE.md` + `AGENTS.md` + `prompts/` |
-| Skills 蒸馏与同步 | `skills/*` + Review Pipeline |
-
-文章的核心贡献是 **隐私分层 + 三层知识流**。PIOS 目录可对照，但默认隐私策略不同：Austin 把个人金额与持仓关进 gitignored 的 `output/`；PIOS 另有强制审查顺序与停止条件（见 `prompts/review_pipeline.md`），并不把 `database/portfolio/` 自动等同于「永不提交」。
-
-另需注意：原文「永远不离开你的电脑」指不提交到 Git。使用 Claude Code 时，文件内容仍可能作为提示发送给模型 API；这与「不入库」不是同一件事。
+| 优先级 | 借鉴内容 | PIOS 目标文件/位置 | 具体做法 | 预期收益 |
+|--------|----------|-------------------|----------|----------|
+| **P0** | raw_material frontmatter schema | `raw_material/README.md` + 示例文件 | 为 raw_material 文件定义统一 frontmatter（title, collected, source_url, freshness），并修改 README 说明 | 建立可追溯、可时效评估的调研材料基线 |
+| **P0** | knowledge/ freshness + status 标记 | `knowledge/` 下各个 SKILL.md 或 README | 在知识条目的 frontmatter 或文件头部加 `status: draft\|stable\|outdated` 和 `source` 追溯；建立定期审计机制 | 防止使用过期知识做决策 |
+| **P0** | 运维型 Skill：`/knowledge-sync` | `skills/sync/` (新建) 或合并入 research | 扫描 raw_material/ 与 knowledge/ 比对，输出未处理调研材料的表格 | 消除 raw_material 的"入库断层" |
+| **P1** | 运维型 Skill：`/knowledge-extract` | `skills/extract/` (新建) | 从 raw_material 提炼 knowledge/ 条目，调用 research → validation | 标准化知识提取流程，减少人工编写负担 |
+| **P1** | 运维型 Skill：`/portfolio-refresh` | 整合入现有 skill | 扫描 database/portfolio/ 和 database/products/，检查数据完整性，报告异常 | 保持数据库质量 |
+| **P1** | PIOS CLAUDE.md 增加 skill 速查表 | `CLAUDE.md` | 在 CLAUDE.md 末尾加一段 2-3 行的 skill 触发条件速查（类似 Austin 的"配套 Skills 的使用"表格） | 降低会话启动时的认知负担 |
+| **P2** | Obsidian 兼容 | `knowledge/` 文件 | 考虑在 knowledge/ 文件头部加 Obsidian 兼容的 YAML frontmatter，可选的 WikiLink 支持 | 零成本获得图谱浏览能力 |
+| **P2** | DCA 自动化命令 | `skills/dca/` 或集成到 workflow | 将 `workflow/dca.md` 的检查逻辑封装为 `/dca-check` skill | 把流程文档变成可执行命令 |
+| **P3** | Quartz 发布模板 | 独立的发布仓库 | 如果未来需要公开知识条目，参考 Quartz 的部署模式 | 知识产出的发布通道 |
+| **P3** | Freshness 定时扫描 | 新的 cron 或定时 skill | 类似 `/wealth-freshness`，定期扫描过期条目并更新 `valid_until` | 知识体系长期自治 |
 
 ---
 
-## 3. Wealthfolio
+## 五、关键洞察总结
 
-### 定位与一句话摘要
+### 5.1 PIOS 的独特优势
 
-开源、注重隐私的 **local-first 个人财务 / 组合追踪器**：投资、净值、支出与情景模拟。数据默认存在本机，无需账户即可永久免费使用基础能力。
+与 Austin 的体系相比，PIOS 有以下差异化优势：
 
-### 核心功能 / 架构特点
+1. **结构化数据库** — `database/` 下的 product screening、portfolio 数据、市场信息是 Austin 体系没有的数据层，也是 PIOS 的差异化竞争力
+2. **8 阶段 Review Pipeline** — PIOS 有明确的阶段式审查流程，而 Austin 的流程更多是自由形式
+3. **Decision 四结论体系** — PIOS 的决策记录（行动、等待、拒绝、失效）比 Austin 的 `/wealth-log` 更结构化
+4. **Committee 四席制** — PIOS 有正式的挑战/对抗机制，Austin 没有此类设计
 
-- 多账户、多资产组合追踪；活动（成交）导入与管理。
-- 绩效分析：时间加权 / 资金加权收益、基准对比、历史分析。
-- 目标规划与配置管理；多币种与汇率。
-- **Local-first**：SQLite 本地存储，无强制云库。
-- 可选 **Wealthfolio Connect**（订阅）：30+ 券商只读同步、加密多端同步；手动录入与 CSV 导入始终免费。
-- **Addon 系统**：TypeScript SDK、权限同意、热重载、可扩展页面与数据访问。
-- **交付形态**：桌面（Windows / macOS / Linux）、iOS，以及 Docker / 自托管 Web（Axum 服务端 + 可选 OIDC）。
+### 5.2 Austin 可借鉴的差异化优势
 
-### 技术栈
+1. **运维型 Skill** — Austin 把"维护知识库本身"作为一种 skill 类型来支持，PIOS 缺乏这类元维护能力
+2. **freshness 元数据** — Austin 为每个知识条目标记时效性，PIOS 没有
+3. **工作流即产品** — Austin 的 4 个核心工作流（个股研究、日常监控、ETF DCA、定期审查）比 PIOS 的 workflow 更完整
+4. **从 pain 出发的设计** — Austin 的每条命令都源于具体痛点，这比"设计完整投资系统再逆向工作"更实际
 
-| 层 | 技术 |
-|----|------|
-| 前端 | React、React Router、Tailwind、Radix/Shadcn、Recharts、React Query、Zod、Vite、TypeScript、pnpm / Turborepo |
-| 桌面 | Tauri |
-| 后端 | Rust、SQLite、Diesel；Web 模式为 Axum HTTP server |
-| 扩展 | `@wealthfolio/addon-sdk`、addon-dev-tools、共享 UI 包 |
+### 5.3 关于 Part 2 的核心教训
 
-### 与「个人投资知识库 / 投资操作系统」的关系
+Austin 在 Part 2 中总结了 5 条教训，PIOS 应重视：
 
-属于 **持仓与净值应用（记账 / 可视化侧）**：把「现在有什么、表现如何、目标进度」做清楚。不内置价值投资方法论或多 Agent 决策纪律。Addon 可扩展功能，但仍是应用层扩展，不是知识库审查流水线。
+1. **与上游解耦** — PIOS 目前没有上游依赖问题，但如果未来引入外部数据源，需要设计清晰的解耦策略
+2. **从痛点建工作流** — 不是设计完整的 AI 投资顾问再倒推功能，而是从具体痛点开始
+3. **脚本取数据，LLM 做解释** — LLM 擅长推理，不擅长回忆事实。获取数据用脚本，分析数据交给 LLM。这是 PIOS 设计 Command 时的重要原则
+4. **目录边界是承重墙** — PIOS 的 database/knowledge/reports/decision_log 已有明确划分，需保持
+5. **知道扩展极限** — 当知识条目突破上下文窗口限制时 RAG 不再是选择而是必需
 
-### 与 PIOS 的可比点
+### 5.4 关于 Part 3 的六阶段框架
 
-| 相似 | 差异 |
-|------|------|
-| 关心组合、目标、多币种、隐私 | Wealthfolio 是可安装产品；PIOS 是 Markdown + Agent 规则仓库 |
-| 可自托管 / 本地数据 | PIOS 几乎无 GUI；持仓在 `database/` 文本骨架中维护 |
-| 可扩展（Addon） | PIOS 扩展靠 Skill / workflow / templates |
+Austin 的 IOS 六阶段框架（Idea → Research → Technical → Allocation → Execution → Management）与 PIOS 的 8 阶段 Pipeline（Research → Validation → Modeling → Reasoning → Risk → Challenge → Decision → Documentation）有互补性：
 
-**可借鉴**：活动类型模型、绩效指标口径、本地优先与密钥（OS keyring）做法。  
-**分工建议**：若需要日常净值仪表盘，可用 Wealthfolio 做「事实层」；买卖与配置结论仍走 PIOS Pipeline。
+- IOS 的阶段 1-2-3 对应 PIOS 的 Research-Modeling-Reasoning
+- IOS 的阶段 4-5-6（分配、执行、持仓管理）是 PIOS 未系统覆盖的
+- PIOS 的 Validation-Risk-Challenge-Documentation 是 IOS 未系统覆盖的
 
-### 关键信息（截至 2026-07-27）
-
-| 项 | 值 |
-|----|-----|
-| Stars | 8,396（约 8.4k） |
-| Forks | 602 |
-| License | AGPL-3.0（品牌商标另见 `TRADEMARKS.md`） |
-| 主语言 | Rust |
-| 活跃度 | 活跃（`pushed_at` 2026-07-25）；Issues 较多属正常社区规模 |
-| 官网 | https://wealthfolio.app |
-
-### 来源链接
-
-- 仓库：https://github.com/wealthfolio/wealthfolio  
-- 官网：https://wealthfolio.app  
-- Docker Hub：`wealthfolio/wealthfolio`
+PIOS 可考虑在工作流层面补充"执行后管理"阶段（Position Management），完成从研究到退出的全生命周期覆盖。
 
 ---
 
-## 4. Ghostfolio
+## 六、原始资料清单
 
-### 定位与一句话摘要
+以下为分析所依据的原始资料：
 
-开源 **财富管理（Wealth Management）** 软件：用 Web 技术持续记录股票、ETF、加密货币等，并据此做数据驱动的组合洞察。面向个人长期自用，可自托管或使用官方 Premium 云服务。
-
-### 核心功能 / 架构特点
-
-- 交易 CRUD、多账户管理。
-- 组合绩效：ROAI（Return on Average Investment）覆盖 Today / WTD / MTD / YTD / 1Y / 5Y / Max 等窗口。
-- 图表、静态风险分析、导入导出、Dark Mode、Zen Mode。
-- **PWA**、移动优先。
-- 官方 **Ghostfolio Premium** 云托管（覆盖数据商与运维成本）；自托管走 Docker Compose（PostgreSQL + Redis）。
-- 实验性 Public API（Bearer / 匿名 access token）、活动导入、公开组合只读等。
-- 家用 NAS / Home Assistant / Umbrel 等社区集成（README 还列 CasaOS、Runtipi、TrueCharts、Unraid 等）。
-
-### 技术栈
-
-| 层 | 技术 |
-|----|------|
-| 组织 | Nx monorepo、TypeScript |
-| 后端 | NestJS、PostgreSQL、Prisma、Redis |
-| 前端 | Angular、Angular Material、Bootstrap utility classes |
-| 部署 | Docker（linux/amd64、arm/v7、arm64） |
-
-### 与「个人投资知识库 / 投资操作系统」的关系
-
-属于 **自托管组合仪表盘 / 财富管理应用**：强在持续运营、多平台聚合视图与隐私自主；弱在「为什么买、为何现在、反方挑战、决策日志」等知识与纪律层。与 Wealthfolio 同属「事实与绩效」赛道：Ghostfolio 更偏 **Web + Postgres 长期服务**，Wealthfolio 更偏 **桌面 local-first + Tauri**（同时提供 Docker / Web）。
-
-### 与 PIOS 的可比点
-
-| 相似 | 差异 |
-|------|------|
-| 重视隐私与数据所有权、买 / 持有心态友好 | Ghostfolio 是完整 Web 应用；PIOS 是决策与知识操作系统 |
-| 组合构成洞察、风险提示 | 无 PIOS 式 Research→Decision 流水线与 citation / as_of 规则 |
-| 可 API 导入活动 | PIOS 侧数据多为 Markdown / 表结构，需人工或脚本桥接 |
-
-**可借鉴**：绩效时间窗口定义、活动导入 schema、自托管运维经验。  
-**分工建议**：Ghostfolio / Wealthfolio 二选一（或按桌面 vs 服务器偏好）作持仓真源；PIOS 负责研究、模型、风险、反方与决策落盘。
-
-### 关键信息（截至 2026-07-27）
-
-| 项 | 值 |
-|----|-----|
-| Stars | 9,014（约 9.0k） |
-| Forks | 1,245（约 1.2k） |
-| License | AGPL-3.0 |
-| 主语言 | TypeScript |
-| 活跃度 | 活跃（`pushed_at` 2026-07-26）；项目始于 2021-04 |
-| 官网 | https://Ghostfol.io |
-
-### 来源链接
-
-- 仓库：https://github.com/ghostfolio/ghostfolio  
-- 官网 / Demo / Premium：https://Ghostfol.io  
-- 社区话题：https://github.com/topics/ghostfolio
-
----
-
-## 对照速查
-
-```text
-                    知识/规则层              研究对抗层              持仓事实层
-PIOS                ████████               ███████                ██（骨架）
-AI Berkshire        ████                   ████████               ██
-Austin LLM Wiki     ████████               ██                     ██（output 隐私）
-Wealthfolio         █                      █                      ████████
-Ghostfolio          █                      █                      ████████
-```
-
-对 PIOS 最有直接方法论价值的，是 Austin 文（三层知识 + 隐私）与 AI Berkshire（Skill 纪律与对抗）。  
-对 PIOS 最有互补产品价值的，是 Wealthfolio / Ghostfolio（净值与活动真源，不替代 Decision）。
-
----
-
-## 免责与维护
-
-- 外部项目的实盘收益、星标数与功能以各自仓库为准；本文件仅作对照索引。
-- Stars / `pushed_at` 会过时；重要决策前请重新打开源链接核对。
-- 更新本文件时：改「调研日期」、必要时重拉 GitHub API，并保留原文链接。
+1. **Part 1** — [Building Your Personal Finance Knowledge Base with Claude Code](https://austinxyz.github.io/blogs/blog/2026/05/04/wealth-llm-wiki)
+2. **Part 2** — [From LLM Wiki to Investment Agent: Lessons from Building rwh-overlay](https://austinxyz.github.io/blogs/blog/2026/05/04/rwh-overlay-lessons)
+3. **Part 3** — [The Investment Operating System](https://austinxyz.github.io/blogs/blog/2026/05/04/investment-os)
+4. **GitHub 仓库** — [austinxyz/wealth-llm-wiki](https://github.com/austinxyz/wealth-llm-wiki)
+5. **Karpathy LLM Wiki Gist** — https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+6. **RWH 仓库** — [kgajjala/rwh](https://github.com/kgajjala/rwh)
+7. **finance-skills** — [kgajjala/finance-skills](https://github.com/kgajjala/finance-skills)

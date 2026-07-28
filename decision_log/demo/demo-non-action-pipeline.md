@@ -47,7 +47,7 @@ scope: demo_only
 
 # 当时可见数据
 
-- 数据 `as_of`：无。
+- 数据适用时点：无。
 - 证据快照：无真实外部证据。
 - 来源或上游记录：[演示研究](../../reports/demo/demo-non-action-pipeline.md)。
 - 已知限制：关键组合和产品输入均缺失。
@@ -67,7 +67,7 @@ scope: demo_only
 
 # 复盘
 
-## 过程评估（先不看结果）
+## 过程评估：先不看结果
 
 - Validation `unknown` 已阻断 Modeling、Reasoning、Risk、Challenge 与行动建议。
 - `research` 结论与项目“可跑流程 / 不可 act”的就绪状态一致。

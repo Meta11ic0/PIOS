@@ -11,7 +11,7 @@ required:
   - verification_status
 # 基础字段：身份、费率、成立/上市、跟踪对象等；按公告低频更新。
 # 动态字段：规模、成交额、价差、IOPV/NAV、折溢价、跟踪偏离、申赎/交易状态等；
-# 每次观测必须带 as_of，历史按 products/history/ 追加，不在基础表原地覆盖。
+# 每次观测必须带适用时点（字段 as_of），历史按 products/history/ 追加，不在基础表原地覆盖。
 fields:
   # —— 目录 / 基础 ——
   product_id:
@@ -65,7 +65,7 @@ fields:
   size:
     type: decimal
     category: dynamic
-    description: 基金规模；须配合 size_unit 与 as_of
+    description: 基金规模；须配合 size_unit 与适用时点（字段 as_of）
   size_unit:
     type: string
     category: dynamic
@@ -121,13 +121,13 @@ fields:
     values: [primary, secondary]
   published_at:
     type: datetime
-    description: 来源发布或披露时点；使用带时区的 RFC 3339
+    description: 来源发布时间；使用带时区的 RFC 3339
   as_of:
     type: datetime
-    description: 本条快照适用时点；动态字段必填
+    description: 适用时点；动态字段必填
   retrieved_at:
     type: datetime
-    description: PIOS 取得来源或事实的时点；使用带时区的 RFC 3339
+    description: 取得时间；使用带时区的 RFC 3339
   source_locator:
     type: string
     description: 来源中的页码、表格、字段或段落位置

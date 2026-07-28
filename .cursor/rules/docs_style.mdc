@@ -1,0 +1,10 @@
+---
+description: 编写或改写 PIOS 仓库说明文档时的文风与链接约定
+alwaysApply: false
+---
+
+# Docs Style（引用层）
+
+本规则正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+
+编写或改写 README、STATUS 等说明时，须先 **Read** [`prompts/docs_style.md`](../../prompts/docs_style.md)，再按该文件全文遵守。投资行动会话若不涉及文档改写，不必每轮读取。

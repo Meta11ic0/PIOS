@@ -3,11 +3,11 @@
 状态：active  
 适用范围：中国大陆证券账户可交易的场内 ETF 卖出或减仓
 
-卖出属于投资行动，必须执行完整 Review Pipeline（见 [prompts/review_pipeline.md](../prompts/review_pipeline.md)）。审查深度见 [OPERATIONS.md](../OPERATIONS.md) §1.1：**卖出始终走完整八步**。
+卖出属于投资行动，必须执行完整 Review Pipeline；见 [prompts/review_pipeline.md](../prompts/review_pipeline.md)。审查深度见 [OPERATIONS.md](../OPERATIONS.md)「审查深度分级」：**卖出始终走完整八步**。
 
 ## 流程
 
-1. 确认卖出原因（达到目标上限、再平衡、风险事件、原 Decision 失效等），不是因短期涨跌临时改规则。
+1. 确认卖出原因：达到目标上限、再平衡、风险事件、原 Decision 失效等。不是因短期涨跌临时改规则。
 2. 读取持仓、目标配置与原 Decision Log。
 3. 若属于重大再平衡或改变资产暴露，先执行 [Committee Skill](../skills/committee/SKILL.md)；不适用时记录理由。
 4. 按 [Review Pipeline](../prompts/review_pipeline.md) 完整八步执行；各步细则见对应 `skills/*/SKILL.md`。

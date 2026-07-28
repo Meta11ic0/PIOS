@@ -2,7 +2,7 @@
 
 状态：active
 
-再平衡属于调仓行动，必须按 [Review Pipeline](../prompts/review_pipeline.md) 完整八步执行（深度见 [OPERATIONS.md](../OPERATIONS.md) §1.1）。细则在各 Skill，本文不重复展开。
+再平衡属于调仓行动，必须按 [Review Pipeline](../prompts/review_pipeline.md) 完整八步执行；深度见 [OPERATIONS.md](../OPERATIONS.md)「审查深度分级」。细则在各 Skill，本文不重复展开。
 
 ## 流程
 

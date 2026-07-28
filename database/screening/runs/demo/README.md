@@ -1,8 +1,8 @@
-# 演示 screening runs（demo_only）
+# 演示 screening runs：demo_only
 
 本目录只存放演示运行包。
 
-- 顶层必须有 `scope: demo_only`（或等价说明）。
+- 顶层必须有 `scope: demo_only`，或等价说明。
 - 生产 Modeling 输入与比较 **不得**引用本目录文件。
 - `verification_status: unknown` 表示停止/预检，不表示评分或比较通过。
 

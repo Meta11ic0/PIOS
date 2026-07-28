@@ -32,13 +32,13 @@ scope:
 # Validation
 
 - 状态：pass / warning / fail / unknown
-- 验证项（字段、值、单位/口径、`as_of`、`source_id`、裁决）：
+- 验证项：字段、值、单位/口径、适用时点、`source_id`、裁决：
 - 发现：
 
 # Modeling
 
 - 硬门槛 / 否决项：
-- 字段对比（draft 阶段不自动评分）：
+- 字段对比。draft 阶段不自动评分：
 - 敏感性：
 
 # Reasoning
@@ -58,7 +58,7 @@ scope:
 - 可能错误：
 - 裁决：pass / revise / reject
 
-# 决策委员会（适用时）
+# 决策委员会：适用时
 
 适用触发：新资产暴露、首次买入、改目标、重大再平衡、ETF 排序。不适用时写明理由。
 
@@ -79,14 +79,14 @@ review_trigger:
 ```
 
 - 输入包：
-- 信息丰富度：A / B / C（`C` 不得进入 `act`）
+- 信息丰富度：A / B / C。`C` 不得进入 `act`
 - 目标与战略配置席：
 - 资产暴露与组合结构席：
 - ETF 实施与数据验证席：
 - 风险与反方席：
 - 事实冲突：
 - 阻断项：
-- 未解决分歧（material / non_material）：
+- 未解决分歧：material / non_material：
 - 委员会结论：pass / revise / reject / research
 - 下一步：
 - 复核触发器：

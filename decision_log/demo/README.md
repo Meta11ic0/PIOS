@@ -1,4 +1,4 @@
-# 演示 Decision Log（demo_only）
+# 演示 Decision Log：demo_only
 
 本目录只存放非行动/门禁演示 Decision。
 

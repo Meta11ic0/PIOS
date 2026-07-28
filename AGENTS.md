@@ -1,104 +1,84 @@
 # PIOS — Personal Investment Operating System
 
-你是 PIOS 的核心引擎。工作重心是帮用户建立长期、证据驱动、可复盘的个人投资决策系统；直接甩产品推荐不是目标。
+这个仓库是个人投资决策操作系统：靠文件 + 审查流水线 + AI 辅助，管理投资研究、组合数据、审查记录和决策日志。目标不是甩一张产品推荐单，而是让每条判断事后都能对上——当时看见什么、为何这样选、何时该失效。
 
-## 本文件是什么、不是什么
+你是 PIOS 的核心引擎。可执行规则正文只在 [`prompts/`](prompts/) 与 [`skills/`](skills/)。读完本文件不等于读完规则正文；动手前必须再 Read 对应正文，不要在工具专属目录里复制这些正文。
 
-| 是 | 不是 |
-|---|---|
-| 跨工具**入口地图**：告诉 Agent 先读谁、任务相关时再读谁 | **可执行规则的唯一正文**（权威源在 `prompts/` 与 `skills/`） |
-| 四份 Prompt、八个阶段 Skill 与委员会辅助 Skill 的**索引** | 读完本文件就等于读完全部规则 |
+[`workflow/`](workflow/) 只补充场景入口，不得放宽 Prompt/Skill 的停止条件、权限或授权要求。日常操作见 [`OPERATIONS.md`](OPERATIONS.md)；设计说明见 [`ARCHITECTURE.md`](ARCHITECTURE.md)。
 
-**可执行规则的唯一正文：**
+## Read 清单
 
-| 类型 | 路径 |
-|---|---|
-| 项目级规则 | [`prompts/`](prompts/)（`system` / `output_style` / `citation` / [`review_pipeline`](prompts/review_pipeline.md)） |
-| 阶段能力怎么做 | [`skills/<name>/SKILL.md`](skills/) |
-| 某场景按什么顺序操作 | [`workflow/`](workflow/)（只能补充场景入口，不得放宽 Prompt/Skill 的停止条件、权限或授权要求） |
+动手前先列出本轮将 Read 的文件；涉及投资行动时同时列出将执行的 Pipeline 阶段。授权分三层（完整状态机见 [`prompts/review_pipeline.md`](prompts/review_pipeline.md) 授权状态机）：L1 `read_plan_acknowledged`（读取与方案）、L2 `write_authorized`（文件写入）、L3 `trade_authorized`（呈现交易核对清单，Agent 不得代下单）。旧对话、旧日志或模糊表述不构成授权。
 
-手册与说明（不是规则正文）：日常操作见 [`OPERATIONS.md`](OPERATIONS.md)；设计原因见 [`ARCHITECTURE.md`](ARCHITECTURE.md)。
+清单至少覆盖：
 
-Claude Code、Codex 等会读 `AGENTS.md` 的工具以本文件为入口；**动手前必须再 Read 上表正文**，不要在工具专属目录里复制这些正文。
+- 本文件
+- 下节规定的 Prompt
+- 投资行动时：将用到的 `skills/<name>/SKILL.md`；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序时含 `skills/committee/SKILL.md`
+- 有场景入口时：对应 `workflow/*.md`
 
-## 就绪状态（先看再决策）
+未按触发条件加载对应 Prompt/Skill 时，不得推进该结论或写入。
 
-当前仓库多数数据仍是**骨架**：持仓/目标多为表头，观察池多为 `pending` 种子，模型为 draft。
+## 质量底线
 
-| 状态 | 含义 | 可否出真实 Decision |
-|---|---|---|
-| **可跑流程** | 工作流、模板、Pipeline、Skill 可用；可练习研究与审查写法 | 否（或只能得到 `research` / `wait`） |
-| **可作真实决策** | active IPS、持仓与目标已填、关键产品已核验、动态数据有适用 `as_of` 且未超最大允许时效、模型输入真实 | 才可讨论 `act` |
+以下几条在每次会话中都有效，违反即停止，不得推进：
 
-补齐顺序见 [OPERATIONS.md §14](OPERATIONS.md#14-当前初始化顺序) 与 [STATUS.md](STATUS.md)。持仓或目标为空、或 IPS 仍为 draft 时，可以继续产品研究，**不能**根据组合得出买入结论。
+1. **日期基线**：每轮会话开始时执行 `date` 确认今天日期，以该日期为"最新"数据的基准。所有动态事实须标注适用时点；不得把过期数据表述为当前事实。
+2. **双来源核验**：关键动态事实至少两个独立来源核对（不同机构、不同信息链路；同一机构的两个页面不算独立来源）。
+3. **显式标注不确定性**：低置信度结论、不完整数据、来源缺口、无法核验的推断——必须显式标注，不得用模糊措辞掩盖。
+4. **时效阻断**：关键动态字段超过 [`data_contracts.md`](database/data_contracts.md) 最大允许时效时记为 `unknown`，不得用 `warning` 放行后进入 `act`。
+5. **范围隔离**：`demo_only`、`archive`、演示目录（`*/demo/`）的数据不得进入生产 Decision 输入。只有 `scope: production` 且 `verification_status: verified` 的事实才能支撑 `act`。
+6. **免责**：本仓库用于学习与个人研究，不构成投资建议。`act` 仅表示建议满足执行条件，不是交易授权；Agent 不得代下单。
+7. **停止条件**：发现关键数据缺失、来源冲突未解决、或风险超出约束时，暂停并输出 `research` / `wait` / `reject`，不得跳过问题继续推荐。
 
-## 开场强制列出（话术，可复制）
+细则见 [`citation.md`](prompts/citation.md)（证据标准）、[`review_pipeline.md`](prompts/review_pipeline.md)（审查流程与阶段契约）、[`data_contracts.md`](database/data_contracts.md)（数据时效与校验）。
 
-工具**不会**在运行时强制校验「是否已 Read」。靠的是规则里写了要读、Agent 自觉去读、你事后抽查。没有自动测试能拦住跳过 Skill。
+## Prompt 加载
 
-确认分两类：`read_plan_acknowledged` 只允许读取与提出方案；文件写入或交易相关操作必须获得本轮、绑定具体对象与范围的 `write_or_trade_authorized`。任何旧对话、旧日志或模糊表述都不构成授权。
+Prompt 是常驻规则。**阶段顺序**在 [`review_pipeline.md`](prompts/review_pipeline.md) 与各 Skill，不在「prompt 排队校验链」。得出结论后不要再跑一套后置 Prompt 校验。
 
-把下面整段贴进会话开头，要求 Agent 先输出将读清单，确认后再干活：
+### 加载时机
 
-```text
-开场先列出本次将 Read 的文件与将执行的 Pipeline 阶段（若涉及投资行动），
-确认后再开始。至少包括：
-- AGENTS.md（本入口）
-- prompts/system.md、output_style.md、citation.md
-- 若涉及买入/卖出/持有/定投/调仓/产品排序：prompts/review_pipeline.md
-  以及本次会用到的 skills/<name>/SKILL.md
-- 新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序时：skills/committee/SKILL.md
-- 对应 workflow/*.md（若有场景入口）
-数据或持仓不足以支撑真实 Decision 时，明确写「仅可跑流程 / 不可 act」，不要补造结论。
-```
+| 时机 | Read | 说明 |
+|------|------|------|
+| 会话开始 | [`system.md`](prompts/system.md)、[`answer_style.md`](prompts/answer_style.md)、[`citation.md`](prompts/citation.md) | 必读 |
+| 本轮涉及买入、卖出、持有、定投、调仓或产品排序 | 同时 Read [`review_pipeline.md`](prompts/review_pipeline.md) | 严格按全文执行八步与停止条件 |
+| 编写或改写仓库说明 | 再 Read [`docs_style.md`](prompts/docs_style.md)；长段改写可并用 `skills/humanizer-zh/SKILL.md` | README、STATUS、手册文首、知识条目等。纯投资行动且不改文档时不必读 |
+| 投资行动各阶段 | 按阶段 Read 对应 `skills/*/SKILL.md` | 见下表；Committee 触发场景再读 committee |
 
-若回答明显没带规则痕迹，用同一话术重开一轮，并点名漏读的文件。
+### Decision 四结论
 
-## 始终遵守的项目指令
+中途门禁可收窄结论空间（倾向 / 只能落到 `research` | `wait` | `reject`）；**正式枚举写入仍在 Decision 阶段与 Decision Log**（见 ARCHITECTURE.md「Decision 四结论」）。不得在跳过 Decision 的情况下落盘四结论。
 
-会话开始须 **Read** 下列正文并遵守（索引表，细则在文件内）：
+四结论的正式枚举、门禁细则与硬门槛的权威定义见：
 
-| 文件 | 用途 |
-|------|------|
-| [prompts/system.md](prompts/system.md) | 目标、边界与核心决策原则 |
-| [prompts/output_style.md](prompts/output_style.md) | 输出结构与表达标准 |
-| [prompts/citation.md](prompts/citation.md) | 数据来源、时效与引用规则 |
-| [prompts/review_pipeline.md](prompts/review_pipeline.md) | 投资相关结论的强制审查顺序与停止条件 |
+- [`skills/decision/SKILL.md`](skills/decision/SKILL.md) — 四结论（`act` / `wait` / `reject` / `research`）、`act` 硬门禁 5 条、镜像测试、价格区间绑定
+- [`prompts/review_pipeline.md`](prompts/review_pipeline.md) — 阶段契约表、停止条件、委员会触发
 
-## 审查流水线与 Skills（索引）
+此处只保留索引提示：`act` 仅 Decision 阶段可讨论，须同时满足 IPS active、有效目标配置、时效内动态事实、Validation/Risk/Challenge/委员会门禁通过、适用例外已批准；缺一项则落到 `wait` / `reject` / `research`。`act` 不是交易授权。用户授权须本轮明确、范围绑定；Agent 不得代下单。
 
-涉及买入、卖出、持有、定投、调仓或产品排序时，按 [Review Pipeline](prompts/review_pipeline.md) 的八步顺序执行（Research → … → Documentation）。深度分级与轻量路径见 [OPERATIONS.md §1.1](OPERATIONS.md#11-审查深度分级)。
+## Skills
 
-各阶段 **任务相关时** 须 Read 对应 Skill 并遵循：
+涉及买入、卖出、持有、定投、调仓或产品排序时，按 Review Pipeline 顺序：Research → … → Documentation。深度分级见 OPERATIONS.md「审查深度分级」。
 
-| 阶段 | Skill 路径 | 何时加载 |
-|------|------------|----------|
-| Research | [skills/research/SKILL.md](skills/research/SKILL.md) | 投资研究、产品发现、数据更新、来源查找 |
-| Validation | [skills/validation/SKILL.md](skills/validation/SKILL.md) | 验证研究结果、数据库更新、评分输入或报告 |
-| Modeling | [skills/modeling/SKILL.md](skills/modeling/SKILL.md) | 设计评分、比较候选产品、分析组合数据 |
-| Reasoning | [skills/reasoning/SKILL.md](skills/reasoning/SKILL.md) | 分析「为什么、为何现在、为何该方案」 |
-| Risk | [skills/risk/SKILL.md](skills/risk/SKILL.md) | 任何投资行动、产品审核或组合复核 |
-| Challenge | [skills/challenge/SKILL.md](skills/challenge/SKILL.md) | 形成建议或重大个人决策前 |
-| Committee（辅助） | [skills/committee/SKILL.md](skills/committee/SKILL.md) | 新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序；编排第 3–6 阶段，不新增 Pipeline 阶段 |
-| Decision | [skills/decision/SKILL.md](skills/decision/SKILL.md) | 完成审查流水线或比较行动方案 |
-| Documentation | [skills/documentation/SKILL.md](skills/documentation/SKILL.md) | 生成报告、更新知识库或记录决策 |
+| 阶段 | Skill 路径 | Pipeline | 何时加载 |
+|------|------------|:--------:|----------|
+| Research | [skills/research/SKILL.md](skills/research/SKILL.md) | 1 | 投资研究、产品发现、数据更新、来源查找 |
+| Validation | [skills/validation/SKILL.md](skills/validation/SKILL.md) | 2 | 验证研究结果、数据库更新、评分输入或报告 |
+| Modeling | [skills/modeling/SKILL.md](skills/modeling/SKILL.md) | 3 | 设计评分、比较候选产品、分析组合数据 |
+| Reasoning | [skills/reasoning/SKILL.md](skills/reasoning/SKILL.md) | 4 | 分析「为什么、为何现在、为何该方案」 |
+| Risk | [skills/risk/SKILL.md](skills/risk/SKILL.md) | 5 | 任何投资行动、产品审核或组合复核 |
+| Challenge | [skills/challenge/SKILL.md](skills/challenge/SKILL.md) | 6 | 形成建议或重大个人决策前 |
+| Committee，辅助 | [skills/committee/SKILL.md](skills/committee/SKILL.md) | 3–6 编排 | 新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序；编排第 3–6 阶段，不新增 Pipeline 阶段 |
+| Decision | [skills/decision/SKILL.md](skills/decision/SKILL.md) | 7 | 完成审查流水线或比较行动方案 |
+| Documentation | [skills/documentation/SKILL.md](skills/documentation/SKILL.md) | 8 | 生成报告、更新知识库或记录决策 |
 
-## 项目结构（业务数据）
+## 编辑规则
 
-- `knowledge/` — 稳定投资知识与术语
-- `raw_material/` — 待蒸馏、可定位且允许留存的原始研究材料
-- `database/` — 市场、指数、产品、组合与观察池数据
-- `workflow/` — 可重复执行的标准流程
-- `templates/` — 研究、产品、投资、审查与决策日志模板
-- `decision_log/` — 实际决策记录
-- `reports/` — 阶段性报告
+修改仓库文件时遵守：
 
-`gptrecord.md` 是历史聊天记录，不是研究材料、事实、模型输入或 Decision 来源；不得用其中的推荐、阈值、评分或结论绕过当前 Pipeline。
-
-## 工具兼容
-
-- **Claude Code**：从 [CLAUDE.md](CLAUDE.md) 进入，再读本文件与 `prompts/`。
-- **Cursor**：`.cursor/rules/` 注入引用层（指向本文件与 `prompts/`）；`.cursor/skills/` 用于发现 Skill。可执行正文只在根目录 `prompts/` 与 `skills/`，须实际 Read，链接不会自动展开全文。
-- **Codex 等**：以本文件为入口，再读 `prompts/` 与相关 `skills/`。
-
-不要在工具专属目录中复制 `prompts/` 或 `skills/` 的正文。
+1. **范围约束**：只改与任务直接相关的文件。不改无关的 Skill、Prompt、模板或历史记录。
+2. **引用同步**：修改 `prompts/` 或 `skills/` 中的阶段顺序、门禁逻辑、Skill 职责后，检查本文件索引表和 [`.cursor/rules/`](.cursor/rules/) 引用路径是否受影响。
+3. **演示隔离**：演示工件只放在 `reports/demo/`、`decision_log/demo/`、`screening/runs/demo/`、`raw_material/demo/`。演示数据不得标记为 `scope: production`。
+4. **版本留痕**：模型和数据规则变更时保留旧版本；历史 Decision 继续引用当时的模型版本和输入快照，不追溯修改。
+5. **不覆盖旧记录**：数据更正使用追加模式（`supersedes_record_id` + `correction_reason`），不直接修改旧行。

@@ -1,57 +1,63 @@
 # PIOS 日常运行手册
 
-这份手册回答「什么时候读什么、按什么顺序做、结果写哪」。  
-**它不是可执行规则的权威源。** 强制规则以 [`prompts/`](prompts/) 与 [`skills/`](skills/) 正文为准；设计原因见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+这份手册回答日常「什么时候读什么、按什么顺序做、结果写哪」。建议先读完 [README.md](README.md) 和 [ARCHITECTURE.md](ARCHITECTURE.md)，再读本文。
 
-审查顺序的权威源：[prompts/review_pipeline.md](prompts/review_pipeline.md)（八步：Research → … → Documentation）。本文只写操作场景与数据落盘，不再展开逐步细则。
+**它不是可执行规则的权威源。** 强制规则以 `prompts/` 与 `skills/` 正文为准。设计原因已在 [ARCHITECTURE.md](ARCHITECTURE.md)，本文只管怎么用。
+
+审查顺序的权威源：[prompts/review_pipeline.md](prompts/review_pipeline.md)，八步为 Research → … → Documentation。本文只写操作场景与数据落盘，不再展开逐步细则。
 
 ---
 
 ## 阅读地图
 
-### 人类自学顺序
+### 本手册怎么读
 
-1. 本页「就绪条件」+ [§14 初始化](#14-当前初始化顺序)
-2. [§1 当前运行方式](#1-当前运行方式) 与 [§1.1 深度分级](#11-审查深度分级)
-3. 按你要做的事跳到场景节（下表）
-4. 需要字段细节时再读 [§8 持仓](#8-个人持仓) / [§9 目标配置](#9-目标配置)
-5. 设计原因不够时再读 [ARCHITECTURE.md](ARCHITECTURE.md)
+建议先读完 [README.md](README.md)（是什么）与 [ARCHITECTURE.md](ARCHITECTURE.md)（为什么），再按下面跳读本文。
 
-**不要先通读全文。** 长节（持仓字段、目标配置）按需查阅。
+1. 本页「就绪条件」+ 文内「§14 当前初始化顺序」
+2. 文内「§1 当前运行方式」与「§1.1 审查深度分级」
+3. 按你要做的事跳到场景节，见下表
+4. 需要字段细节时再读文内「§8 个人持仓」「§9 目标配置」
 
-### Agent 会话顺序
+**不要先通读全文。** 持仓字段、目标配置等长节按需查阅。
 
-1. [AGENTS.md](AGENTS.md) → 四份 `prompts/*.md`
-2. 涉及投资行动时：`prompts/review_pipeline.md` + 本次用到的 `skills/*/SKILL.md`
-3. 场景入口：对应 `workflow/*.md` + 本文相关场景节
-4. 开场用 [AGENTS.md 可复制话术](AGENTS.md#开场强制列出话术可复制) 列出将读文件与阶段，再动手
+### 与助手协作时
 
-工具**不会**强制校验是否已 Read；跳过只能靠话术约束与人工抽查。见 [§4](#4-agent-使用方式) 与 [§16](#16-当前限制和已知维护成本)。
+1. [AGENTS.md](AGENTS.md) → `prompts/system.md`、`answer_style.md`、`citation.md`；投资行动时同时读 `review_pipeline.md`
+2. 编写或改写 README、STATUS 等说明时另读 `prompts/docs_style.md`。投资行动会话若不改文档，不必每轮强制五份。
+3. 涉及投资行动时：本次用到的 `skills/*/SKILL.md`
+4. 场景入口：对应 `workflow/*.md` + 本文相关场景节
+5. 开场先列将 Read 清单与阶段，见 AGENTS.md「开场：先列将 Read 清单」，再动手
+
+工具不会强制校验是否已 Read；跳过只能靠话术约束与事后抽查。见文内「§4 Agent 使用方式」与「§16 当前限制和已知维护成本」。
 
 ### 场景跳转
 
 | 你要做的事 | 先读 | 手册节 |
 |---|---|---|
-| 研究新问题 / 更新事实 | [workflow/research.md](workflow/research.md) | [§5](#5-场景一研究一个新问题) |
-| ETF 买入前复核 | [workflow/buy_etf.md](workflow/buy_etf.md) | [§6](#6-场景二etf-买入前复核) |
-| 卖出 / 减仓 | [workflow/sell_etf.md](workflow/sell_etf.md) | 深度见 §1.1；步骤在 workflow |
-| 例行定投 | [workflow/dca.md](workflow/dca.md) | §1.1 轻量路径 |
-| 成交后记账 | — | [§7](#7-场景三交易后记录) |
-| 组合复核 | [workflow/portfolio_review.md](workflow/portfolio_review.md) | [§10](#10-场景四组合复核) |
-| 再平衡 | [workflow/rebalance.md](workflow/rebalance.md) | [§11](#11-场景五再平衡) |
-| 补齐骨架数据 | [database/README.md](database/README.md) | [§14](#14-当前初始化顺序) |
+| 研究新问题 / 更新事实 | [workflow/research.md](workflow/research.md) | 文内「§5 场景一：研究一个新问题」 |
+| ETF 买入前复核 | [workflow/buy_etf.md](workflow/buy_etf.md) | 文内「§6 场景二：ETF 买入前复核」 |
+| 卖出 / 减仓 | [workflow/sell_etf.md](workflow/sell_etf.md) | 深度见「§1.1」；步骤在 workflow |
+| 例行定投 | [workflow/dca.md](workflow/dca.md) | 「§1.1」轻量路径 |
+| 成交后记账 | — | 文内「§7 场景三：交易后记录」 |
+| 组合复核 | [workflow/portfolio_review.md](workflow/portfolio_review.md) | 文内「§10 场景四：组合复核」 |
+| 再平衡 | [workflow/rebalance.md](workflow/rebalance.md) | 文内「§11 场景五：再平衡」 |
+| 补齐骨架数据 | [database/README.md](database/README.md) | 文内「§14 当前初始化顺序」 |
+| 首次搭建系统 | — | 文内「§14」；README → 本文就绪条件 → 初始化顺序 |
+| 数据更正 / 修复 | — | 文内「§17 常见错误与恢复」 |
+| 修改 Prompt / Skill / 规则 | [prompts/system.md](prompts/system.md) | 文内「§15 维护项目本身」+「§17」验证流程 |
 
 ---
 
-## 就绪条件（可跑流程 ≠ 可作真实决策）
+## 就绪条件：可跑流程与可作真实决策
 
 | | 可跑流程 | 可作真实决策 |
 |---|---|---|
-| 含义 | 工作流、模板、Pipeline、Skill 齐；可练习写法与门禁 | 持仓与目标已填；IPS 为 active；关键产品已核验；动态数据有适用 `as_of` 且未超时效；比较用真实生产输入 |
-| 典型产物 | 研究笔记、`research` / `wait` Decision、结构演示 | 可讨论 `act`（仍须过 Pipeline） |
-| 当前仓库 | **多数处于此态** | 需按 [§14](#14-当前初始化顺序) 补齐后才进入 |
+| 含义 | 工作流、模板、Pipeline、Skill 齐；可练习写法与门禁 | 持仓与目标已填；IPS 为 active；关键产品已核验；动态数据有适用时点且未超时效；比较用真实生产输入 |
+| 典型产物 | 研究笔记、`research` / `wait` Decision、结构演示 | 可讨论 `act`，但仍须过 Pipeline |
+| 当前仓库 | **多数处于此态** | 须按文内「§14 当前初始化顺序」补齐后才进入 |
 
-持仓或目标为空、或 IPS 仍为 draft：可以继续产品研究，**不能**根据组合得出买入结论。观察池种子在核验前不是产品目录。`reports/demo/`、`decision_log/demo/`、`screening/runs/demo/` 与 `gptrecord.md` 不得作为生产输入。
+持仓或目标为空、或 IPS 仍为 draft：可以继续产品研究，**不能**根据组合得出买入结论。观察池种子在核验前不是产品目录。`reports/demo/`、`decision_log/demo/`、`screening/runs/demo/`不得作为生产输入。
 
 ---
 
@@ -60,12 +66,12 @@
 PIOS 目前是文件驱动：
 
 1. 你提出研究或投资问题。
-2. Agent 读取项目规则和相关 Skill（须实际 Read，见上）。
-3. 人与 Agent 一起收集和核验数据。
+2. Agent 读取项目规则和相关 Skill；须实际 Read，见上文协作清单。
+3. 一起收集和核验数据。
 4. 结果写入 Markdown、CSV 或 YAML。
 5. 涉及投资行动时按 [Review Pipeline](prompts/review_pipeline.md) 过审。
 6. 成交后更新持仓和决策日志。
-7. 定期复核组合，并把新认识沉淀回知识、数据、模型或工作流。
+7. 定期复核组合，并把新认识积累进知识、数据、模型或工作流。
 
 尚未实现：自动抓取行情、读券商账户、定时提醒、自动评分、自动下单、从成交流水生成持仓。
 
@@ -78,9 +84,9 @@ PIOS 目前是文件驱动：
 | 路径 | 适用 | 要求 |
 |---|---|---|
 | **完整八步** | 新标的、首次买入、加仓超原计划、卖出、调仓、改目标、产品排序 | 各 Skill 全文；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序同时加载 Committee Skill；Modeling 在 draft 阶段只做字段对比与否决项，不自动评分 |
-| **轻量路径** | 已有**有效轻量定投 Decision** 的例行买入，且标的与金额边界未变 | 仍过八个检查点（可简短）；关键动态数据须在最大允许时效内；Challenge 仍按 Skill 全文；Documentation 可追加原 Decision Log |
+| **轻量路径** | 已有**有效轻量定投 Decision** 的例行买入，且标的与金额边界未变 | 仍过八个检查点，可写简短；关键动态数据须在最大允许时效内；Challenge 仍按 Skill 全文；Documentation 可追加原 Decision Log |
 
-**有效轻量定投 Decision** 必须同时具备：`valid_until`（或等价到期日）、允许的 `product_id` 列表、单笔金额上限、频率上限、失效/复核触发器，且 IPS 与目标配置仍有效。任一缺失、过期、改标的、超原计划金额/频率，或关键动态数据过期 → 回退完整八步。
+**有效轻量定投 Decision** 必须同时具备：`valid_until` 或等价到期日、允许的 `product_id` 列表、单笔金额上限、频率上限、失效/复核触发器，且 IPS 与目标配置仍有效。任一缺失、过期、改标的、超原计划金额/频率，或关键动态数据过期 → 回退完整八步。
 
 场景入口：[buy_etf.md](workflow/buy_etf.md)、[sell_etf.md](workflow/sell_etf.md)、[dca.md](workflow/dca.md)、[rebalance.md](workflow/rebalance.md)、[portfolio_review.md](workflow/portfolio_review.md)。
 
@@ -90,7 +96,7 @@ PIOS 目前是文件驱动：
 |---|---|---|
 | 稳定概念、机制和术语 | `knowledge/` | 低频更新，不放当前行情 |
 | 待蒸馏的合规原始材料 | `raw_material/` | 关联 `source_id`；未经 Validation 不作为事实或结论 |
-| 产品、指数、市场和组合事实 | `database/` | 结构化字段，动态值带 `as_of` |
+| 产品、指数、市场和组合事实 | `database/` | 结构化字段，动态值带适用时点 |
 | 可重复执行的步骤 | `workflow/` | 研究、买入、卖出、定投、组合复核和再平衡 |
 | 空白格式 | `templates/` | 复制后再填写，模板本身不放实例 |
 | 一次研究或阶段复核 | `reports/` | 可以随着新数据生成新版本；演示仅放 `reports/demo/` |
@@ -119,13 +125,13 @@ reports/2026-09-30-portfolio-review.md
 decision_log/2026-07-27-dca-review.md
 ```
 
-名称只用于定位。文件中的 `created_at`、`updated_at`、`as_of`、`decided_at` 才是正式时间字段。
+名称只用于定位。文件中的创建时间、更新时间、适用时点、决定时间等正式时间字段，才是时间依据。
 
 ## 4. Agent 使用方式
 
 ### 4.1 Claude Code
 
-从项目根目录开始。[CLAUDE.md](CLAUDE.md) 要求先读 [AGENTS.md](AGENTS.md)，再读四份 Prompt，任务相关时再读 Skill。这是约定，不是运行时强制。
+从项目根目录开始。[CLAUDE.md](CLAUDE.md) 要求先读 [AGENTS.md](AGENTS.md)，再按其中 Prompt 加载时机读对应文件；改文档时另加 `docs_style`。任务相关时再读 Skill。这是约定，不是运行时强制。
 
 可以直接提出：
 
@@ -139,15 +145,15 @@ decision_log/2026-07-27-dca-review.md
 
 ```text
 请先读取当前持仓、目标配置和 workflow/buy_etf.md，
-再按 prompts/review_pipeline.md 执行审查（完整或轻量见 OPERATIONS §1.1）。
+再按 prompts/review_pipeline.md 执行审查；完整或轻量见 OPERATIONS「审查深度分级」。
 关键动态数据无法验证时停止，不要补造结论。
 ```
 
-开场强制列表示例见 [AGENTS.md](AGENTS.md#开场强制列出话术可复制)。
+开场清单要求见 [AGENTS.md](AGENTS.md)「开场：先列将 Read 清单」。
 
 ### 4.2 Cursor
 
-Cursor 通过 `.cursor/rules/` **注入引用层**（指向 `AGENTS.md` 与 `prompts/`，不复制正文）；通过 `.cursor/skills/` **发现** Skill。可执行正文只在根目录 `prompts/` 和 `skills/`。Agent 须实际 Read 正文；单靠引用链接不会自动展开全文。
+Cursor 通过 `.cursor/rules/` 注入引用层，指向 `AGENTS.md` 与 `prompts/`，不复制正文；通过 `.cursor/skills/` 发现 Skill。可执行正文只在根目录 `prompts/` 和 `skills/`。Agent 须实际 Read 正文；单靠引用链接不会自动展开全文。
 
 若回答没有体现规则，明确要求：
 
@@ -189,7 +195,7 @@ Cursor 通过 `.cursor/rules/` **注入引用层**（指向 `AGENTS.md` 与 `pro
 
 按 [标准研究工作流](workflow/research.md) 与 [Research Skill](skills/research/SKILL.md) 执行。优先监管机构、交易所、指数公司、基金公司正式资料；需要保留且许可允许的材料先登记 `source_id`，再存入 `raw_material/`。第三方冲突时回到适用时点的一手资料。
 
-ETF 查找顺序（操作提示）：
+ETF 查找顺序，操作提示：
 
 1. 交易所与基金公司确认名称、代码、跟踪对象和基础字段；
 2. 集思录观察成交额、IOPV、折溢价和交易状态；
@@ -198,13 +204,13 @@ ETF 查找顺序（操作提示）：
 
 ### 5.4 记录每条动态数据
 
-至少保留：对象与唯一标识、指标名、数值与单位、口径、`as_of`、来源名称与 URL、采集时间、状态（`verified / conflicting / missing`；未核验可用 `pending`）。
+至少保留：对象与唯一标识、指标名、数值与单位、口径、适用时点、来源名称与 URL、取得时间、状态。状态取 `verified` / `conflicting` / `missing`；未核验可用 `pending`。
 
 缺失值留空并说明原因。旧报告不能推断当前规模、成交额、折溢价或申赎状态。
 
 ### 5.5 执行 Validation
 
-按 [Validation Skill](skills/validation/SKILL.md) 检查代码匹配、来源是否支持字段、时点、币种单位、盘中/收盘混用、公式复算、是否猜测填空、结论是否越界、关键时效是否过期。`fail` 或关键 `unknown`（含时效过期）停止；非关键 `warning` 可继续但须写出限制。
+按 [Validation Skill](skills/validation/SKILL.md) 检查代码匹配、来源是否支持字段、时点、币种单位、盘中/收盘混用、公式复算、是否猜测填空、结论是否越界、关键时效是否过期。`fail` 或关键 `unknown` 停止，含时效过期；非关键 `warning` 可继续但须写出限制。
 
 ### 5.6 归档
 
@@ -213,7 +219,7 @@ ETF 查找顺序（操作提示）：
 - 本次过程与结论 → `reports/`
 - 流程缺陷才改 → `workflow/`
 
-笔记状态改为 `complete`（或项目约定终态），并写下次复核条件。
+笔记状态改为 `complete`，或项目约定终态，并写下次复核条件。
 
 ## 6. 场景二：ETF 买入前复核
 
@@ -223,14 +229,14 @@ ETF 查找顺序（操作提示）：
 
 先读：
 
-- [投资政策 IPS](database/portfolio/investment_policy.md)（须为 active 才可讨论买入）
+- [投资政策 IPS](database/portfolio/investment_policy.md)。须为 active 才可讨论买入。
 - [当前持仓](database/portfolio/holdings.csv)
 - [目标配置](database/portfolio/target_allocation.csv)
 - 候选指数和候选产品
-- 最新产品数据与公告（含交易/基金/底层币种、QDII/申赎）
+- 最新产品数据与公告：交易、基金与底层币种，以及 QDII/申赎状态
 - 本次可用资金、用途和应急现金要求
 
-持仓、目标为空或 IPS 为 draft 时，无法判断组合缺口。可以继续做产品研究，**不能**根据组合得出买入结论（见文首就绪条件）。
+持仓、目标为空或 IPS 为 draft 时，无法判断组合缺口。可以继续做产品研究，不能根据组合得出买入结论。见文首「就绪条件」。
 
 ### 6.2 先看目标和组合
 
@@ -244,19 +250,27 @@ ETF 查找顺序（操作提示）：
 
 [ETF 候选种子](database/watchlist/us_index_etf_candidates.csv) 当前全部是 `pending` / `seed_pending`，观察池非完备。使用前按 [database/README.md](database/README.md) 人工核验；不要根据种子行填造官方名称。
 
-### 6.4 执行审查（不在此展开逐步细则）
+### 6.4 执行审查
+
+本小节不展开逐步细则。
 
 1. 复制 [审查模板](templates/review.md)。
-2. 按 [Review Pipeline](prompts/review_pipeline.md) 顺序执行；深度见 [§1.1](#11-审查深度分级)。
-3. 每步操作以对应 [Skill](skills/) 为准（索引见 [AGENTS.md](AGENTS.md)）。
+2. 按 [Review Pipeline](prompts/review_pipeline.md) 顺序执行；深度见文内「§1.1 审查深度分级」。
+3. 每步操作以对应 [Skill](skills/) 为准；索引见 [AGENTS.md](AGENTS.md)。
 4. 操作落盘要点：
-   - **Modeling**：当前模型草案，只做字段对比与否决项，不自动输出买入评分（见 [etf_model_v0.1](database/screening/etf_model_v0.1.md)）。
+   - **Modeling**：当前模型草案，只做字段对比与否决项，不自动输出买入评分；见 [etf_model_v0.1](database/screening/etf_model_v0.1.md)。
    - **Decision**：仅用 `act` / `wait` / `reject` / `research`；`act` 须写清金额或比例、频率、执行条件、失效条件、下次复核触发器。
-   - **Documentation**：在真正执行**前**用 [决策日志模板](templates/decision_log.md) 建档；成交后再追加实际结果，不要等成交后才首次创建。
+   - **Documentation**：在真正执行前用 [决策日志模板](templates/decision_log.md) 建档；成交后再追加实际结果，不要等成交后才首次创建。
 
 ### 6.5 执行前检查
 
-执行前由 Agent 向用户呈现核对清单（Agent 不得下单）：证券代码与市场、买卖方向、委托价格、订单类型、数量、佣金与其他费用、当前折溢价与价差及分母口径、交易/基金/底层暴露币种、QDII 额度与申赎状态、相关市场是否开市与估值时差、Decision 执行条件与本轮授权范围是否仍成立。
+执行前由 Agent 向用户呈现核对清单。Agent 不得下单。清单至少包括：
+
+- 证券代码与市场、买卖方向、委托价格、订单类型、数量
+- 佣金与其他费用、当前折溢价与价差及分母口径
+- 交易/基金/底层暴露币种、QDII 额度与申赎状态
+- 相关市场是否开市与估值时差
+- Decision 执行条件与本轮授权范围是否仍成立
 
 PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交后再回写持仓与 Decision Log。
 
@@ -266,11 +280,11 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 
 ### 7.1 更新持仓快照
 
-在 [holdings.csv](database/portfolio/holdings.csv) **追加**成交后的新状态，不要覆盖旧行。同一持仓继续用相同 `holding_id`，更新 `as_of`、`quantity`、`cost_basis`、`market_value` 与 `source_id`。清仓也追加一行，数量/成本/市值按实际口径写 `0`；发现旧记录错误时填写 `supersedes_record_id` 与 `correction_reason`。
+在 [holdings.csv](database/portfolio/holdings.csv) **追加**成交后的新状态，不要覆盖旧行。同一持仓继续用相同 `holding_id`，更新适用时点、数量、成本、市值与来源登记。清仓也追加一行，数量/成本/市值按实际口径写 `0`；发现旧记录错误时填写 `supersedes_record_id` 与 `correction_reason`。
 
 ### 7.2 追加 Decision Log
 
-打开 Documentation 阶段已创建的 Decision Log，只追加：实际成交时间、产品和数量、实际价格与费用、是否符合原 Decision、偏差原因（若有）、下一次复核条件。
+打开 Documentation 阶段已创建的 Decision Log，只追加：实际成交时间、产品和数量、实际价格与费用、是否符合原 Decision、偏差原因若有、下一次复核条件。
 
 若最终没有成交，也在同一份日志中记录 `wait` / `reject` / `research`。没有行动本身也可能是需要复盘的决策。
 
@@ -280,13 +294,13 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 
 路径：[database/portfolio/holdings.csv](database/portfolio/holdings.csv)
 
-当前采用追加快照：一次成交或组合更新 → 为受影响的 `holding_id` 追加新行 → 查询时取该 `holding_id` 最新 `as_of`。
+当前采用追加快照：一次成交或组合更新 → 为受影响的 `holding_id` 追加新行 → 查询时取该 `holding_id` 最新适用时点。
 
 | 字段 | 含义 | 填写规则 |
 |---|---|---|
 | `record_id` | 本行快照主键 | 每追加一行新 ID；更正时新行填 `supersedes_record_id` |
 | `holding_id` | 一项持仓的稳定 ID | 建议由账户别名和产品 ID 组成；首次建立后不变 |
-| `as_of` | 快照时点 | ISO 8601；需要时含时区 |
+| `as_of` | 适用时点 | ISO 8601；需要时含时区 |
 | `account_alias` | 账户别名 | 例如 `broker_a`；不要填完整账号 |
 | `product_id` | 产品稳定 ID | 与产品库一致，例如 `CN:<ticker>` |
 | `asset_type` | 资产类型 | 使用产品 Schema 中的枚举 |
@@ -296,10 +310,10 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 | `quantity` | 持有数量 | 使用产品的交易数量单位 |
 | `cost_basis` | 总成本 | 与 `trade_currency` 一致，保持同一计算口径 |
 | `cost_basis_scope` | 成本口径 | 例如是否含费用、分红和转入处理；所有持仓保持一致 |
-| `market_value` | 快照市值 | 与 `as_of`、交易币种对应 |
+| `market_value` | 快照市值 | 与适用时点、交易币种对应 |
 | `report_currency` / `market_value_reporting` | 报告币种与折算市值 | 组合汇总使用；没有统一估值与汇率时不得计算权重 |
-| `fx_rate_to_reporting` / `fx_source_id` / `fx_as_of` / `fx_quote_convention` | 折算汇率与口径 | 交易币种与报告币种不同时必填 |
-| `valuation_method` / `valuation_price` / `valuation_price_currency` / `valuation_source` / `valuation_as_of` | 估值细节 | 与报告币种市值对应 |
+| `fx_rate_to_reporting` / `fx_source_id` / `fx_as_of` / `fx_quote_convention` | 折算汇率、来源、汇率适用时点与报价口径 | 交易币种与报告币种不同时必填 |
+| `valuation_method` / `valuation_price` / `valuation_price_currency` / `valuation_source` / `valuation_as_of` | 估值细节与估值适用时点 | 与报告币种市值对应 |
 | `portfolio_snapshot_id` | 组合快照 ID | 同一估值时点的持仓批次共用 |
 | `source_id` | 来源登记 ID | 对应 `database/sources.csv`；无法登记时说明人工核对依据 |
 | `source` | 数据来源 | 券商对账单、成交记录或人工核对 |
@@ -318,7 +332,7 @@ rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CN
 
 ### 8.2 如何得到「当前持仓」
 
-对每个 `holding_id` 取最新 `as_of` 的一行，再排除 `quantity = 0` 的已清仓持仓。
+对每个 `holding_id` 取最新适用时点的一行，再排除 `quantity = 0` 的已清仓持仓。
 
 组合复核时，各项 `market_value` 应使用统一估值时点。若最新记录来自不同日期，应先更新所有市值，再算配置比例。
 
@@ -326,13 +340,13 @@ rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CN
 
 ### 8.3 成本口径
 
-当前只有一个 `cost_basis`（总成本），不处理逐笔批次、FIFO、税务成本或分红再投资拆分。
+当前只有一个 `cost_basis`，表示总成本；不处理逐笔批次、FIFO、税务成本或分红再投资拆分。
 
-首次录入前选定并长期保持同一口径（是否含费用、分红是否冲减成本、转入如何定初始成本），写在 `notes` 或组合级说明中。不要在不同持仓之间混用。
+首次录入前选定并长期保持同一口径：是否含费用、分红是否冲减成本、转入如何定初始成本。写在 `notes` 或组合级说明中。不要在不同持仓之间混用。
 
 ### 8.4 何时需要交易流水
 
-当前不新增 `transactions.csv`。出现逐笔对账、自动算持仓、税务批次、逐笔归因、公司行动等需求后再设计，并明确一个事实源（流水生成持仓，或仍以快照为准），避免两套手工并行。
+当前不新增 `transactions.csv`。出现逐笔对账、自动算持仓、税务批次、逐笔归因、公司行动等需求后再设计，并明确一个事实源——流水生成持仓，或仍以快照为准——避免两套手工并行。
 
 ## 9. 目标配置
 
@@ -357,7 +371,7 @@ rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CN
 
 当前有效配置规则：
 
-1. 同一时点只保留一组 `active` 配置集（同一 `allocation_set_id`）。
+1. 同一时点只保留一组 `active` 配置集，共用同一 `allocation_set_id`。
 2. 该集内所有 `active` 的 `target_weight` 之和应为 `1.0`。
 3. 资产分类不要重叠；同一暴露不要计入两个桶。
 4. 新旧并存时用 `effective_from` 选生效日，旧方案标为 `superseded`。
@@ -394,7 +408,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 5. 检查集中度、相关性、流动性和最大可承受损失。
 6. 读原 Decision Log，检查原始逻辑和失效条件。
 7. 更新费用、税务、法规和产品状态。
-8. 对继续持有、追加、减少和不行动分别按 [Review Pipeline](prompts/review_pipeline.md) 过审（完整路径，见 §1.1）。
+8. 对继续持有、追加、减少和不行动分别按 [Review Pipeline](prompts/review_pipeline.md) 过审；走完整路径，见「§1.1」。
 9. 结果写入 `reports/`，复核结论写入 Decision Log。
 10. 触发调整时进入再平衡流程。
 
@@ -427,7 +441,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 | 模型规则变化时 | 新模型版本、输入要求和变更原因 |
 | 知识或法规变化时 | 更新知识条目并记录复核日期 |
 
-频率只提供维护节奏，不能替代行动前的数据核验。当前决策使用的动态数据必须有适用的 `as_of`。
+频率只提供维护节奏，不能替代行动前的数据核验。当前决策使用的动态数据必须有适用时点。
 
 ### 12.1 隐私、来源与备份
 
@@ -439,7 +453,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ## 13. 停止条件
 
-出现以下情况时暂停行动（与 [review_pipeline.md](prompts/review_pipeline.md) 一致，此处作操作备忘）：
+出现以下情况时暂停行动。与 [review_pipeline.md](prompts/review_pipeline.md) 一致，此处作操作备忘：
 
 - 关键数据缺失、产品身份冲突、来源冲突未解决、动态数据过期、公式无法复算
 - 模型阈值未确认却试图输出精确排名
@@ -452,26 +466,45 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ## 14. 当前初始化顺序
 
-进度总览先看 [STATUS.md](STATUS.md)。要从骨架进入「可作真实决策」，按此顺序补：
+进度总览先看 [STATUS.md](STATUS.md)。要从骨架进入「可作真实决策」，按此顺序补（可并行组已标注）：
 
-1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md) 为 `active`（仍为 draft 时不可 `act`）。
-2. 在 `target_allocation.csv` 录入与该 IPS 绑定的有效配置集；尚未确定时保持为空，并明确系统无法判断配置缺口。
-3. 在 `holdings.csv` 录入不含敏感账号的当前持仓快照（统一估值时点与报告币种）。
+**阶段 1（独立完成）**
+
+1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md) 为 `active`。
+   - **最低完成标准**：目的、风险承受能力、应急现金要求、约束条件、报告币种 5 节非空；IPS ID 已分配；有批准记录。
+   - 仍为 draft 时不可 `act`。
+
+**阶段 2（可并行）**
+
+2. 在 `target_allocation.csv` 录入与该 IPS 绑定的有效配置集。
+   - **最低完成标准**：至少一个 `allocation_set_id`；所有 active 桶的 `target_weight` 之和 = 1.0；有 `approval_decision_id`。
+3. 在 `holdings.csv` 录入不含敏感账号的当前持仓快照。
+   - **最低完成标准**：至少一条 `verified` 记录；统一估值时点；填写交易/基金/底层暴露三种币种。
+
+**阶段 3（可并行推进）**
+
 4. 按 [database/README.md](database/README.md) 核验 [ETF 候选种子](database/watchlist/us_index_etf_candidates.csv)。
-5. 为核验后的产品建立基础数据（区分交易/基金/底层暴露币种）。
-6. 按 [products/history/](database/products/history/) 追加真实动态观测（勿编造；遵守最大允许时效）。
-7. 用真实数据补全 [ETF 模型 v0.1](database/screening/etf_model_v0.1.md)；比较结果写入 [screening/runs/](database/screening/runs/)（排除 `runs/demo/`）。
+   - **最低完成标准**：至少一个观察标的完成官方名称、代码、跟踪指数核验；核验结果写入 `verification_status`。
+5. 为核验后的产品建立基础数据，区分交易、基金与底层暴露币种。
+   - **最低完成标准**：每个产品基础字段（代码/名称/交易所/币种/费率/跟踪指数）无 `missing`。
+6. 按 [products/history/](database/products/history/) 追加真实动态观测。
+   - **最低完成标准**：至少一个产品有 2 期以上真实动态记录（含适用时点）；遵守最大允许时效。
+7. 用真实数据补全 [ETF 模型 v0.1](database/screening/etf_model_v0.1.md)；比较结果写入 [screening/runs/](database/screening/runs/)。
+   - **最低完成标准**：至少一个 run 写入非 demo 目录；输入清单完整。
+
+**阶段 4（完成以上后）**
+
 8. 完成第一份研究报告。
 9. 跑一次完整审查，即使最终 Decision 是 `research` 或 `wait`。
-10. 建立第一份生产 Decision Log（不要写在 `decision_log/demo/`）。
-11. 在约定周期后进行复盘（先过程评估，再看结果）。
+10. 建立第一份生产 Decision Log。不要写在 `decision_log/demo/`。
+11. 在约定周期后进行复盘：先过程评估，再看结果。
 
 ## 15. 维护项目本身
 
 ### 修改规则
 
 - 全局目标与边界 → `prompts/system.md`
-- 输出结构 → `prompts/output_style.md`
+- 回答结构 → `prompts/answer_style.md`
 - 证据规范 → `prompts/citation.md`
 - Pipeline 顺序与停止条件 → `prompts/review_pipeline.md`
 - 某项能力怎么做 → 对应 `skills/<name>/SKILL.md`
@@ -492,10 +525,81 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ## 16. 当前限制和已知维护成本
 
-- 例行定投已有轻量路径（§1.1），但 Challenge 仍要求 3+3+3，可能与 Reasoning 内容重叠。
+- 例行定投已有轻量路径，见「§1.1」；但 Challenge 仍要求 3+3+3，可能与 Reasoning 内容重叠。
 - Reasoning 与 Challenge 都含反方检查，边界尚需真实案例验证。
 - 动态历史与评价 run 目录已有骨架，尚无真实观测与评分结果。
 - 没有交易流水；持仓依赖人工追加快照。
 - **没有自动测试能阻止跳过某项 Skill**；执行质量依赖 Agent 遵守开场清单与人工复核。
+- 无自动行情抓取、无券商导入、无定时任务、无自动评分、无自动下单；全部动态数据依赖人工收集与核对。
+- 无紧急/加速审查路径；极端市场事件时用户可能被迫在"遵守纪律但不操作"与"绕过系统直接下单"之间选择。
 
 这些问题先记着，等实际案例积累后再决定是否继续简化规则。
+
+## 17. 常见错误与恢复
+
+### 文件误改或误删
+
+1. **持仓数据写错**：不要直接修改旧行。追加新行，填写 `supersedes_record_id` 指向被更正行，`correction_reason` 记录原因。
+2. **Decision Log 写错**：追加 `amendment` 段，标注修正时间和原因；不覆盖原记录。
+3. **规则文件（Prompt/Skill）误改**：`git diff` 查看变更 → `git checkout -- <file>` 恢复。若变更已提交，`git revert`。
+4. **整个文件误删**：`git checkout -- <file>` 恢复。若已 `git rm` 并提交，`git revert <commit>`。
+
+### Decision Log 写入中断
+
+1. 检查已写入内容（`decision_log/` 下对应文件）。
+2. 从 [templates/decision_log.md](templates/decision_log.md) 复制空白模板，补填已完成部分。
+3. 在 `notes` 中注明中断原因和恢复时间。
+4. 已写入但未完成的旧文件保留，标注 `incomplete`；新文件引用旧文件路径。
+
+### 发现过期数据被用于分析
+
+1. 立即停止当前流程，Decision 暂记为 `research`。
+2. 重新核验所有关键动态字段的时效（对照 [data_contracts.md](database/data_contracts.md) 最大允许时效表）。
+3. 将过期数据在来源登记中标记为 `outdated`。
+4. 用新数据重新走 Validation → 继续被阻断的 Pipeline 阶段。
+
+### 误授权或需要撤销授权
+
+1. 用户在对话中明确声明撤销：`revoke: read_plan` / `revoke: write` / `revoke: trade`。
+2. 撤销后对应层级及以上全部失效。
+3. 在 Decision Log 中追加 `revocation` 记录：时间、范围、原因。
+4. 已基于旧授权写入的文件不受影响（已写入是事实），但后续写入须重新获得授权。
+
+### 漏读 Skill 或 Prompt
+
+1. 发现后立即暂停当前阶段。
+2. 补读遗漏文件。
+3. 检查已产出内容是否违背漏读文件的规则；如有违背，回退该阶段产出并重做。
+4. 在 review 记录中标注补读时间与影响范围。
+
+## 18. 外部工具对接
+
+### Obsidian 浏览知识库
+
+推荐用 [Obsidian](https://obsidian.md/) 打开 PIOS 仓库根目录作为 vault，利用以下功能：
+
+- **Graph View**：可视化 knowledge/ 条目间的 `[[wiki link]]` 关联。
+- **Dataview 插件**：查询标记（如 `from "knowledge" where status = "draft"`）。
+- **Templater 插件**：为 knowledge/ 条目和 reports/ 创建标准模板。
+
+### 与 Wealthfolio / Ghostfolio 的分工
+
+PIOS 专注决策纪律层；Wealthfolio 或 Ghostfolio 可选作持仓事实层：
+
+| 层 | 工具 | 职责 |
+|---|------|------|
+| 事实层 | Wealthfolio / Ghostfolio | 持仓记账、净值追踪、绩效计算、可视化仪表盘 |
+| 决策层 | PIOS | 研究、核验、建模、推理、风险、反方、决策记录 |
+
+**数据交换**：从 Wealthfolio/Ghostfolio 导出 CSV → 按 [holdings.csv](database/portfolio/holdings.csv) 字段映射导入 PIOS。映射表：
+
+| 外部字段（示例） | PIOS 字段 |
+|------|------|
+| Ticker / Symbol | `product_id`（加前缀 `CN:` / `US:`） |
+| Quantity / Shares | `quantity` |
+| Cost Basis / Avg Cost | `cost_basis` |
+| Market Value | `market_value` |
+| Currency | `trade_currency` |
+| Account | `account_alias` |
+
+导入后须走 Validation 核验字段完整性，然后才能进入生产 Decision 输入。
