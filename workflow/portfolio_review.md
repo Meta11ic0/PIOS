@@ -8,7 +8,7 @@
 
 ## 流程
 
-1. 先复核 [`investment_policy.md`](../database/portfolio/investment_policy.md) 是否仍为 active，且仍符合期限、现金流、风险承受能力和可投资范围；政策变更必须单独形成 Decision，并触发委员会。
+1. 先复核 [`investment_policy.md`](../database/portfolio/investment_policy.md) 中 IPS（Investment Policy Statement，投资政策）状态是否仍为 `active`，且仍符合期限、现金流、风险承受能力和可投资范围；政策变更必须单独形成 Decision，并触发 Committee。
 2. 更新资产、负债、应急现金和未来现金需求。
 3. 使用统一估值时点和报告币种更新持仓。交易、基金与底层暴露币种不得混用。汇率、估值来源或时点不完整时，不计算组合权重或绩效。
 4. 按资产、地区、币种、行业和产品汇总当前暴露；穿透暴露使用带适用时点、权重单位与覆盖状态的产品画像快照。

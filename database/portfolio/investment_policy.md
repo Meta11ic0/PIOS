@@ -1,6 +1,6 @@
 ---
 ips_id: ips-personal-v1
-title: 个人投资政策声明 IPS
+title: 个人投资政策声明 IPS（Investment Policy Statement）
 version: 0.1.0
 status: draft
 effective_from:
@@ -16,12 +16,14 @@ portfolio_scope:
 
 # 填写顺序：新手
 
+本文件是 IPS（Investment Policy Statement，投资政策）。状态字段见文首 `status`（`draft` / `active` 等）。
+
 1. 先写清资金用途、期限、报告币种与成功定义；见本节「目的」。
 2. 再写风险与流动性约束：应急现金、可承受回撤、账户限制。
-3. 批准本 IPS 为 `active` 后，再到 [`target_allocation.csv`](target_allocation.csv) 填写配置桶；**不要**在 IPS 仍为 `draft` 时把目标配置当作可执行政策。
+3. 批准本 IPS、使其状态为 `active` 后，再到 [`target_allocation.csv`](target_allocation.csv) 填写配置桶；**不要**在 IPS 状态仍为 `draft` 时把目标配置当作可执行政策。
 4. 产品与定投规则是配置桶内的实现细节，写在 Decision / 工作流中，不替代本文件。
 
-只有 `status: active`、存在批准记录且所有必填约束已填的 IPS 才能支持 `act`。
+只有 IPS 状态为 `active`（`status: active`）、存在批准记录且所有必填约束已填的 IPS 才能支持`act`。
 
 # 目的与适用范围
 

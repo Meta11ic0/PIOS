@@ -215,7 +215,7 @@ PIOS 当前没有知识保鲜机制。随着 knowledge/ 增长，这个问题会
 1. **结构化数据库** — `database/` 下的 product screening、portfolio 数据、市场信息是 Austin 体系没有的数据层，也是 PIOS 的差异化竞争力
 2. **8 阶段 Review Pipeline** — PIOS 有明确的阶段式审查流程，而 Austin 的流程更多是自由形式
 3. **Decision 四结论体系** — PIOS 的决策记录（行动、等待、拒绝、失效）比 Austin 的 `/wealth-log` 更结构化
-4. **Committee 四席制** — PIOS 有正式的挑战/对抗机制，Austin 没有此类设计
+4. **Committee四席制** — PIOS 有正式的挑战/对抗机制，Austin 没有此类设计
 
 ### 5.2 Austin 可借鉴的差异化优势
 

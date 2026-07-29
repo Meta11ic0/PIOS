@@ -3,7 +3,7 @@ title:
 status: draft
 created_at:
 updated_at:
-as_of:
+valid_at:
 scope:
 ---
 
@@ -35,7 +35,7 @@ scope:
 
 # Decision
 
-- 状态：act / wait / reject / research
+- 状态：`act` / `wait` / `reject` / `research`
 - 行动边界：
 - 生效前提：
 - 失效条件：

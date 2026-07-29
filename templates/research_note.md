@@ -6,7 +6,7 @@ work_status: draft
 data_status: unknown
 created_at:
 updated_at:
-as_of:
+valid_at:
 information_cutoff_at:
 source_refs: []
 upstream_ids: []

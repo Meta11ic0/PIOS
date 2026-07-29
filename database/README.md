@@ -4,7 +4,7 @@
 
 **就绪提示：** 多数路径仍是骨架：空表、pending 种子、draft 模型。有工作流可以练审查写法。须先完成以下项，才能据此下真实买入 Decision：
 
-- IPS 为 `active`
+- IPS（Investment Policy Statement，投资政策）状态为 `active`
 - 真实持仓与目标
 - 已核验产品
 - 带适用时点的动态数据

@@ -18,7 +18,7 @@ source_id:
 material_type: excerpt
 distillation_status: pending
 published_at:
-retrieved_at:
+fetched_at:
 source_url_or_file_ref:
 content_hash:
 hash_status: unavailable
@@ -27,7 +27,7 @@ access_note:
 ---
 ```
 
-字段 `published_at` 为来源发布时间；字段 `retrieved_at` 为取得时间。
+字段 `published_at` 为来源发布时间；字段 `fetched_at` 为取得时间。
 
 ## 隐私与版权
 

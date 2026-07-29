@@ -22,6 +22,6 @@
 - 所有投资决策必须披露风险、限制、替代方案与失效条件。
 - 涉及投资行动时必须执行 Review Pipeline（见 `review_pipeline.md`）。
 - 动态事实的时效与来源规则见 `citation.md`；`act` 的门禁细则见 `skills/decision/SKILL.md`。
-- Agent 不得代用户下单；授权模型见 `review_pipeline.md` 授权状态机。
+- 本系统不接入券商、不自动下单：禁止代用户下单，禁止设计或接入券商交易 API；`act` 仅为结论，不是交易指令。授权模型见 `review_pipeline.md` 授权状态机。
 
 禁止无依据推荐、只看单一来源、隐去关键风险或把过时数据表述为当前事实。

@@ -11,7 +11,7 @@ decided_at: 2026-07-27T15:40:00+08:00
 frozen_at: 2026-07-27T15:40:00+08:00
 content_hash:
 review_at:
-as_of:
+valid_at:
 information_cutoff_at: 2026-07-27T15:40:00+08:00
 pipeline_version: review-pipeline-v1
 ips_id: ips-personal-v1
@@ -54,7 +54,7 @@ scope: demo_only
 
 # 最终决策
 
-- 决策结论：research
+- 决策结论：`research`
 - 行动：补齐 [STATUS.md](../../STATUS.md) 中的决策门禁。
 - 金额或比例边界：不适用。
 - 执行条件：不适用。
@@ -69,8 +69,8 @@ scope: demo_only
 
 ## 过程评估：先不看结果
 
-- Validation `unknown` 已阻断 Modeling、Reasoning、Risk、Challenge 与行动建议。
-- `research` 结论与项目“可跑流程 / 不可 act”的就绪状态一致。
+- Validation `unknown`已阻断 Modeling、Reasoning、Risk、Challenge 与行动建议。
+- `research` 结论与项目“可跑流程 / cannot act”的就绪状态一致。
 - 本演示不得被引用为生产 Decision 先例。
 
 ## 学习动作

@@ -9,7 +9,7 @@ review_target:
 created_at:
 updated_at:
 reviewed_at:
-as_of:
+valid_at:
 information_cutoff_at:
 pipeline_version:
 ips_id:
@@ -31,7 +31,7 @@ scope:
 
 # Validation
 
-- 状态：pass / warning / fail / unknown
+- 状态：`pass` / `warning` / `fail` / `unknown`
 - 验证项：字段、值、单位/口径、适用时点、`source_id`、裁决：
 - 发现：
 
@@ -56,9 +56,9 @@ scope:
 - 反例：
 - 替代方案：
 - 可能错误：
-- 裁决：pass / revise / reject
+- 裁决：`pass` / `revise` / `reject`
 
-# 决策委员会：适用时
+# Committee：适用时
 
 适用触发：新资产暴露、首次买入、改目标、重大再平衡、ETF 排序。不适用时写明理由。
 
@@ -73,7 +73,7 @@ seat_d:
 fact_conflicts:
 blocking_gates:
 unresolved_disagreements: # material / non_material
-committee_outcome: pass / revise / reject / research
+committee_outcome: pass / revise / reject / research  # `pass` / `revise` / `reject` / `research`
 next_action:
 review_trigger:
 ```
@@ -87,14 +87,14 @@ review_trigger:
 - 事实冲突：
 - 阻断项：
 - 未解决分歧：material / non_material：
-- 委员会结论：pass / revise / reject / research
+- Committee 结论：`pass` / `revise` / `reject` / `research`
 - 下一步：
 - 复核触发器：
 
 # Final Review
 
 - 是否允许进入 Decision：
-- IPS 是否 active、目标配置集是否有效：
+- IPS（Investment Policy Statement，投资政策）状态是否为 `active`、目标配置集是否有效：
 - 关键动态数据是否均在最大允许时效内：
 - 未解决事项：
 - 所有阻断项的关闭证据：
@@ -102,7 +102,7 @@ review_trigger:
 
 # Decision Handoff
 
-- 建议结论：act / wait / reject / research
+- 建议结论：`act` / `wait` / `reject` / `research`
 - Decision Log 路径：
 - 最终行动边界仅以 Decision Log 为准：
 - 提醒：`act` ≠ 交易授权；Agent 不得下单

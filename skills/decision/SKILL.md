@@ -11,22 +11,22 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 同时满足才可讨论 `act`，否则只能输出 `wait` / `reject` / `research`：
 
-1. IPS 为 `active`，有批准记录，必填约束已填；`draft`、空白或过期 IPS **不得**支撑 `act`。
+1. IPS（Investment Policy Statement，投资政策）状态为 `active`，有批准记录，必填约束已填；状态为 `draft`、空白或过期的 IPS **不得**支撑 `act`。
 2. 存在与该 IPS 绑定的有效目标配置集，即 `allocation_set_id`；权重完整且可用于偏离判断。
 3. 持仓与关键产品动态事实具有适用时点，且未超过字段最大允许时效；过期关键项视为 `unknown`，阻断 `act`。
-4. Validation 无关键 `fail/unknown`；Risk 无 `Critical`；Challenge 非 `revise/reject`；委员会触发场景已通过或已记录不适用理由。
+4. Validation 无关键 `fail`/`unknown`；Risk 无 `Critical`；Challenge 非 `revise` / `reject`；Committee 触发场景已通过或已记录不适用理由。
 5. 适用例外均已批准、未过期、已关联 `decision_id` 与关闭/失效条件；未核验例外视为不存在。
 
-可选决策结论：
+可选决策结论（枚举勿另造）：
 
 - `act`：按明确范围执行。仅表示建议满足条件，不是交易授权
 - `wait`：等待具体条件满足
 - `reject`：当前方案不符合目标或约束
 - `research`：需要补充指定证据
 
-## 镜像测试（Mirror Test）
+## 镜像测试
 
-讨论 `act` 前，强制用 5 句话重述投资论点。讲不清楚则不得 `act`：
+讨论 `act` 前，强制用 5 句话重述投资论点。讲不清楚则 cannot act：
 
 1. **问题**：要解决什么配置或组合问题？
 2. **证据**：支持行动的关键事实与来源是什么？
@@ -36,7 +36,7 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 5 句话任一无法清晰表述 → 回到上游阶段补证，不得推进 `act`。
 
-## `act` 价格区间绑定
+## `act` 的价格区间绑定
 
 `act` 结论须绑定具体执行价格区间（如 `act@≤1.500 CNY/份` 或 `act@[1.450, 1.520] CNY/份`），不绑定视为结论不完整。区间依据须在 Reasoning 或 Modeling 阶段产出，不得凭空指定。价格区间同时也是 `act` 的失效条件之一：成交价超出区间 → 本轮 `act` 失效，须重新审查。
 
@@ -53,4 +53,4 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 建议必须服从整体资产配置，不因短期新闻或单一指标改变长期规则。决策完成后调用 documentation，将当时可见信息写入 Decision Log；记录 `frozen_at` 与内容哈希。过程评估只能在冻结后追加，且须先于结果评估。
 
-`act` 仅代表建议满足执行条件，不代表 Agent 已获授权或已执行。用户授权须本轮、绑定产品/方向/数量或限额/订单类型/有效期；实际执行与持仓更新必须在 Decision Log 中分别记录；后续结果只能追加，不得改写当时理由。
+`act` 仅代表建议满足执行条件，不代表 Agent 已获授权或已执行。用户授权须本轮、绑定产品/方向/数量或限额/订单类型/有效期；实际执行与持仓更新必须在 Decision Log 中分别记录；后续结果只能追加，不得改写当时理由。要呈现交易核对清单，须另获 checklist-auth（`checklist_authorized`）；落盘文件须另获 write-auth（`write_authorized`）。

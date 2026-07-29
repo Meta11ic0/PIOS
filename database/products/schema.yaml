@@ -1,6 +1,7 @@
-# schema_version 0.4.0：在 0.3.0 基础上补齐跨境 ETF 币种/额度与动态指标口径，
-# 并区分「基础字段」与「动态字段」边界。动态历史不得用本文件单行覆盖，见 products/history/。
-schema_version: 0.4.0
+# schema_version 0.5.0：在 0.4.0 基础上统一时间列名——原 as_of → valid_at，原 retrieved_at → fetched_at。
+# 0.4.0 曾补齐跨境 ETF 币种/额度与动态指标口径，并区分「基础字段」与「动态字段」边界。
+# 动态历史不得用本文件单行覆盖，见 products/history/。
+schema_version: 0.5.0
 entity: investment_product
 required:
   - product_id
@@ -11,7 +12,7 @@ required:
   - verification_status
 # 基础字段：身份、费率、成立/上市、跟踪对象等；按公告低频更新。
 # 动态字段：规模、成交额、价差、IOPV/NAV、折溢价、跟踪偏离、申赎/交易状态等；
-# 每次观测必须带适用时点（字段 as_of），历史按 products/history/ 追加，不在基础表原地覆盖。
+# 每次观测必须带适用时点（列名 `valid_at`），历史按 products/history/ 追加，不在基础表原地覆盖。
 fields:
   # —— 目录 / 基础 ——
   product_id:
@@ -65,7 +66,7 @@ fields:
   size:
     type: decimal
     category: dynamic
-    description: 基金规模；须配合 size_unit 与适用时点（字段 as_of）
+    description: 基金规模；须配合 size_unit 与适用时点（列名 `valid_at`）
   size_unit:
     type: string
     category: dynamic
@@ -122,10 +123,10 @@ fields:
   published_at:
     type: datetime
     description: 来源发布时间；使用带时区的 RFC 3339
-  as_of:
+  valid_at:
     type: datetime
     description: 适用时点；动态字段必填
-  retrieved_at:
+  fetched_at:
     type: datetime
     description: 取得时间；使用带时区的 RFC 3339
   source_locator:

@@ -6,7 +6,7 @@
 
 ## 流程
 
-1. 确认 [`investment_policy.md`](../database/portfolio/investment_policy.md) 为 active 且仍有效；记录 IPS、目标配置集、偏离快照和有效例外。修改政策、按既定政策再平衡、替换配置桶内产品是三类不同 Decision。
+1. 确认 [`investment_policy.md`](../database/portfolio/investment_policy.md) 中 IPS（Investment Policy Statement，投资政策）状态为 `active` 且仍有效；记录 IPS、目标配置集、偏离快照和有效例外。修改政策、按既定政策再平衡、替换配置桶内产品是三类不同 Decision。
 2. 使用统一估值时点、报告币种和可复核汇率计算实际配置及偏离。
 3. 检查是否达到预先设定的时间或偏离触发条件。
 4. 优先评估用新增现金修复偏离，再评估卖出。

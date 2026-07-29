@@ -1,8 +1,8 @@
-# 演示 Decision Log：demo_only
+# 演示 Decision Log：`demo_only`
 
 本目录只存放非行动/门禁演示 Decision。
 
-- 一律标注 `scope: demo_only`。
+- 一律标注 `scope: demo_only`（`demo_only`）。
 - **不得**计入生产 Decision 统计、复盘样本或授权先例。
 - 查询生产 Decision 时排除本目录。
 

@@ -6,7 +6,7 @@ work_status: closed
 data_status: unknown
 created_at: 2026-07-27T15:40:00+08:00
 updated_at: 2026-07-27T15:40:00+08:00
-as_of:
+valid_at:
 information_cutoff_at: 2026-07-27T15:40:00+08:00
 source_refs: []
 upstream_ids:
@@ -32,4 +32,4 @@ scope: demo_only
 
 # 结论
 
-仅可跑流程，不可 `act`。下一步应按 [STATUS.md](../../STATUS.md) 补齐组合政策、持仓、产品核验与动态事实。
+仅可跑流程 / cannot act。下一步应按 [STATUS.md](../../STATUS.md) 补齐组合政策、持仓、产品核验与动态事实。

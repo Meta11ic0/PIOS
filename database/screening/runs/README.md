@@ -1,8 +1,8 @@
 # 评价运行记录：screening runs
 
-每次 Modeling 比较的输出落在本目录。关联 `model_version` 与输入适用时点，便于复盘；修改模型规则时另起版本，不覆盖历史 run。输入适用时点对应字段 `input_as_of`。
+每次 Modeling 比较的输出落在本目录。关联 `model_version` 与输入适用时点，便于复盘；修改模型规则时另起版本，不覆盖历史 run。输入适用时点列名为 `input_valid_at`。
 
-**演示 run** 只放在 [`demo/`](demo/)，必须 `scope: demo_only`；生产 Modeling 输入清单排除该目录。
+**演示 run** 只放在 [`demo/`](demo/)，必须 `scope: demo_only`（`demo_only`）；生产 Modeling 输入清单排除该目录。
 
 ## 文件命名
 
@@ -21,9 +21,9 @@ YYYY-MM-DD-<topic>-<model_version>.yaml
 | 字段 | 含义 |
 |---|---|
 | `run_id` | 本次运行稳定 ID |
-| `scope` | `production` 或 `demo_only` |
+| `scope` | `production` 或 `demo_only`（`demo_only`） |
 | `model_version` | 对应 `etf_model_v0.1` 等模型标识 |
-| `input_as_of` | 输入动态数据的统一适用时点 |
+| `input_valid_at` | 输入动态数据的统一适用时点 |
 | `created_at` | 运行记录创建时间 |
 | `universe` | 候选 `product_id` 列表 |
 | `hard_gate_results` | 各否决项通过/未通过/`unknown` |

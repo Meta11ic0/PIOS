@@ -27,7 +27,7 @@
 2. 编写或改写 README、STATUS 等说明时另读 `prompts/docs_style.md`。投资行动会话若不改文档，不必每轮强制五份。
 3. 涉及投资行动时：本次用到的 `skills/*/SKILL.md`
 4. 场景入口：对应 `workflow/*.md` + 本文相关场景节
-5. 开场先列将 Read 清单与阶段，见 AGENTS.md「开场：先列将 Read 清单」，再动手
+5. 开场先列将 Read 清单与阶段，见 AGENTS.md「Read 清单」，再动手
 
 工具不会强制校验是否已 Read；跳过只能靠话术约束与事后抽查。见文内「§4 Agent 使用方式」与「§16 当前限制和已知维护成本」。
 
@@ -53,11 +53,11 @@
 
 | | 可跑流程 | 可作真实决策 |
 |---|---|---|
-| 含义 | 工作流、模板、Pipeline、Skill 齐；可练习写法与门禁 | 持仓与目标已填；IPS 为 active；关键产品已核验；动态数据有适用时点且未超时效；比较用真实生产输入 |
+| 含义 | 工作流、模板、Pipeline、Skill 齐；可练习写法与门禁 | 持仓与目标已填；IPS（Investment Policy Statement，投资政策）状态为 `active`；关键产品已核验；动态数据有适用时点且未超时效；比较用真实生产输入 |
 | 典型产物 | 研究笔记、`research` / `wait` Decision、结构演示 | 可讨论 `act`，但仍须过 Pipeline |
 | 当前仓库 | **多数处于此态** | 须按文内「§14 当前初始化顺序」补齐后才进入 |
 
-持仓或目标为空、或 IPS 仍为 draft：可以继续产品研究，**不能**根据组合得出买入结论。观察池种子在核验前不是产品目录。`reports/demo/`、`decision_log/demo/`、`screening/runs/demo/`不得作为生产输入。
+持仓或目标为空、或 IPS 状态仍为 `draft`：可以继续产品研究，**不能**根据组合得出买入结论。观察池种子在核验前不是产品目录。`reports/demo/`、`decision_log/demo/`、`screening/runs/demo/`不得作为生产输入。
 
 ---
 
@@ -83,7 +83,7 @@ PIOS 目前是文件驱动：
 
 | 路径 | 适用 | 要求 |
 |---|---|---|
-| **完整八步** | 新标的、首次买入、加仓超原计划、卖出、调仓、改目标、产品排序 | 各 Skill 全文；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序同时加载 Committee Skill；Modeling 在 draft 阶段只做字段对比与否决项，不自动评分 |
+| **完整八步** | 新标的、首次买入、加仓超原计划、卖出、调仓、改目标、产品排序 | 各 Skill 全文；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序同时加载Committee Skill；Modeling 在 draft 阶段只做字段对比与否决项，不自动评分 |
 | **轻量路径** | 已有**有效轻量定投 Decision** 的例行买入，且标的与金额边界未变 | 仍过八个检查点，可写简短；关键动态数据须在最大允许时效内；Challenge 仍按 Skill 全文；Documentation 可追加原 Decision Log |
 
 **有效轻量定投 Decision** 必须同时具备：`valid_until` 或等价到期日、允许的 `product_id` 列表、单笔金额上限、频率上限、失效/复核触发器，且 IPS 与目标配置仍有效。任一缺失、过期、改标的、超原计划金额/频率，或关键动态数据过期 → 回退完整八步。
@@ -149,7 +149,7 @@ decision_log/2026-07-27-dca-review.md
 关键动态数据无法验证时停止，不要补造结论。
 ```
 
-开场清单要求见 [AGENTS.md](AGENTS.md)「开场：先列将 Read 清单」。
+开场清单要求见 [AGENTS.md](AGENTS.md)「Read 清单」。
 
 ### 4.2 Cursor
 
@@ -159,7 +159,7 @@ Cursor 通过 `.cursor/rules/` 注入引用层，指向 `AGENTS.md` 与 `prompts
 
 ```text
 先读取 AGENTS.md、prompts/review_pipeline.md 和本任务涉及的所有 SKILL.md，
-列出本次将执行的阶段，再开始研究。持仓/目标不足时标明「不可 act」。
+列出本次将执行的阶段，再开始研究。持仓/目标不足时标明「cannot act」。
 ```
 
 ### 4.3 Codex 或其他 IDE / Agent
@@ -210,7 +210,7 @@ ETF 查找顺序，操作提示：
 
 ### 5.5 执行 Validation
 
-按 [Validation Skill](skills/validation/SKILL.md) 检查代码匹配、来源是否支持字段、时点、币种单位、盘中/收盘混用、公式复算、是否猜测填空、结论是否越界、关键时效是否过期。`fail` 或关键 `unknown` 停止，含时效过期；非关键 `warning` 可继续但须写出限制。
+按 [Validation Skill](skills/validation/SKILL.md) 检查代码匹配、来源是否支持字段、时点、币种单位、盘中/收盘混用、公式复算、是否猜测填空、结论是否越界、关键时效是否过期。失败或关键 `fail` / `unknown`停止，含时效过期；非关键 `warning` 可继续但须写出限制。
 
 ### 5.6 归档
 
@@ -229,14 +229,14 @@ ETF 查找顺序，操作提示：
 
 先读：
 
-- [投资政策 IPS](database/portfolio/investment_policy.md)。须为 active 才可讨论买入。
+- [投资政策 IPS](database/portfolio/investment_policy.md)（Investment Policy Statement）。状态须为 `active` 才可讨论买入。
 - [当前持仓](database/portfolio/holdings.csv)
 - [目标配置](database/portfolio/target_allocation.csv)
 - 候选指数和候选产品
 - 最新产品数据与公告：交易、基金与底层币种，以及 QDII/申赎状态
 - 本次可用资金、用途和应急现金要求
 
-持仓、目标为空或 IPS 为 draft 时，无法判断组合缺口。可以继续做产品研究，不能根据组合得出买入结论。见文首「就绪条件」。
+持仓、目标为空或 IPS 状态为 `draft` 时，无法判断组合缺口。可以继续做产品研究，不能根据组合得出买入结论。见文首「就绪条件」。
 
 ### 6.2 先看目标和组合
 
@@ -259,7 +259,7 @@ ETF 查找顺序，操作提示：
 3. 每步操作以对应 [Skill](skills/) 为准；索引见 [AGENTS.md](AGENTS.md)。
 4. 操作落盘要点：
    - **Modeling**：当前模型草案，只做字段对比与否决项，不自动输出买入评分；见 [etf_model_v0.1](database/screening/etf_model_v0.1.md)。
-   - **Decision**：仅用 `act` / `wait` / `reject` / `research`；`act` 须写清金额或比例、频率、执行条件、失效条件、下次复核触发器。
+   - **Decision**：仅用`act` / `wait` / `reject` / `research`；`act` 须写清金额或比例、频率、执行条件、失效条件、下次复核触发器。
    - **Documentation**：在真正执行前用 [决策日志模板](templates/decision_log.md) 建档；成交后再追加实际结果，不要等成交后才首次创建。
 
 ### 6.5 执行前检查
@@ -272,11 +272,11 @@ ETF 查找顺序，操作提示：
 - 相关市场是否开市与估值时差
 - Decision 执行条件与本轮授权范围是否仍成立
 
-PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交后再回写持仓与 Decision Log。
+PIOS 不负责下单。实际交易只能由用户在券商系统完成。成交后，用户把本次成交明细告诉 AI（对应哪次 `act`、代码、方向、成交价、数量、成交时间、费用等），并明确允许写入约定范围的文件后，Agent 才更新持仓与 Decision Log。未获写入许可不得改文件，也不得假装已从券商自动同步。出核对清单（checklist-auth）不等于允许写入。
 
 ## 7. 场景三：交易后记录
 
-每次成交后更新两处。
+用户告知成交明细并允许写入后，更新两处。
 
 ### 7.1 更新持仓快照
 
@@ -286,7 +286,7 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 
 打开 Documentation 阶段已创建的 Decision Log，只追加：实际成交时间、产品和数量、实际价格与费用、是否符合原 Decision、偏差原因若有、下一次复核条件。
 
-若最终没有成交，也在同一份日志中记录 `wait` / `reject` / `research`。没有行动本身也可能是需要复盘的决策。
+若最终没有成交，也在同一份日志中记录`wait` / `reject` / `research`。没有行动本身也可能是需要复盘的决策。
 
 ## 8. 个人持仓
 
@@ -300,7 +300,8 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 |---|---|---|
 | `record_id` | 本行快照主键 | 每追加一行新 ID；更正时新行填 `supersedes_record_id` |
 | `holding_id` | 一项持仓的稳定 ID | 建议由账户别名和产品 ID 组成；首次建立后不变 |
-| `as_of` | 适用时点 | ISO 8601；需要时含时区 |
+| `valid_at` | 适用时点 | ISO 8601；需要时含时区 |
+| `fetched_at` | 取得时间 | 拉取或录入时刻；可留空；有值时用不早于来源 `published_at` |
 | `account_alias` | 账户别名 | 例如 `broker_a`；不要填完整账号 |
 | `product_id` | 产品稳定 ID | 与产品库一致，例如 `CN:<ticker>` |
 | `asset_type` | 资产类型 | 使用产品 Schema 中的枚举 |
@@ -312,8 +313,8 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 | `cost_basis_scope` | 成本口径 | 例如是否含费用、分红和转入处理；所有持仓保持一致 |
 | `market_value` | 快照市值 | 与适用时点、交易币种对应 |
 | `report_currency` / `market_value_reporting` | 报告币种与折算市值 | 组合汇总使用；没有统一估值与汇率时不得计算权重 |
-| `fx_rate_to_reporting` / `fx_source_id` / `fx_as_of` / `fx_quote_convention` | 折算汇率、来源、汇率适用时点与报价口径 | 交易币种与报告币种不同时必填 |
-| `valuation_method` / `valuation_price` / `valuation_price_currency` / `valuation_source` / `valuation_as_of` | 估值细节与估值适用时点 | 与报告币种市值对应 |
+| `fx_rate_to_reporting` / `fx_source_id` / `fx_valid_at` / `fx_quote_convention` | 折算汇率、来源、汇率适用时点与报价口径 | 交易币种与报告币种不同时必填 |
+| `valuation_method` / `valuation_price` / `valuation_price_currency` / `valuation_source` / `valuation_valid_at` | 估值细节与估值适用时点 | 与报告币种市值对应 |
 | `portfolio_snapshot_id` | 组合快照 ID | 同一估值时点的持仓批次共用 |
 | `source_id` | 来源登记 ID | 对应 `database/sources.csv`；无法登记时说明人工核对依据 |
 | `source` | 数据来源 | 券商对账单、成交记录或人工核对 |
@@ -326,8 +327,8 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成；成交
 CSV 示例只表达格式，不代表真实产品：
 
 ```csv
-record_id,holding_id,as_of,account_alias,product_id,asset_type,trade_currency,fund_currency,underlying_exposure_currency,quantity,cost_basis,cost_basis_scope,market_value,report_currency,market_value_reporting,fx_rate_to_reporting,fx_source_id,fx_as_of,fx_quote_convention,valuation_method,valuation_price,valuation_price_currency,valuation_source,valuation_as_of,portfolio_snapshot_id,source_id,source,verification_status,supersedes_record_id,correction_reason,notes
-rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CNY,CNY,USD,<quantity>,<total_cost>,includes_fees,<market_value>,CNY,<market_value>,1,,,,market_price,<price>,CNY,broker_statement,2026-07-27T15:00:00+08:00,snap-1,source-broker-statement,broker_statement,verified,,,
+record_id,holding_id,valid_at,fetched_at,account_alias,product_id,asset_type,trade_currency,fund_currency,underlying_exposure_currency,quantity,cost_basis,cost_basis_scope,market_value,report_currency,market_value_reporting,fx_rate_to_reporting,fx_source_id,fx_valid_at,fx_quote_convention,valuation_method,valuation_price,valuation_price_currency,valuation_source,valuation_valid_at,portfolio_snapshot_id,source_id,source,verification_status,supersedes_record_id,correction_reason,notes
+rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CNY,CNY,USD,<quantity>,<total_cost>,includes_fees,<market_value>,CNY,<market_value>,1,,,,market_price,<price>,CNY,broker_statement,2026-07-27T15:00:00+08:00,snap-1,source-broker-statement,broker_statement,verified,,,
 ```
 
 ### 8.2 如何得到「当前持仓」
@@ -356,7 +357,7 @@ rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CN
 |---|---|---|
 | `allocation_id` | 配置桶的稳定 ID | 同一配置范围保持稳定 |
 | `allocation_set_id` | 同一生效配置集 ID | 一次批准的完整桶集合共用 |
-| `ips_id` | 投资政策版本 | 对应 `investment_policy.md` 的 IPS ID；IPS 须为 `active` |
+| `ips_id` | 投资政策版本 | 对应 `investment_policy.md` 的 IPS ID；IPS 状态须为 `active` |
 | `approval_decision_id` | 批准本配置集的 Decision | 无批准记录则不得用于 `act` |
 | `effective_from` | 生效日期 | ISO 8601 日期 |
 | `asset_class` | 资产类别 | 按自己的分类体系统一 |
@@ -376,7 +377,7 @@ rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,broker_a,CN:<ticker>,ETF,CN
 3. 资产分类不要重叠；同一暴露不要计入两个桶。
 4. 新旧并存时用 `effective_from` 选生效日，旧方案标为 `superseded`。
 5. `report_currency` 是组合报告币种，不是单个产品交易币种。
-6. IPS 仍为 `draft` 时，目标配置只能作为草稿，不能支撑 `act`。
+6. IPS 状态仍为 `draft` 时，目标配置只能作为草稿，不能支撑 `act`。
 
 格式示例：
 
@@ -457,8 +458,8 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 - 关键数据缺失、产品身份冲突、来源冲突未解决、动态数据过期、公式无法复算
 - 模型阈值未确认却试图输出精确排名
-- Risk 为 `Critical`，或关键风险无法评估
-- Challenge 为 `revise` 或 `reject`
+- Risk 为`Critical`，或关键风险无法评估
+- Challenge 为 `revise` / `reject`
 - 追加买入时目标资产已达或超过上限
 - Decision 执行条件已失效，或下单信息与审查对象不一致
 
@@ -470,9 +471,9 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 **阶段 1（独立完成）**
 
-1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md) 为 `active`。
+1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md)，使 IPS（Investment Policy Statement，投资政策）状态为 `active`。
    - **最低完成标准**：目的、风险承受能力、应急现金要求、约束条件、报告币种 5 节非空；IPS ID 已分配；有批准记录。
-   - 仍为 draft 时不可 `act`。
+   - IPS 状态仍为 `draft` 时 cannot act。
 
 **阶段 2（可并行）**
 
@@ -495,7 +496,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 **阶段 4（完成以上后）**
 
 8. 完成第一份研究报告。
-9. 跑一次完整审查，即使最终 Decision 是 `research` 或 `wait`。
+9. 跑一次完整审查，即使最终 Decision 是`research`或`wait`。
 10. 建立第一份生产 Decision Log。不要写在 `decision_log/demo/`。
 11. 在约定周期后进行复盘：先过程评估，再看结果。
 
@@ -560,7 +561,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ### 误授权或需要撤销授权
 
-1. 用户在对话中明确声明撤销：`revoke: read_plan` / `revoke: write` / `revoke: trade`。
+1. 用户在对话中明确声明撤销：`revoke: read_plan` / `revoke: write` / `revoke: checklist`。
 2. 撤销后对应层级及以上全部失效。
 3. 在 Decision Log 中追加 `revocation` 记录：时间、范围、原因。
 4. 已基于旧授权写入的文件不受影响（已写入是事实），但后续写入须重新获得授权。

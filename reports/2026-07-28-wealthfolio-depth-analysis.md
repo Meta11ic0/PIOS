@@ -78,7 +78,7 @@ PIOS `holdings.csv` 当前字段（30+ 列，仅表头无数据）：
 |-----------|-----------------|----------|
 | quantity, cost_basis, market_value | Holdings snapshot | PIOS 已有快照字段，但无 LOT 级管理 |
 | cost_basis_scope | -- | PIOS 有口径说明，Wealthfolio 用 FIFO LOT 系统自动管理 |
-| valuation_method/price/source/as_of | Holdings snapshot | PIOS 估值字段非常精细（6 列），Wealthfolio 简化为 `avgCost` + market price |
+| valuation_method/price/source/valid_at | Holdings snapshot | PIOS 估值字段非常精细（6 列），Wealthfolio 简化为 `avgCost` + market price |
 | account_alias, product_id, asset_type | Account + Symbol | PIOS 使用自由文本 alias，Wealthfolio 用结构化账户 |
 | trade_currency, fund_currency, underlying_exposure_currency | Currency per account | PIOS 的三大币种拆分对跨境 ETF 非常必要，Wealthfolio 仅单币种/账户 |
 | portfolio_snapshot_id | -- | PIOS 特有的批次快照聚合机制 |

@@ -8,7 +8,7 @@ data_status: unknown
 scope: production
 created_at:
 updated_at:
-as_of:
+valid_at:
 review_at:
 source_refs: []
 ---
@@ -34,7 +34,7 @@ source_refs: []
 
 # 动态数据
 
-每个动态字段单独记录值、单位、口径、适用时点、取得时间、`source_id`。超过最大允许时效则标 `unknown`。
+每个动态字段单独记录值、单位、口径、适用时点、取得时间、`source_id`。超过最大允许时效则标`unknown`。
 
 | 字段 | 值 | 单位/口径 | 适用时点 | 取得时间 | source_id | 状态 |
 |---|---|---|---|---|---|---|

@@ -11,7 +11,7 @@ decided_at:
 frozen_at:
 content_hash:
 review_at:
-as_of:
+valid_at:
 information_cutoff_at:
 pipeline_version:
 ips_id:
@@ -75,17 +75,17 @@ scope:
 
 # Challenge 结果
 
-# 决策委员会：适用时
+# Committee：适用时
 
-- 委员会结论：
+- Committee 结论：
 - 阻断项或未解决分歧：
 - 采纳的席位判断及原因：
 - 未采纳的替代方案及原因：
 
 # 最终决策
 
-- `act` 仅表示建议满足条件；Agent 不得下单。实际交易只能由用户在券商系统完成，并须有本轮、范围明确且未过期的 `approved` 授权。
-- 决策结论：act / wait / reject / research
+- `act` 仅表示建议满足条件；Agent 不得下单。实际交易只能由用户在券商系统完成，并须有本轮、范围明确且未过期的 `approved` 授权。呈现核对清单另需 checklist-auth（`checklist_authorized`）。
+- 决策结论：`act` / `wait` / `reject` / `research`
 - 行动：
 - 金额或比例边界：
 - 频率边界；定投时填写：

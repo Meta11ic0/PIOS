@@ -16,7 +16,7 @@ scope: PIOS portfolio measurement conventions
 ## 报告币种与估值
 
 - `report_currency` 是组合汇总时使用的币种；单项产品交易币种仍保留在持仓快照。
-- `market_value_reporting` 是按估值适用时点、汇率适用时点、`fx_quote_convention` 与可定位来源折算后的报告币种市值。估值与汇率适用时点对应字段 `valuation_as_of`、`fx_as_of`。
+- `market_value_reporting` 是按估值适用时点、汇率适用时点、`fx_quote_convention` 与可定位来源折算后的报告币种市值。估值适用时点列名 `valuation_valid_at`，汇率适用时点列名 `fx_valid_at`。
 - 每次组合比较应使用统一估值时点；不同日期的持仓市值不能直接汇总为当前权重。
 
 ## 外部现金流
