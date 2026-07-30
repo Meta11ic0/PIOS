@@ -16,23 +16,6 @@ PIOS（Personal Investment Operating System）用文件管研究、组合、审�
 
 会话里的 read-auth / write-auth / checklist-auth 约束的是 Agent。用户自己用编辑器读写不需要这些授权。**约定可被故意违反或绕过，但同时也会失去本项目的审查意义。**
 
-## 术语表
-
-**命名原则：** 术语优先简单英文（或早已通用的短词）；中文只在必要时作一句解释。三层授权文档用语统一为 `read-auth` / `write-auth` / `checklist-auth`（机器键仍分别为 `read_plan_acknowledged` / `write_authorized` / `checklist_authorized`）。
-
-
-| 名词                                      | 含义                                                   | 易混点                                      |
-| --------------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
-| Review Pipeline                         | 投资行动时固定顺序的审查通道                                       | 不是「写完再校验」。中途可停                           |
-| 四结论                                     | Decision 正式出口：`act` / `wait` / `reject` / `research` | 只在 Decision 与 Decision Log 正式写入。中途停不写成正式四结论 |
-| `act`                                   | 建议已满足执行条件                                            | 不是下单指令，也不是已成交。清单与写入另需授权                  |
-| read-auth / write-auth / checklist-auth | 分别约束 Agent：开读推进、改仓库文件、呈现交易核对清单                       | 三层互不等同。用户自己用编辑器读写不需要这些授权                 |
-| IPS / `active`                          | 个人投资政策。状态为 `active` 才可能支撑 `act`                      | `draft` 或空白不得支撑 `act`                    |
-| Committee                               | 编排第 3–6 步的对抗审查                                       | 不是第九步。四席不是多数决：硬性条件未过时，多数赞成也不得放行            |
-| 种子数据                                    | 观察池里尚未官方核验的候选占位                                      | 不得当生产事实。无种子也可直接 Research                 |
-| 适用时点                                    | 数据对哪一天或哪一窗口有效                                        | 不等于取得时间                                  |
-
-
 ## 快速入门
 
 先弄清四个核心模块，分别是：
@@ -71,7 +54,7 @@ PIOS（Personal Investment Operating System）用文件管研究、组合、审�
 - `reject`：当前方案不符合目标或约束。
 - `research`：缺指定证据，需要再做研究。
 
-中途停在第 1–6 步时，只返回审查结果与停止原因，不写成正式四结论，也不走第 8 步。第 8 步只在 Decision 完成后写入 Decision Log。
+中途停在第 1–6 步时，只返回审查结果与停止原因，不写成正式结论，也不走第 8 步。第 8 步只在 Decision 完成后写入 Decision Log。
 
 ### Committee
 
@@ -133,7 +116,7 @@ IPS 写用户的整体投资方向与边界：目标、风险、约束、报告�
   - **用户：** 接受停止，或先去补核验、补 IPS / 持仓，再开一轮。不要催着硬推买入。
   - **结论倾向（还不是正式 Decision）：** 缺 IPS `active`、缺持仓或缺少已核验动态时，倾向将来落到 `research`。若只是在等可核验的申赎公告日之类时点，倾向 `wait`。
 3. **可选收尾**
-  - **Agent：** 可以做 Modeling 的 draft 信息项对照，并标明 draft。若本轮要把四结论正式写下，须进入 Decision，且只能写 `research` / `wait`，不能写 `act`。
+  - **Agent：** 可以做 Modeling 的 draft 信息项对照，并标明 draft。若本轮要把正式结论写入，须进入 Decision，且只能写 `research` / `wait`，不能写 `act`。
   - **用户：** 若要让 Agent 写入 Decision Log 或报告，给 write-auth。
   - **本路径：** 不出交易核对清单，也没有下单通道。
 
@@ -148,7 +131,7 @@ IPS 写用户的整体投资方向与边界：目标、风险、约束、报告�
   - **Agent：** 比较候选，把方案接到用户目标与组合，评估风险，并强制做反方审查。过程写在对话或审查记录里。若出现关键失败、`unknown`、Risk `Critical`，或 Challenge 裁决为 `revise` / `reject`，则阻断，不得进入 `act`。
   - **用户：** 查看分歧与阻断项，决定是否改方案或补证据。此步不下单。
 3. **Decision**
-  - **Agent：** 给出正式四结论之一。若为 `act`，须写明价格区间、金额边界与失效条件。`act` 不是授权下单，也不等于已经成交。
+  - **Agent：** 给出四种正式结论之一。若为 `act`，须写明价格区间、金额边界与失效条件。`act` 不是授权下单，也不等于已经成交。
   - **用户：** 确认只要建议文案，还是还要交易核对清单。
 4. `act` **之后**
   - **核对清单（可选）：** 用户给予 checklist-auth 后，Agent 在对话里列出核对项。不需要清单则跳过。
@@ -164,7 +147,7 @@ flowchart TD
   Fork -->|`unknown` / `fail`<br/>如种子未核验| PathA["路径 A<br/>`research` / `wait`"]
   Fork -->|关键 `pass`| PathB["路径 B<br/>Committee → Decision"]
   PathA --> Doc["留档与复核条件<br/>改文件须用户明确允许"]
-  PathB --> Out{"四结论"}
+  PathB --> Out{"四种正式结论"}
   Out -->|"`wait` / `reject` / `research`"| Doc
   Out -->|"`act` 且可给买入建议"| List{"本轮要出核对清单？"}
   List -->|否| Paper["可有 `act` 文案<br/>不出核对清单"]
@@ -192,7 +175,7 @@ flowchart TD
   Need -->|否| Other["问答或改文档<br/>投资不虚构八步"]
   Need -->|是| RP["Read review_pipeline<br/>+ 阶段 Skill + 可选 workflow"]
   RP --> Eight["1→8 按契约推进"]
-  Eight --> Dec["Decision<br/>四结论正式出口"]
+  Eight --> Dec["Decision<br/>正式结论出口"]
   Dec --> Auth{"需写入或出清单？"}
   Auth -->|允许 Agent 写文件| Write["本步允许写入的路径内写入"]
   Auth -->|出核对清单| List["checklist-auth<br/>仅核对清单"]
@@ -280,7 +263,7 @@ flowchart TD
 
 新资产暴露、首次买入、改目标、重大再平衡、ETF 排序时必须调用；例行小额定投默认不加。四席共用同一份已核验输入，先各自写意见再汇总。Committee 四席不是多数决：关键数据未核验、IPS/风险的硬性条件未过、或反方席否决时，即使多数席赞成也不得放行。出现失败 / `unknown`、IPS 硬约束冲突、Risk `Critical`、反方 `revise` / `reject`，都不得进入可 `act` 的 Decision。见 [skills/committee/SKILL.md](skills/committee/SKILL.md)。
 
-#### 7 Decision 四结论：只在这里正式写入
+#### 7 Decision 正式结论：只在这里写入
 
 - **做什么**：在长期目标下给出 `act` / `wait` / `reject` / `research` 之一，并写清边界与复核条件。
 - **Agent**：核对五条硬性条件（IPS 状态为 `active`、有效目标配置、时效内动态事实、上游放行条件与 Committee、例外已批）；换几句反问自检（镜像测试）五句话；`act` 必须绑价格区间。不调用券商。中途放行条件只能收窄结论空间；正式只准这几种结论的写入只发生在本阶段与 Decision Log。
@@ -394,7 +377,7 @@ raw_material/ → Research → Validation
 4. 本步允许写入的路径不等于本轮 write-auth；成交后正式写入须用户告知明细并明确允许 **Agent** 写入。你自己改文件不需要 write-auth。
 5. 关键动态超时效记 `unknown`，不能靠 `warning` 蒙混。
 6. `demo` / `archive` / `example` 不得进生产 Decision。
-7. 四结论只能在 Decision 阶段正式写入。
+7. 正式结论只能在 Decision 阶段写入。
 8. 持仓快照记「持有什么」，Decision Log 记「当时为何」；用 `decision_id` / `holding_id` 互指。
 9. Committee 不是第九步；四席不是多数决：关键数据未核验、IPS/风险的硬性条件未过、或反方席否决时，即使多数席赞成也不得放行。
 10. 触发器只会触发再审查，不会自动下单。
@@ -441,7 +424,7 @@ raw_material/ → Research → Validation
 | Workflow | `workflow/` | 场景入口；不得放宽停止、权限、授权 |
 
 
-Prompt 管红线，Skill 管步骤。Research、Reasoning 在方法上空间大一些；Validation 的四状态和 Decision 的四结论正式只准这几种，Agent 不能另造第五种。
+Prompt 管红线，Skill 管步骤。Research、Reasoning 在方法上空间大一些；Validation 的四状态和 Decision 的四种正式结论只准这几种，Agent 不能另造第五种。
 
 ### 3.4 与其它文档的分工
 
