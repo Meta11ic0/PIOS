@@ -6,7 +6,7 @@ PIOS（Personal Investment Operating System）用文件管研究、组合、审�
 
 1. 以固定八步 Review Pipeline进行审查，任一步都可能因证据、校验、风险停下。
 2. 中途停下只交审查结果与停止原因，正式结论出口在 Pipeline第 7 步 Decision，结论只有 `act` / `wait` / `reject` / `research` 四种。
-3. **真正成交只在用户自己的券商客户端。**
+3. **真正成交只在用户自己的券商客户端，本项目不接入券商 API、不自动下单、不代下单。**
 
 **知识探索与市场调研：** 了解概念、规则、产品，项目内部数据维护等
 
@@ -16,25 +16,20 @@ PIOS（Personal Investment Operating System）用文件管研究、组合、审�
 
 会话里的 read-auth / write-auth / checklist-auth 约束的是 Agent。用户自己用编辑器读写不需要这些授权。**约定可被故意违反或绕过，但同时也会失去本项目的审查意义。**
 
-## 快速入门
+## 一、快速入门
 
-先弄清四个核心模块，分别是：
 
-1. **Review Pipeline**：固定八步审查
-2. **Committee**：高风险议题上，对 Pipeline 第 3–6 步的可选编排
-3. **IPS**：个人投资政策
-4. **种子数据**：用户自行添加的观察目标
 
-另外还有会话里的 **read-auth / write-auth / checklist-auth**，用来限制 Agent 行为。
-
-### 主要流程
+### 1.1 主要流程
 
 1. 用户提出问题 → Agent 列出本轮要读的仓库内文件，以及打算怎么审查 → 用户确认（向 Agent 发出 read-auth）。
 2. 有了 read-auth，Agent 才会读本地规则和数据，并按 Review Pipeline 推进。
 3. Agent 持续在对话里查证、比较、挑毛病、写结论。若要让它改仓库文件，用户需要确认（向 Agent 发出 write-auth）；若要让它出交易核对清单，用户也需要确认（向 Agent 发出 checklist-auth）。用户自己用编辑器改文件，不需要这些授权。
-4. **真正下单只在用户的券商客户端。**仅当结论为 `act` 之后：可在 checklist-auth 下呈现交易核对清单（也可不出），用户自行在券商操作，成交后用户提交明细并给予 write-auth，Agent 才写入 Decision Log 并更新持仓。**本项目不接入券商 API、不自动下单、不代下单。**
+4. **真正下单只在用户的券商客户端。**当结论为 `act` 之后，用户可以给予 checklist-auth 让 Agent 呈现交易核对清单（也可不出），用户自行在券商操作，成交后用户提交明细并给予 write-auth，Agent 才写入 Decision Log 并更新持仓。
 
-### Review Pipeline
+
+
+### 1.2 Review Pipeline
 
 买入、卖出、持有、定投、调仓或产品排序，都按固定顺序走；任一步可按契约停下。细则见 [prompts/review_pipeline.md](prompts/review_pipeline.md)。
 
@@ -56,132 +51,113 @@ PIOS（Personal Investment Operating System）用文件管研究、组合、审�
 
 中途停在第 1–6 步时，只返回审查结果与停止原因，不写成正式结论，也不走第 8 步。第 8 步只在 Decision 完成后写入 Decision Log。
 
-### Committee
+### 1.3 Committee
 
-Committee 管的是第 3–6 步（Modeling → Reasoning → Risk → Challenge），不是 Pipeline 之外的第 9 步。配置变更、首次买入、产品排序这类高风险议题上，它用四席对抗，从多个角度挑毛病。
+Committee 是第 3–6 步（Modeling → Reasoning → Risk → Challenge）的特殊编排方式，不是 Pipeline 之外的第 9 步。会在原有基础上，用多个审查角色从不同角度挑毛病，把这四步做完。
 
-它不产生交易授权，也不代替第 7 步 Decision。Committee 四席不是多数决：关键数据未核验、IPS/风险的硬性条件未过、或反方席否决时，即使多数席赞成也不得放行。触发时，四席共用已核验输入，先各自写意见再汇总，把 3–6 做完。不触发时，这四步仍按阶段 Skill 顺序跑。1–2 与 7–8 两种情况一样。
+### 1.4 IPS（Investment Policy Statement）
 
-常见触发：新资产 / 地域 / 币种 / 指数敞口、首次买入、改 IPS 或目标配置、重大再平衡、ETF 产品排序。例行小额定投默认不触发。Agent 对照触发清单自行判断，没有程序自动跳转。权威见 [skills/committee/SKILL.md](skills/committee/SKILL.md)；Pipeline 强制句见 [prompts/review_pipeline.md](prompts/review_pipeline.md)。
+IPS 内容为用户的整体投资方向与边界：目标、风险、约束、报告币种等，一个仓库只允许有一份活跃的IPS，位于在 [database/portfolio/investment_policy.md](database/portfolio/investment_policy.md)。
 
-### IPS（Investment Policy Statement）
+### 1.5 种子数据
 
-IPS 写用户的整体投资方向与边界：目标、风险、约束、报告币种等。文件就在 [database/portfolio/investment_policy.md](database/portfolio/investment_policy.md)，打开直接改。
+用户关注的代码、大致跟踪指数、待核验备注之类，存放在对应 CSV [database/watchlist/us_index_etf_candidates.csv](database/watchlist/us_index_etf_candidates.csv)。
 
-审查时，它用来判断「该不该动、能动多少」。状态须为 `active`，且有批准记录，才可能支撑 `act`。要可执行买入结论，合格 IPS 不能少。仍是 `draft` 或空白时，可以做产品研究（像后面路径 A），但不给出可执行买入结论。
+### 1.6 例子：限额后场内跨境 ETF
 
-改法：按文内「填写顺序：新手」改正文与文首 YAML（含 `status`）。用户自己改不需要 write-auth；改完按文件要求批准，并把 `status` 设为 `active`。让 Agent 改，须本轮 write-auth。批准后到同目录 [target_allocation.csv](database/portfolio/target_allocation.csv) 填目标配置，用 `ips_id` 关联，不必在 IPS 里再填路径。
+用户的纳指、标普定投的计划因场外 QDII 联接限额导致中断，想要找可替代的标的，但同类产品过多，用户了解不足，需要先调查对比再做后续决定。
 
-### 种子数据
+同一背景下走两条路径演示：一条是单纯市场调研；一条是市场调研完成后期望买入建议。
 
-用户关注的代码、大致跟踪指数、待核验备注之类。数据在对应 CSV，例如 [database/watchlist/us_index_etf_candidates.csv](database/watchlist/us_index_etf_candidates.csv)。表里通常填：`product_id` / 代码、资产类型与市场、跟踪对象、`verification_status`、备注等。打开 CSV 按表头增改，用户自己改不需要 write-auth。待观察的种子数据核验通过后其状态会改为 `verified`，或写入生产记录（见 database/README.md）。让 Agent 改表，须给予 write-auth。
+#### 1.6.1 开场
 
-提前设置好种子数据，Agent 会有更明确的调查方向，Research / Validation 拿这些线索去对官方材料。种子数据核验通过后应写入 `products/` 等正式记录，后续步骤跟的是已核验事实，不会自动信任整张种子表，`act` 需要已经核验的数据。没有种子数据也没关系，Research 里直接定位产品再核验即可。
-
-### 读这个文件时以谁为准
-
-放行条件与阶段契约以 `prompts/` 和 `skills/` 全文为准；日常操作见 [OPERATIONS.md](OPERATIONS.md)；加载协议见 [AGENTS.md](AGENTS.md)。改 `prompts/` 或 `skills/` 里的阶段顺序、放行条件或 Skill 职责时，顺手核对本文流程图和八步写入总表。
-
-### 用例子串起来：限额后场内跨境 ETF
-
-以下例子属审查线深浅：浅审停在校验，深审走到可执行建议。不是文首的知识与市场调研线。
-
-用户的纳指、标普定投的计划因场外 QDII 联接限额导致中断，想要找可替代的标的，但同类产品多，用户了解不足，需要先调查对比再做后续决定。
-
-同一背景下走两条路径演示：一条是调查校验后停下（`research` / `wait`）；一条是审核完成给出买入建议（`act`），流程大致是：
-
-获得read-auth → Review Pipeline （中途可停）→  `act`：可出核对清单也可不出 → 用户在券商自行操作 → 提交成交信息并给予 write-auth → Agent 改 Decision Log / 持仓
-
-#### 开场
-
-- 用户说清目标（路径 A 或 B 的问法见下）。
-- Agent 列出本轮要读的仓库内文件以及打算怎么审查（走哪些步骤）
-- 用户确认，即向agent发送read-auth后才进入路径 A 或 B。
+- 用户说清目标
+- Agent 列出本轮要读的仓库内文件以及打算怎么审查
+- 用户确认，即向agent发送read-auth后才进入路径 A 或 B
 
 问法示例：
 
 - **路径 A**：「QDII限额了，帮我选择现在可以购买的候选标的并进行对比，先不形成买入结论。」审查侧重 Research → Validation，通常不触发 Committee。
 - **路径 B**：「…并形成可执行的买入建议。」Agent 对照触发条件决定 3–6 是否用 Committee。
 
-#### 路径 A：Validation 停住，倾向 `research` / `wait`
 
-背景：用户只要候选与对比，先不形成买入结论。材料或政策往往还不齐，审查多停在 Research → Validation。通常不走 Committee。
+
+#### 1.6.2 路径 A：Research → Validation
 
 1. **Research**
   - **Agent**先按本轮清单读取仓库里的规则与数据，需要定位具体产品时，会联网查交易所或基金公司官网。第三方资讯网站只会当线索，不会当已核验事实。查不到或暂时对不上的信息如实记录，并在对话里一并交出「候选草稿」和「尚未查清信息清单」。
   - **用户**看草稿，纠正调查范围，补充只有用户知道的约束（例如账户能否买）。默认不改仓库。若要让 Agent 把摘录或候选写入文件，须本轮 write-auth。
-  - 如果调查产品身份对不上（代码、份额类别或交易所对不上）时，停在 Research，不进入排序或买入比较。
+  - 如果调查产品事实与原计划有出入，如代码、份额类别或交易所对不上时，停在 Research，不进入排序或买入比较。
 2. **Validation**（本路径常见停点）
-  - **Agent：** 对关键信息项标 `pass` / `fail` / `unknown`。例如种子尚未核验、关键动态缺少适用时点 `valid_at`，关键项会记为 `unknown`，本轮必须停。此时不做「现在可买」的排序，也不进入能支撑 `act` 的 Modeling / Decision。
-  - **用户：** 接受停止，或先去补核验、补 IPS / 持仓，再开一轮。不要催着硬推买入。
-  - **结论倾向（还不是正式 Decision）：** 缺 IPS `active`、缺持仓或缺少已核验动态时，倾向将来落到 `research`。若只是在等可核验的申赎公告日之类时点，倾向 `wait`。
+  - **Agent：** 对关键信息项标 `pass` / `fail` / `unknown`。例如种子数据尚未核验、关键动态时间点对不上，关键项会记为 `unknown`。
+  - **用户：** 接受停止，或先去补核验、补 IPS / 持仓等，再开一轮。
 3. **可选收尾**
-  - **Agent：** 可以做 Modeling 的 draft 信息项对照，并标明 draft。若本轮要把正式结论写入，须进入 Decision，且只能写 `research` / `wait`，不能写 `act`。
-  - **用户：** 若要让 Agent 写入 Decision Log 或报告，给 write-auth。
-  - **本路径：** 不出交易核对清单，也没有下单通道。
+  - 要落盘时：用户自己改 `reports/`、`knowledge/`、`database/` 等，或明确路径并给 Agent write-auth。
+  - Validation 未过也可记录为候选或尚未查清项。
 
-#### 路径 B：条件够齐，可给出买入建议（`act`），仍不代下单
 
-背景：用户要可执行的买入建议。除已获得 read-auth 外，还须同时满足：IPS 为 `active`、目标配置有效、候选已核验（种子已升为 `verified`，或已有同等核验记录）、关键动态仍在时效内。缺任一项，应按路径 A 停住，不要硬走本路径。
+
+#### 1.6.3 路径 B：形成可执行的买入建议
 
 1. **Research → Validation**
   - **Agent：** Research 做法与路径 A 相同。Validation 时，关键信息项须为 `pass`（或已向用户说明、且用户可接受的 `warning`）。若仍有未核验种子，停住，改按路径 A 处理。
-  - **用户：** 确认调查范围。需要时给予 write-auth，让 Agent 写入核验结果。
-2. **第 3–6 步**（命中触发条件则用 Committee 编排，否则按 Modeling → Reasoning → Risk → Challenge 顺序跑）
-  - **Agent：** 比较候选，把方案接到用户目标与组合，评估风险，并强制做反方审查。过程写在对话或审查记录里。若出现关键失败、`unknown`、Risk `Critical`，或 Challenge 裁决为 `revise` / `reject`，则阻断，不得进入 `act`。
-  - **用户：** 查看分歧与阻断项，决定是否改方案或补证据。此步不下单。
+  - **用户：** 确认调查范围，需要时给予 write-auth，让 Agent 写入核验结果。
+2. **第 3–6 步** 命中触发条件时，由 Committee 编排并完成本段四步——共用同一份冻结输入，从配置、暴露、实施、风险反方四视角审查后合议；否则按 Modeling → Reasoning → Risk → Challenge 线性执行。
+  - **Agent：** 比较候选，把方案接到用户目标与组合，评估风险，并强制做反方审查，过程写在对话或审查记录里。
+  - **用户：** 查看分歧与阻断项，决定是否改方案或补证据。
 3. **Decision**
-  - **Agent：** 给出四种正式结论之一。若为 `act`，须写明价格区间、金额边界与失效条件。`act` 不是授权下单，也不等于已经成交。
-  - **用户：** 确认只要建议文案，还是还要交易核对清单。
+  - **Agent：** 给出正式结论。
 4. `act` **之后**
   - **核对清单（可选）：** 用户给予 checklist-auth 后，Agent 在对话里列出核对项。不需要清单则跳过。
-  - **下单：** 用户在券商客户端自行操作。系统没有券商 API，也不会代下单。成交价超出本轮价格区间时，本轮 `act` 失效，须重新审查。
+  - **下单：** 用户在券商客户端自行操作。
   - **记账：** 用户提交成交明细并给予 write-auth 后，Agent 才更新 Decision Log 与持仓。
 
-```mermaid
-flowchart TD
-  Q["配置问题<br/>如：补纳指暴露"] --> A0["本轮要读的文件<br/>与打算怎么审查<br/>等待确认"]
-  A0 -->|用户确认| A1["read-auth<br/>read_plan_acknowledged"]
-  A0 -->|未确认| WaitAck["停：不能假装开审"]
-  A1 --> Fork{"Validation<br/>关键信息项？"}
-  Fork -->|`unknown` / `fail`<br/>如种子未核验| PathA["路径 A<br/>`research` / `wait`"]
-  Fork -->|关键 `pass`| PathB["路径 B<br/>Committee → Decision"]
-  PathA --> Doc["留档与复核条件<br/>改文件须用户明确允许"]
-  PathB --> Out{"四种正式结论"}
-  Out -->|"`wait` / `reject` / `research`"| Doc
-  Out -->|"`act` 且可给买入建议"| List{"本轮要出核对清单？"}
-  List -->|否| Paper["可有 `act` 文案<br/>不出核对清单"]
-  List -->|是| Check["checklist-auth<br/>呈现交易核对清单"]
-  Paper --> Broker["用户在券商成交<br/>系统无下单通道"]
-  Check --> Broker
-  Broker --> Tell["提交成交信息<br/>并 write-auth<br/>允许 Agent 写入"]
-  Tell --> WB["Agent 改 Decision Log<br/>与持仓"]
-  Doc --> End["可复盘"]
-  WB --> End
-  WaitAck --> End
-```
 
+## 二、模块
 
-
-## 二、分模块
-
-### 2.1 端到端鸟瞰
+### 2.1 
 
 ```mermaid
 flowchart TD
-  S["会话开始<br/>date 基线"] --> Load["AGENTS：列出本轮要读的文件<br/>与打算怎么审查<br/>必读 system / answer_style / citation"]
-  Load --> A1["read-auth<br/>read_plan_acknowledged"]
-  A1 --> Need{"本轮含买入/卖出/<br/>持有/定投/调仓/排序？"}
-  Need -->|否| Other["问答或改文档<br/>投资不虚构八步"]
-  Need -->|是| RP["Read review_pipeline<br/>+ 阶段 Skill + 可选 workflow"]
-  RP --> Eight["1→8 按契约推进"]
-  Eight --> Dec["Decision<br/>正式结论出口"]
-  Dec --> Auth{"需写入或出清单？"}
-  Auth -->|允许 Agent 写文件| Write["本步允许写入的路径内写入"]
-  Auth -->|出核对清单| List["checklist-auth<br/>仅核对清单"]
-  List --> User["用户在券商成交"]
-  User --> Tell["告知成交明细<br/>并 write-auth<br/>允许 Agent 写入"]
-  Tell --> Back["Agent 更新 holdings / Log<br/>未许可不得改、不假装同步"]
+ S["会话开始<br/>确定date 基线"] --> Load["AGENTS：列出本轮要读的文件<br/>与打算怎么审查"]
+ Load --> Confirm{"用户确认？"}
+ Confirm -->|否| End["结束"]
+ Confirm -->|是| R["1 Research<br/>取证与来源"]
+
+ subgraph RP["Review Pipeline"]
+  R --> V["2 Validation<br/>逐项校验"]
+  V --> Check{"关键项？"}
+  Check -->|fail / unknown| FailFork{"开场为投资行动？"}
+  FailFork -->|是| Fall["降级成知识调研"]
+  FailFork -->|否| Stop["停下：返回审查结果<br/>与停止原因"]
+  Fall --> Stop
+  Check -->|pass| Fork{"知识调研？ / 投资行动？"}
+  Fork -->ResOut{"Validation结束"}
+  Fork -->|投资行动| C{"Committee 触发？"}
+  C -->|命中| C36["3–6 Committee 编排<br/>Modeling → Reasoning<br/>→ Risk → Challenge"]
+  C -->|未命中| L36["3–6 线性推进<br/>Modeling → Reasoning<br/> → Risk → Challenge"]
+  C36 --> Mid{"任一步阻断？"}
+  L36 --> Mid
+  Mid -->|是| Stop
+  Mid -->|否| DC{"7 Decision"}
+  Stop --> ResOut
+  DC -->|wait / reject / research| ED["没通过"]
+  DC -->|act| CL{"出核对清单？"}
+  CL -->|是<br/>checklist-auth| LI["对话呈现核对清单"]
+  CL -->|否| BK["用户自行成交"]
+  LI --> BK
+  BK --> WB["用户提交成交明细"]
+  WB --> |write-auth|Doc8["8 Documentation<br/>Decision Log / 留痕"]
+  ResOut --> Sup["用户补充资料<br/>再开一轮 / 回到补料"]
+  ED --> |可选|Doc8["8 Documentation<br/>Decision Log / 留痕"]
+  Sup --> R
+ end
+
+ ResOut -->|对话交付即可| End
+ ResOut --> W["Agent 写入 knowledge /<br/>database / reports 等"]
+ W --> End
+ ED --> End
+ Doc8 --> End
 ```
 
 
@@ -193,16 +169,16 @@ flowchart TD
 本步允许写入的路径列划的是各步可写目录，不等于本轮已允许 Agent 改文件（write-auth）；**若要让 Agent 正式写入**，仍须你本轮明确允许其写入约定路径。`sources.csv` 里有一行，只说明来源找得到；进 Decision 还要 Validation，并落到 `verified`。
 
 
-| 步   | 阶段            | 一句话      | 典型写入（本步允许写入的路径）                            | 常见停法                |
-| --- | ------------- | -------- | ---------------------------------------------------- | ------------------- |
-| 1   | Research      | 找证据、登来源  | `raw_material/`、`database/sources.csv`、`reports/` 候选 | 身份无法确认              |
-| 2   | Validation    | 判能不能当事实用 | review 的 Validation 节、动态快照候选                         | 关键 `fail`/`unknown` |
-| 3   | Modeling      | 按规则比较    | `database/screening/runs/`                           | 输入缺失或越过 draft 边界    |
-| 4   | Reasoning     | 接到目标与组合  | `review`、`reports/`                                  | 脱离组合或无证据推理          |
-| 5   | Risk          | 风险分级     | `review`                                             | `Critical` 或关键不可评估  |
-| 6   | Challenge     | 专找反面     | `review`                                             | `revise` / `reject` |
-| 7   | Decision      | 四选一出口    | `decision_log/`                                      | 放行条件缺项；正式只准这几种结论只在此写入      |
-| 8   | Documentation | 关联可回溯    | `knowledge/`、`database/`、`reports/`、`decision_log/`  | 无法定位上游              |
+| 步   | 阶段            | 一句话      | 典型写入（本步允许写入的路径）                                      | 常见停法                  |
+| --- | ------------- | -------- | ---------------------------------------------------- | --------------------- |
+| 1   | Research      | 找证据、登来源  | `raw_material/`、`database/sources.csv`、`reports/` 候选 | 身份无法确认                |
+| 2   | Validation    | 判能不能当事实用 | review 的 Validation 节、动态快照候选                         | 关键 `fail`/`unknown`   |
+| 3   | Modeling      | 按规则比较    | `database/screening/runs/`                           | 输入缺失或越过 draft 边界      |
+| 4   | Reasoning     | 接到目标与组合  | `review`、`reports/`                                  | 脱离组合或无证据推理            |
+| 5   | Risk          | 风险分级     | `review`                                             | `Critical` 或关键不可评估    |
+| 6   | Challenge     | 专找反面     | `review`                                             | `revise` / `reject`   |
+| 7   | Decision      | 四选一出口    | `decision_log/`                                      | 放行条件缺项；正式只准这几种结论只在此写入 |
+| 8   | Documentation | 关联可回溯    | `knowledge/`、`database/`、`reports/`、`decision_log/`  | 无法定位上游                |
 
 
 八步都可能按阶段契约停下来。Validation、Challenge、Decision 打断得更勤，但不是「只有这三步能拦」。完整放行与阻断条件见 [prompts/review_pipeline.md](prompts/review_pipeline.md) 阶段契约表。
@@ -219,6 +195,8 @@ flowchart TD
 - **写出的材料**：`reports/` 研究笔记；`database/sources.csv`；可选 `raw_material/<主题>/`；候选信息草案（尚未 verified）。
 - **何时停**：产品身份对不上。见 [skills/research/SKILL.md](skills/research/SKILL.md)。
 
+
+
 #### 2 Validation — 质检
 
 - **做什么**：核对来源、日期、比较所用标准是否一致、遗漏与逻辑，逐项裁定能否进入后续。
@@ -226,6 +204,8 @@ flowchart TD
 - **用户**：冲突来源怎么采信；缺官方材料就补；关键项不过时接受停，别催着往下走。
 - **写出的材料**：`templates/review.md` 的 Validation 节；通过后才写入 `database/` 动态或基础快照。
 - **何时停**：关键 `fail`/`unknown`（`fail` / `unknown`）。见 [skills/validation/SKILL.md](skills/validation/SKILL.md)。
+
+
 
 #### 3 Modeling — 可比化
 
@@ -235,6 +215,8 @@ flowchart TD
 - **写出的材料**：`database/screening/runs/*.yaml`；review 的 Modeling 节。
 - **何时停**：输入缺失，或模型越过 draft 边界。见 [skills/modeling/SKILL.md](skills/modeling/SKILL.md)。
 
+
+
 #### 4 Reasoning — 正向叙事
 
 - **做什么**：把目标、约束、组合、资产、产品连成能复查的推理链。
@@ -242,6 +224,8 @@ flowchart TD
 - **用户**：核对目标、金额、可承受损失是否还成立；理解偏了就改。
 - **写出的材料**：review 的 Reasoning 节；必要时 `reports/`。
 - **何时停**：推理脱离组合，或没有证据链。见 [skills/reasoning/SKILL.md](skills/reasoning/SKILL.md)。
+
+
 
 #### 5 Risk — 风险分级
 
@@ -251,6 +235,8 @@ flowchart TD
 - **写出的材料**：review 的 Risk 节。
 - **何时停**：`Critical`，或关键风险不可评估。见 [skills/risk/SKILL.md](skills/risk/SKILL.md)。
 
+
+
 #### 6 Challenge — 强制唱反调
 
 - **做什么**：尽量证伪原结论，专门对付确认偏误。
@@ -259,9 +245,11 @@ flowchart TD
 - **写出的材料**：review 的 Challenge 节。
 - **何时停**：裁决为 `revise` 或 `reject`（阻断 `act`）。见 [skills/challenge/SKILL.md](skills/challenge/SKILL.md)。
 
+
+
 #### Committee — 编排第 3–6 步，不是第九步
 
-新资产暴露、首次买入、改目标、重大再平衡、ETF 排序时必须调用；例行小额定投默认不加。四席共用同一份已核验输入，先各自写意见再汇总。Committee 四席不是多数决：关键数据未核验、IPS/风险的硬性条件未过、或反方席否决时，即使多数席赞成也不得放行。出现失败 / `unknown`、IPS 硬约束冲突、Risk `Critical`、反方 `revise` / `reject`，都不得进入可 `act` 的 Decision。见 [skills/committee/SKILL.md](skills/committee/SKILL.md)。
+新资产暴露、首次买入、改目标、重大再平衡、ETF 排序时必须调用；例行小额定投默认不加。各方共用同一份已核验输入，先各自写意见再汇总。关键数据未核验、IPS/风险的硬性条件未过、或反方审查否决时，即使多数意见赞成也不得放行。出现失败 / `unknown`、IPS 硬约束冲突、Risk `Critical`、反方 `revise` / `reject`，都不得进入可 `act` 的 Decision。见 [skills/committee/SKILL.md](skills/committee/SKILL.md)。
 
 #### 7 Decision 正式结论：只在这里写入
 
@@ -278,6 +266,8 @@ flowchart TD
 3. 关键动态事实仍在时效内。
 4. Validation 无关键 `fail`/`unknown`；Risk 无 `Critical`；Challenge 非 `revise` / `reject`；Committee 触发场景已通过，或已记下不适用理由。
 5. 适用例外均已批准、未过期，并已关联 `decision_id` 与关闭条件。
+
+
 
 #### 8 Documentation — 留痕
 
@@ -306,7 +296,11 @@ flowchart TD
 
 
 
+
+
 ### 2.4 全局锚点
+
+
 
 #### IPS（Investment Policy Statement，投资政策）
 
@@ -338,7 +332,7 @@ IPS 是个人投资政策说明书。状态非 `active`（例如仍为 `draft` �
 | -------------- | ------------------------ | ----------------------------------------------------- | --------------------------------------------------- |
 | read-auth      | `read_plan_acknowledged` | **Agent** 读文件；列出本轮要读的文件与打算怎么审查；提方案                    | 任何写入、呈现核对清单；你自己打开文件阅读不属此层                           |
 | write-auth     | `write_authorized`       | **Agent** 写入约定范围的仓库文件（含成交后更新 holdings / Decision Log） | 呈现交易核对清单；未获本轮许可 Agent 不得改文件；不得假装券商已同步；你自己编辑器改文件不属此层 |
-| checklist-auth | `checklist_authorized`   | **Agent** 呈现核对清单信息项                                    | 代下单、券商 API、假装已成交；不等于允许 Agent 改文件                    |
+| checklist-auth | `checklist_authorized`   | **Agent** 呈现核对清单信息项                                   | 代下单、券商 API、假装已成交；不等于允许 Agent 改文件                    |
 
 
 write-auth 与 checklist-auth 不能并成一句授权。旧对话、旧日志、含糊的「随便」都不算本轮授权。提交成交信息并允许 **Agent** 写入后，Agent 才改 Decision Log / 持仓；授权状态怎么转见 [prompts/review_pipeline.md](prompts/review_pipeline.md)「授权状态机」。
@@ -356,6 +350,8 @@ flowchart TD
   Broker --> Tell["提交成交信息<br/>并 write-auth"]
   Tell --> WB["Agent 改 Decision Log / 持仓"]
 ```
+
+
 
 
 
@@ -379,24 +375,27 @@ raw_material/ → Research → Validation
 6. `demo` / `archive` / `example` 不得进生产 Decision。
 7. 正式结论只能在 Decision 阶段写入。
 8. 持仓快照记「持有什么」，Decision Log 记「当时为何」；用 `decision_id` / `holding_id` 互指。
-9. Committee 不是第九步；四席不是多数决：关键数据未核验、IPS/风险的硬性条件未过、或反方席否决时，即使多数席赞成也不得放行。
+9. Committee 不是第九步；关键数据未核验、IPS/风险的硬性条件未过、或反方审查否决时，即使多数意见赞成也不得放行。
 10. 触发器只会触发再审查，不会自动下单。
 
 ---
 
+
+
 ## 三、如何串联
+
+
 
 ### 3.1 强制加载对照
 
 
-| 条件                    | 必须 Read                            | 强制行为                                                   |
-| --------------------- | ---------------------------------- | ------------------------------------------------------ |
-| 任意会话开始                | `system`、`answer_style`、`citation` | 证据优先；区分事实、假设、推理、结论；不下单                                 |
-| 投资行动                  | + `review_pipeline`                | 八步顺序、阶段契约、停止条件、read-auth / write-auth / checklist-auth |
-| 进入第 N 步               | + `skills/<phase>/SKILL.md`        | 该步流程与阻断不可跳过                                            |
-| Committee 触发场景        | + `committee`                      | 编排 3–6；四席不是多数决，硬性条件未过时多数赞成也不得放行                          |
-| 改 README / STATUS 等说明 | + `docs_style`（可选 humanizer-zh）    | 不改放行条件语义                                                 |
-| 有对应场景                 | + `workflow/*.md`                  | 操作顺序；不得放宽 Prompt/Skill                                 |
+| 条件             | 必须 Read                            | 强制行为                                                   |
+| -------------- | ---------------------------------- | ------------------------------------------------------ |
+| 任意会话开始         | `system`、`answer_style`、`citation` | 证据优先；区分事实、假设、推理、结论；不下单                                 |
+| 投资行动           | + `review_pipeline`                | 八步顺序、阶段契约、停止条件、read-auth / write-auth / checklist-auth |
+| 进入第 N 步        | + `skills/<phase>/SKILL.md`        | 该步流程与阻断不可跳过                                            |
+| Committee 触发场景 | + `committee`                      | 编排 3–6；硬性条件未过时，即使多数意见赞成也不得放行                           |
+| 有对应场景          | + `workflow/*.md`                  | 操作顺序；不得放宽 Prompt/Skill                                 |
 
 
 没按触发条件加载对应 Prompt 或 Skill，就不能推进该结论或写入。
@@ -412,6 +411,8 @@ raw_material/ → Research → Validation
 | 知识 / 市场调研（无投资意见）              | 否；Research + Validation | 见 OPERATIONS「§5.1 开始前」与 [workflow/research.md](workflow/research.md) |
 | 改 README / STATUS / 手册 / 知识条目 | 否                       | + `docs_style`                                                       |
 | 概念问答且无行动                      | 否                       | 常驻三份即可；不虚构 Pipeline                                                  |
+
+
 
 
 ### 3.3 Prompt 与 Skill
@@ -441,7 +442,11 @@ Prompt 管红线，Skill 管步骤。Research、Reasoning 在方法上空间大�
 
 ---
 
+
+
 ## 四、收束：边界与目录
+
+
 
 ### 4.1 边界
 
@@ -490,4 +495,3 @@ Prompt 管红线，Skill 管步骤。Research、Reasoning 在方法上空间大�
 
 ---
 
-读完应能说清：投资问题按什么顺序跑；每步谁做什么、写到哪、何时停；`act` 之后可出核对清单也可不出，用户在券商自行操作，提交成交信息并给予 write-auth 后 Agent 才正式写入；三层授权约束的是 Agent，不是禁止你自己用编辑器改文件；AGENTS、Prompt、Skill 如何强制串联，以及为什么没有后置 Prompt 校验链。细则与放行条件仍以 `prompts/`、`skills/` 全文为准。
