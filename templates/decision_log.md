@@ -84,7 +84,7 @@ scope:
 
 # 最终决策
 
-- `act` 仅表示建议满足条件；Agent 不得下单。实际交易只能由用户在券商系统完成，并须有本轮、范围明确且未过期的 `approved` 授权。呈现核对清单另需 checklist-auth（`checklist_authorized`）。
+- `act` 仅表示建议满足条件；Agent 不得下单。实际交易只能由用户在券商系统完成。
 - 决策结论：`act` / `wait` / `reject` / `research`
 - 行动：
 - 金额或比例边界：

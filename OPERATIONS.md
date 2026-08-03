@@ -270,13 +270,13 @@ ETF 查找顺序，操作提示：
 - 佣金与其他费用、当前折溢价与价差及分母口径
 - 交易/基金/底层暴露币种、QDII 额度与申赎状态
 - 相关市场是否开市与估值时差
-- Decision 执行条件与本轮授权范围是否仍成立
+- Decision 执行条件是否仍成立
 
-PIOS 不负责下单。实际交易只能由用户在券商系统完成。成交后，用户把本次成交明细告诉 AI（对应哪次 `act`、代码、方向、成交价、数量、成交时间、费用等），并明确允许写入约定范围的文件后，Agent 才更新持仓与 Decision Log。未获写入许可不得改文件，也不得假装已从券商自动同步。出核对清单（checklist-auth）不等于允许写入。
+PIOS 不负责下单。实际交易只能由用户在券商系统完成。成交后，用户把本次成交明细告诉 AI（对应哪次 `act`、代码、方向、成交价、数量、成交时间、费用等），Agent 更新持仓与 Decision Log。Agent 不得假装已从券商自动同步。
 
 ## 7. 场景三：交易后记录
 
-用户告知成交明细并允许写入后，更新两处。
+用户告知成交明细后，Agent 更新两处。
 
 ### 7.1 更新持仓快照
 
@@ -559,12 +559,11 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 3. 将过期数据在来源登记中标记为 `outdated`。
 4. 用新数据重新走 Validation → 继续被阻断的 Pipeline 阶段。
 
-### 误授权或需要撤销授权
+### 误操作需要回退
 
-1. 用户在对话中明确声明撤销：`revoke: read_plan` / `revoke: write` / `revoke: checklist`。
-2. 撤销后对应层级及以上全部失效。
-3. 在 Decision Log 中追加 `revocation` 记录：时间、范围、原因。
-4. 已基于旧授权写入的文件不受影响（已写入是事实），但后续写入须重新获得授权。
+1. 用户在对话中说明需要回退的操作。
+2. 在 Decision Log 中追加 `correction` 记录：时间、范围、原因。
+3. 已写入的文件通过 git revert 回退。
 
 ### 漏读 Skill 或 Prompt
 

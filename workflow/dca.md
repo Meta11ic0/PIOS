@@ -32,7 +32,7 @@
 6. Challenge：仍遵循 [skills/challenge/SKILL.md](../skills/challenge/SKILL.md) 全文：3 反例 + 3 替代 + 3 可能错误，裁决为 `pass` / `revise` / `reject`。
 7. Decision：确认原结论仍在有效期内且本次金额未超授权边界；否则回退完整路径。
 8. Documentation：优先追加到原 Decision Log；条件变化则新建。
-9. 用户执行：仅当本轮授权仍有效时向用户呈现检查清单；授权范围含产品、方向、数量/限额、订单类型、有效期。Agent 不得下单。用户成交后更新持仓。
+9. 用户执行：Agent 呈现检查清单；Agent 不得下单。用户成交后更新持仓。
 
 ## 完整路径
 

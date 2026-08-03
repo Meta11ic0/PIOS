@@ -16,6 +16,6 @@
 8. 重大再平衡、改目标或改变资产暴露时必须执行 [Committee Skill](../skills/committee/SKILL.md)；不适用时记录理由。
 9. 完成 Review Pipeline 完整八步；禁止因近期涨跌临时修改目标权重。
 10. 形成具体行动边界和执行顺序。
-11. 执行前保存 Decision Log。仅当本轮用户授权范围仍有效时向用户呈现执行清单；Agent 不得下单。用户执行后更新组合数据，并在同一 Decision Log 追加实际执行结果。
+11. 执行前保存 Decision Log。Agent 向用户呈现执行清单；Agent 不得下单。用户执行后更新组合数据，并在同一 Decision Log 追加实际执行结果。
 
 目标配置本身发生变化时，应单独记录原因，不能把“修改目标”包装成普通再平衡。

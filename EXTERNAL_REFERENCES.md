@@ -1,259 +1,184 @@
-# 外部参考分析：Austin Xu 的 Wealth LLM Wiki 系列
+# 外部参考分析
 
-> 分析日期：2026-07-28
-> 分析依据：Building Your Personal Finance Knowledge Base with Claude Code (Part 1)、From LLM Wiki to Investment Agent (Part 2)、The Investment Operating System (Part 3)、wealth-llm-wiki GitHub 仓库、Karpathy LLM Wiki Gist
+> 分析日期：2026-08-03
+> 分析依据：
+> - Austin Xu — [rwh-overlay Lessons (Part 2)](https://austinxyz.github.io/blogs/blog/2026/05/04/rwh-overlay-lessons) / [Investment OS (Part 3)](https://austinxyz.github.io/blogs/blog/2026/05/04/investment-os)
+> - [ai-berkshire](https://github.com/xbtlin/ai-berkshire) — AI 时代价值投资研究框架（14,901 stars）
+> - [wealthfolio](https://github.com/wealthfolio/) — 本地优先的开源组合追踪桌面应用
+> - [ghostfolio](https://github.com/ghostfolio/ghostfolio) — 开源财富管理 Web 应用
 
 ---
 
-## 一、三层知识模型对比
+## 一、ai-berkshire — 主要参考
 
-### 1.1 结构对照
+ai-berkshire 是目前与本项目最接近的参考，两者都是 **Claude Code + 文件驱动 + 多视角审查** 的投资决策辅助系统。其 2024 年实盘收益 +69.29%，2025 年 +66.38%，证明了 AI 辅助投资决策的可行性。
 
-| 层级 | Austin wealth-llm-wiki | PIOS 当前 | 差异 |
-|------|----------------------|-----------|------|
-| L1 - 原始材料 | `raw_material/` — 按分类放调研文章，统一 frontmatter | `raw_material/` — 存在但基本为空（仅 demo），无 frontmatter schema | PIOS 的 raw_material 尚未启用真实内容 |
-| L2 - 结构化知识 | `wiki/` — 按 9 个分类组织，统一 frontmatter，Obsidian MOC | `knowledge/` — 按资产类别分 9+ 子目录 | PIOS 是静态 Markdown，Austin 是 Obsidian wiki（带 frontmatter+DQL） |
-| L3a - 输出/报告 | `publish/` — 虚构案例分析（公开）<br>`output/` — 个人建议（gitignored） | `reports/` — 决策输出（公开） | Austin 区分公开案例和私有建议，PIOS 的报告就是公开产出 |
-| L3b - 决策记录 | 无独立记录层，靠 `/wealth-log` 写投资日志 | `decision_log/` — 结构化决策记录 | PIOS 的 Decision 四结论体系是该层亮点 |
-| 数据库 | 无 | `database/` — ETF screening, portfolio 数据 | PIOS 独有的结构化数据层 |
+### 1.1 架构总览
 
-### 1.2 隐私分层策略
-
-Austin 的隐私模型：
-- `output/` 被 `.gitignore` 完全拒绝入库
-- `wiki/` + `raw_material/` + `publish/` 完全公开，不含个人数据
-- 个人数据（持仓金额、成本、账户余额）只能放在 `output/`
-- CLAUDE.md 硬性规则阻止 AI 把个人数据写入公开目录
-- `.gitignore` 还额外忽略 `.claude/*`、`.obsidian/workspace.json` 等
-
-PIOS 的隐私策略：
-- 整个仓库是私有仓库（git 层面）
-- 无细粒度的目录级隐私标记
-- `.gitignore` 有 `database/products/history/` 等忽略模式
-
-**评估**：PIOS 当前靠"私有仓库"整体控制，缺乏 Austin 的细粒度隔离。这本身不一定是问题——私有仓库已经提供了足够保护。但如果 PIOS 未来有**公开分享**需求（如发布 screening 模型、知识条目），则需要引入 Austin 的目录级隐私策略。
-
-### 1.3 元数据 Schema 对比
-
-Austin 的 raw_material frontmatter:
-```yaml
----
-title: 文件主题
-collected: YYYY-MM-DD
-source_url:
-  - https://...
-freshness: evergreen | annual | volatile
-valid_until: YYYY-MM-DD
-tax_year: YYYY
----
+```
+Skill 层（20 个入口命令）
+  ↓ 调度
+Agent 层（Team Lead → 4 个并行 Agent，各代表一位投资大师）
+  ↓ 调用
+Tool 层（Python 精确计算、MCP 实时检索、报告抽检）
 ```
 
-Austin 的 wiki 条目 frontmatter:
-```yaml
+- **Skill 层**：20 个 `/` 命令，分为深度研究、财报分析、行业筛选、持仓管理、思维工具五类
+- **Agent 层**：`/investment-team` 等命令启动 Team Lead，并行调度 4 个 Agent（巴菲特/芒格/段永平/李录视角），各自独立搜索、独立判断，最后合议
+- **Tool 层**：`tools/financial_rigor.py` 用 `decimal.Decimal` 做精确计算（禁止 LLM 心算），`skills/financial-data.md` 强制双来源交叉验证
+
+### 1.2 与 PIOS 的架构对照
+
+| 维度 | ai-berkshire | PIOS |
+|------|-------------|------|
+| 入口方式 | 20 个独立 `/` 命令，按场景选用 | workflow 文件定义场景入口 → 统一进入 8 步 Pipeline |
+| 审查方式 | `/investment-team` 并行 4 Agent 对抗 | Committee 四席制（配置/暴露/实施/风险反方），编排第 3–6 步 |
+| 输出产物 | 一份完整投研报告（15 节 thesis） | 审查记录 + Decision Log + 可选持仓更新 |
+| 数据层 | `data/` + `reports/` 简单分层 | `database/` 结构化数据 + `knowledge/` + `raw_material/` 三级 |
+| 决策记录 | 报告即记录，无独立 Decision Log | 独立的 Decision Log（四结论、冻结证据、触发器、复核） |
+| 模型选择 | 用户按风险自选（"关键判断用最强模型"） | Agent 跟随会话模型 |
+| 授权 | 无授权体系，建议用 `--dangerously-skip-permissions` | 已决定移除授权体系 |
+
+### 1.3 可借鉴的设计
+
+**A. 反偏见机制 → 强化 PIOS 的 Challenge 阶段**
+
+ai-berkshire 有五层防骗机制：
+
+| 机制 | ai-berkshire 实现 | PIOS 对应 |
+|------|------------------|----------|
+| 信息丰富度评级 | A/B/C 三级，限制低信息输入的结论强度 | 无直接对应，Validation 的 `unknown` 部分覆盖 |
+| 逆向检验 | 芒格视角强制思考"什么情况下会死" | Challenge 阶段的反例+失败情景表 |
+| 快速否决清单 | 8 条红线一票否决 | Decision 五条硬门禁 |
+| 反共识检查 | "聪明人为什么在做空？" | Challenge 的替代方案视角 |
+| 留白原则 | 数据不足时标注灰色地带，不用推测伪装确定性 | Research 的"查不到如实记录" |
+
+PIOS 的 Challenge 阶段已经覆盖了逆向检验和反共识，但**信息丰富度评级**和**快速否决清单**两个机制可以增强。
+
+**B. 精确计算层**
+
+ai-berkshire 严禁 LLM 做数学——PE、市值、DCF 全部走 Python `decimal.Decimal`，偏差 >1% 告警。PIOS 目前没有这一层。这是一个重要的设计缺口：LLM 在计算方面不可靠，需要脚本工具兜底。这个缺口应记入 PROJECT.md。
+
+**C. 技能分类体系**
+
+ai-berkshire 将 20 个 skill 按用户意图分类（深度研究/财报分析/行业筛选/持仓管理/思维工具），而不是按 pipeline 阶段分类。PIOS 的 skill 严格按 pipeline 阶段分类（research / validation / modeling / ...）。两种分类互补——PIOS 的阶段分类适合"有纪律的审查"，ai-berkshire 的意图分类适合"按需使用"。PIOS 可以保留阶段分类，同时在 workflow 层做意图映射。
+
+**D. 无授权运行**
+
+ai-berkshire 官方建议 `claude --dangerously-skip-permissions` 模式运行，没有任何 read-auth / write-auth / checklist-auth 体系。这验证了 PIOS 移除授权体系的决定——同一个生态、同类型项目、有实盘业绩验证。
+
 ---
-title: 条目名称
-category: 账户类型 | 税务策略 | ...
-tags: [tag1, tag2]
-source: "[[raw_material/...]]"
-updated: YYYY-MM-DD
-status: draft | stable | outdated
----
+
+## 二、Austin IOS — 辅助参考
+
+Austin Xu 的两篇文章描述了他从 LLM Wiki 到 Investment Agent 再到 Investment Operating System 的演进。他的 IOS 是一个六阶段框架，与 PIOS 的八阶段 Pipeline 形成互补。
+
+### 2.1 六阶段框架
+
+```
+Idea Generation → Fundamental Research → Technical Confirmation
+  → Portfolio Allocation → Execution → Position Management
 ```
 
-PIOS 当前无统一的 frontmatter schema。`knowledge/` 下文件无元数据标记。
+| Austin IOS | PIOS | 关系 |
+|-----------|------|------|
+| Stage 1: Idea Generation | 无 | PIOS 不生成投资想法，起点是用户提出的问题 |
+| Stage 2: Fundamental Research | Research + Validation + Modeling | PIOS 将"基础研究"拆成三步：取证→核验→可比化 |
+| Stage 3: Technical Confirmation | 无 | PIOS 不覆盖技术分析/趋势确认 |
+| Stage 4: Portfolio Allocation | Reasoning（部分覆盖） | Austin 侧重税务与账户选择，PIOS 侧重目标与约束 |
+| Stage 5: Execution | Decision（act 后核对清单） | Austin 有具体的入场/止损/目标价分析，PIOS 只提供价格区间绑定 |
+| Stage 6: Position Management | Decision Log 触发器 | PIOS 有失效条件和复核触发器，但无系统化监控 |
 
-### 1.4 策略建议
+### 2.2 核心设计原则
 
-**PIOS 不需要照搬 Austin 的结构**，但可以借鉴以下点：
+Austin 总结了五条教训，PIOS 直接借鉴其中三条：
 
-1. **raw_material 的 freshness 标记** — PIOS 的 raw_material 可以引入 freshness 分级（evergreen / annual / volatile），帮助团队判断引用时效
-2. **知识条目的 source 追溯** — knowledge/ 文件如果来自外部调研，建议标注 source URL
-3. **status 标记** — 给 knowledge/ 条目加 draft / stable / outdated 状态，防止使用过期知识
+**A. "脚本取数据，LLM 做解释"**
+
+这是 Austin 最重要的设计原则，与 ai-berkshire 的精确计算层一致。LLM 擅长推理，不擅长回忆事实和计算。PIOS 目前完全依赖 LLM 获取和计算数据。**需要引入工具层来取数据**——先记入 PROJECT.md 作为已知缺口。
+
+**B. "目录边界是承重墙"**
+
+`raw_material/`、`knowledge/`、`reports/`、`decision_log/` 之间的边界一旦模糊，整个系统的可追溯性就崩塌。PIOS 已在 ARCHITECTURE.md §3.5.1 定义了数据生命周期和信任阶梯，需要保持这一纪律。
+
+**C. "从痛点建工作流"**
+
+不要先设计完整的 AI 投资顾问再逆向推导功能。从具体痛点（"QDII 限购了，我能买什么"）出发建 workflow，再逐步泛化。PIOS 当前的 workflow（buy_etf、sell_etf、dca 等）符合这一原则。
+
+### 2.3 PIOS 无需借鉴的部分
+
+- **14 个自定义命令**：Austin 的命令体系针对美股个股，PIOS 的 focus 是中国大陆证券账户可交易的场内跨境 ETF。场景不同，不需要照搬。
+- **Obsidian 集成**：PIOS 以 Claude Code 终端为主要交互界面，Obsidian 作为阅读工具是锦上添花，不是必需。
+- **Quartz 发布**：PIOS 是私有仓库，暂无公开分享需求。
+- **隐私分层（公开/私有目录）**：PIOS 整个仓库私有，不需要目录级隐私隔离。
 
 ---
 
-## 二、Skill 自动化设计
+## 三、wealthfolio & ghostfolio — 应用层参考
 
-### 2.1 Austin 的 Skill 体系
+这两个项目是传统投资组合管理应用，不涉及 AI 决策。它们的参考价值在于**数据模型**和**设计哲学**。
 
-wealth-llm-wiki 共有 5 个核心 skill：
+### 3.1 wealthfolio
 
-| Skill | 类型 | 功能 | 适用场景 |
-|-------|------|------|---------|
-| `/wealth-advise` | 面向用户 | 读取 wiki + output/ 生成个性化建议 | 日常使用 |
-| `/wealth-extract` | 维护型 | raw_material → wiki 提炼 | 作者维护 |
-| `/wealth-sync` | 维护型 | raw_material 增量回补 wiki | 作者维护 |
-| `/wealth-audit` | 质量型 | 四维质量审计 | 质量保证 |
-| `/wealth-freshness` | 维护型 | 时效扫描与更新 | 知识保鲜 |
+- **定位**：本地优先的桌面应用（Rust/Tauri），隐私至上
+- **核心理念**：数据在本地，不经过任何服务器。这与 PIOS 的"文件即数据库"理念一致
+- **功能范围**：持仓追踪、业绩分析、目标规划、Addon 扩展系统
+- **对 PIOS 的参考价值**：Addon 扩展系统——允许社区贡献功能模块。PIOS 可以借鉴这个思路，将 workflow 和 skill 设计为可插拔模块
+- **关键区别**：wealthfolio 是"记录你做了什么"（事后），PIOS 是"帮你审查该不该做"（事前）。两者解决的问题不同
 
-rwh-overlay 另有 14 个投资操作命令（见下文 2.3）。
+### 3.2 ghostfolio
 
-### 2.2 PIOS 当前 Skill 体系
+- **定位**：开源财富管理 Web 应用（Angular/NestJS/Prisma/PostgreSQL），支持自托管
+- **核心理念**：为忙碌的人提供数据驱动的投资决策支持
+- **功能范围**：多账户管理、交易记录、组合业绩（ROAI）、风险分析、导入导出
+- **对 PIOS 的参考价值**：
+  - 数据模型设计——账户、交易、持仓之间的关系建模
+  - 组合分析维度——集中度、货币暴露、板块分布等 PIOS 可以纳入 Reasoning 阶段的检查项
+- **关键区别**：ghostfolio 是完整应用（需要部署、数据库、前端），PIOS 是零运维的文件驱动系统。PIOS 不需要成为应用
 
-PIOS 有 10 个 skill，按功能分：
-- **决策类**：committee, decision, reasoning, challenge, risk
-- **研究类**：research
-- **质量类**：validation
-- **支持类**：documentation, modeling, humanizer-zh
+---
 
-对比来看，Austin 有**运维型 skill**（extract, sync, freshness），PIOS 则全是**认知/决策型 skill**。
+## 四、PIOS 的差异化定位
 
-### 2.3 rwh-overlay 的 14 个命令
+### 4.1 各项目的定位光谱
 
-Austin 在 Part 2 中列出了 rwh-overlay 的全部命令，分为五个职能组：
+```
+"发现机会"                           "验证决策"                        "追踪结果"
+ai-berkshire                          PIOS                      wealthfolio/ghostfolio
+多视角投研 + 生成 thesis              八步审查 + 门禁 + 留痕           持仓追踪 + 业绩分析
+```
 
-| 职能 | 命令 | 说明 |
+PIOS 填补的是**决策纪律**这个空白——不是帮你发现买什么，也不是帮你记录买了什么，而是在"有想法"和"执行"之间加一层结构化的审查。
+
+### 4.2 PIOS 的独特优势（相比三个外部参考）
+
+| 优势 | 说明 | 外部参考状况 |
+|------|------|------------|
+| **8 阶段审查 Pipeline** | 从取证到留痕的完整阶段契约，每步有明确的放行/阻断条件 | ai-berkshire 无阶段化 pipeline，Austin IOS 有 6 阶段但侧重执行 |
+| **Committee 四席对抗** | 配置/暴露/实施/风险反方四个视角的正式对抗审查 | ai-berkshire 有四大师分析但侧重研究，不是决策门禁 |
+| **Decision Log 体系** | 四结论 + 冻结证据 + 触发器 + 追溯链 | 三个参考项目均无独立的决策记录层 |
+| **Data Contracts** | 数据时效分类 + 最大年龄 + 超期阻断 | 三个参考项目均无数据时效管理体系 |
+| **结构化数据库** | `database/` 下的产品筛选、组合数据、来源登记 | ai-berkshire 有 `data/` 但非结构化 |
+| **纯文件驱动** | 零数据库、零部署、Git 即后端 | ghostfolio 需要 PostgreSQL + Redis，wealthfolio 需要桌面应用安装 |
+
+### 4.3 从外部参考确认的设计缺口
+
+| 缺口 | 来源 | 处理 |
 |------|------|------|
-| 知识维护 | `/kb-sync` | 合并上游 RWH wiki + 自己的 overlay 分析 |
-| 个股研究 | `/stock-analyze`, `/stock-refresh`, `/stock-entry` | 全管线研究 pipeline |
-| 日常监控 | `/morning-check`, `/morning-check ALL` | 开盘前决策检查 |
-| ETF 分析 | `/etf-analyze`, `/etf-check` | ETF 深度分析及板块 DCA 决策 |
-| 信息整合 | `/chen-integrate`, `/chen-validate` | 第三方分析交叉验证 |
-| 周期报告 | `/market-daily`, `/market-weekly`, `/market-monthly`, `/market-quarterly` | 定期审计报告 |
-
-这 14 个命令加上 5 个核心 skill，形成了完整的工作流体系。
-
-### 2.4 PIOS 可借鉴的 Skill 类型
-
-**高优先级——引入运维型 Skill：**
-
-1. **`/knowledge-sync`** — 扫描 raw_material/ 中的新文件，与 knowledge/ 对比，输出未处理材料清单（类似 Austin 的 `/wealth-sync`）
-2. **`/knowledge-extract`** — 从 raw_material 文章提炼 knowledge/ 条目（类似 `/wealth-extract`）
-3. **`/knowledge-audit`** — 检查 knowledge/ 条目的质量、完整性、时效性（类似 `/wealth-audit`）
-4. **`/portfolio-refresh`** — 扫描 portfolio 数据库，检查数据完整性，报告异常值（类似 rwh-overlay 的周期命令）
-
-**中优先级——引入投资操作命令：**
-
-1. **`/asset-analyze <TICKER>`** — 全管线研究 pipeline，调用 research → modeling → reasoning → risk → challenge，输出结构化 thesis（对应 PIOS 的 8 阶段 Pipeline）
-2. **`/dca-check`** — DCA 条件检查，比对目标配置偏离度、市场环境、限价可用性（对应 workflow/dca.md 的自动化版本）
-3. **`/rebalance-scan`** — 扫描当前持仓 vs 目标配置，生成调仓候选列表（对应 workflow/rebalance.md 的自动化版本）
-
-### 2.5 CLAUDE.md 内容结构对比
-
-| 维度 | Austin wealth-llm-wiki | PIOS |
-|------|----------------------|------|
-| 核心概念 | 三层知识库说明 + 隐私规则 + schema 定义 | 通过 AGENTS.md 引用 prompts/ 和 skills/ |
-| Schema | raw_material 和 wiki 条目的 frontmatter 完全定义 | 无统一 frontmatter schema，依赖 data_contracts.md |
-| 隐私规则 | 硬性规则（什么不能做）+ git push 前检查 | 依赖仓库级别管理 |
-| Skill 矩阵 | 3+ 个 skill 的触发条件速查 | 通过 AGENTS.md 引用，CLAUDE.md 自身轻量 |
-
-**借鉴点**：PIOS 的 CLAUDE.md 设计理念不同——它专注于入口和引用，把规则正文下放到 prompts/ 和 skills/。这是合理的设计，不需要改为 Austin 的模式。但可以在 CLAUDE.md 中增加一个"可执行 skill 速查表"，简化会话启动时的认知负担。
+| 精确计算工具层 | ai-berkshire + Austin | 记入 PROJECT.md，后续引入 |
+| 信息丰富度评级 | ai-berkshire | 考虑增强 Validation 阶段 |
+| Execution/Position Management 阶段 | Austin IOS | 记入 PROJECT.md，未来扩展 |
+| 运维型 Skill（知识同步/提取/保鲜） | Austin | 记入 PROJECT.md，后续评估 |
+| 无授权运行 | ai-berkshire | 已决定采纳 |
 
 ---
 
-## 三、知识增长路径
+## 五、参考项目链接
 
-### 3.1 "先脚手架再填内容"策略
-
-Austin 的构建顺序：
-1. 用一条 prompt 初始化目录结构和 CLAUDE.md
-2. 创建知识骨架：先建目录和 index.md（MOC 页），列出待建条目
-3. 按需填充：有研究需求时才填充具体条目
-
-这与 PIOS 当前策略一致——PIOS 已经建立了目录结构和框架。差异在于：
-- PIOS 的 knowledge/ 条目没有统一的 frontmatter 和 MOC 索引
-- PIOS 的 raw_material/ 还没有填充真实内容
-
-### 3.2 Obsidian 集成
-
-Austin 将整个仓库作为 Obsidian vault 直接打开，利用：
-- Dataview 插件 — 用 DQL 查询 wiki（"列出所有 tagged retirement 的条目"）
-- Templater 插件 — 个人 situation 文件的模板
-- Graph View — 可视化知识关联
-- WikiLink — `[[wiki/分类/文件名]]` 的内部链接
-
-PIOS 的 knowledge/ 是普通 Markdown 文件，不支持 Obsidian 原生浏览。
-
-**思考**：PIOS 是否需要 Obsidian 集成？取决于使用习惯。如果 PIOS 的主要交互发生在 Claude Code 终端，Obsidian 的价值有限。但如果用户希望_阅读_知识条目时获得更好的浏览体验，Obsidian 集成值得考虑——Cost 很低（只是 Markdown 格式兼容），Benefit 很高（免费图谱浏览）。
-
-### 3.3 Quartz 发布策略
-
-Austin 用 Quartz 将 wiki/ 内容发布为静态网站：
-- 仅发布 wiki/，output/ 保持私有
-- WikiLink 需要完整路径以兼容 Quartz 渲染
-- 可选的发布粒度：仅 wiki，或 wiki+raw_material
-
-PIOS 暂无发布需求。如果未来需要公开 knowledge/ 或 screening 模型，Quartz 路线值得参考。
-
-### 3.4 知识保鲜机制
-
-Austin 的 freshness 体系是一个亮点：
-- `freshness` 三级分类 (evergreen / annual / volatile)
-- `valid_until` 日期标记
-- `/wealth-freshness` skill 定时扫描过期条目
-- wiki 条目的 freshness 从 raw_material 源头继承（多来源取最不稳定档）
-
-PIOS 当前没有知识保鲜机制。随着 knowledge/ 增长，这个问题会越来越突出。
-
-**借鉴点**：引入一个轻量的 freshness 标记体系（不需要像 Austin 那样严格），定期扫描 outdated 条目。
-
----
-
-## 四、可借鉴清单（优先级排序）
-
-| 优先级 | 借鉴内容 | PIOS 目标文件/位置 | 具体做法 | 预期收益 |
-|--------|----------|-------------------|----------|----------|
-| **P0** | raw_material frontmatter schema | `raw_material/README.md` + 示例文件 | 为 raw_material 文件定义统一 frontmatter（title, collected, source_url, freshness），并修改 README 说明 | 建立可追溯、可时效评估的调研材料基线 |
-| **P0** | knowledge/ freshness + status 标记 | `knowledge/` 下各个 SKILL.md 或 README | 在知识条目的 frontmatter 或文件头部加 `status: draft\|stable\|outdated` 和 `source` 追溯；建立定期审计机制 | 防止使用过期知识做决策 |
-| **P0** | 运维型 Skill：`/knowledge-sync` | `skills/sync/` (新建) 或合并入 research | 扫描 raw_material/ 与 knowledge/ 比对，输出未处理调研材料的表格 | 消除 raw_material 的"入库断层" |
-| **P1** | 运维型 Skill：`/knowledge-extract` | `skills/extract/` (新建) | 从 raw_material 提炼 knowledge/ 条目，调用 research → validation | 标准化知识提取流程，减少人工编写负担 |
-| **P1** | 运维型 Skill：`/portfolio-refresh` | 整合入现有 skill | 扫描 database/portfolio/ 和 database/products/，检查数据完整性，报告异常 | 保持数据库质量 |
-| **P1** | PIOS CLAUDE.md 增加 skill 速查表 | `CLAUDE.md` | 在 CLAUDE.md 末尾加一段 2-3 行的 skill 触发条件速查（类似 Austin 的"配套 Skills 的使用"表格） | 降低会话启动时的认知负担 |
-| **P2** | Obsidian 兼容 | `knowledge/` 文件 | 考虑在 knowledge/ 文件头部加 Obsidian 兼容的 YAML frontmatter，可选的 WikiLink 支持 | 零成本获得图谱浏览能力 |
-| **P2** | DCA 自动化命令 | `skills/dca/` 或集成到 workflow | 将 `workflow/dca.md` 的检查逻辑封装为 `/dca-check` skill | 把流程文档变成可执行命令 |
-| **P3** | Quartz 发布模板 | 独立的发布仓库 | 如果未来需要公开知识条目，参考 Quartz 的部署模式 | 知识产出的发布通道 |
-| **P3** | Freshness 定时扫描 | 新的 cron 或定时 skill | 类似 `/wealth-freshness`，定期扫描过期条目并更新 `valid_until` | 知识体系长期自治 |
-
----
-
-## 五、关键洞察总结
-
-### 5.1 PIOS 的独特优势
-
-与 Austin 的体系相比，PIOS 有以下差异化优势：
-
-1. **结构化数据库** — `database/` 下的 product screening、portfolio 数据、市场信息是 Austin 体系没有的数据层，也是 PIOS 的差异化竞争力
-2. **8 阶段 Review Pipeline** — PIOS 有明确的阶段式审查流程，而 Austin 的流程更多是自由形式
-3. **Decision 四结论体系** — PIOS 的决策记录（行动、等待、拒绝、失效）比 Austin 的 `/wealth-log` 更结构化
-4. **Committee四席制** — PIOS 有正式的挑战/对抗机制，Austin 没有此类设计
-
-### 5.2 Austin 可借鉴的差异化优势
-
-1. **运维型 Skill** — Austin 把"维护知识库本身"作为一种 skill 类型来支持，PIOS 缺乏这类元维护能力
-2. **freshness 元数据** — Austin 为每个知识条目标记时效性，PIOS 没有
-3. **工作流即产品** — Austin 的 4 个核心工作流（个股研究、日常监控、ETF DCA、定期审查）比 PIOS 的 workflow 更完整
-4. **从 pain 出发的设计** — Austin 的每条命令都源于具体痛点，这比"设计完整投资系统再逆向工作"更实际
-
-### 5.3 关于 Part 2 的核心教训
-
-Austin 在 Part 2 中总结了 5 条教训，PIOS 应重视：
-
-1. **与上游解耦** — PIOS 目前没有上游依赖问题，但如果未来引入外部数据源，需要设计清晰的解耦策略
-2. **从痛点建工作流** — 不是设计完整的 AI 投资顾问再倒推功能，而是从具体痛点开始
-3. **脚本取数据，LLM 做解释** — LLM 擅长推理，不擅长回忆事实。获取数据用脚本，分析数据交给 LLM。这是 PIOS 设计 Command 时的重要原则
-4. **目录边界是承重墙** — PIOS 的 database/knowledge/reports/decision_log 已有明确划分，需保持
-5. **知道扩展极限** — 当知识条目突破上下文窗口限制时 RAG 不再是选择而是必需
-
-### 5.4 关于 Part 3 的六阶段框架
-
-Austin 的 IOS 六阶段框架（Idea → Research → Technical → Allocation → Execution → Management）与 PIOS 的 8 阶段 Pipeline（Research → Validation → Modeling → Reasoning → Risk → Challenge → Decision → Documentation）有互补性：
-
-- IOS 的阶段 1-2-3 对应 PIOS 的 Research-Modeling-Reasoning
-- IOS 的阶段 4-5-6（分配、执行、持仓管理）是 PIOS 未系统覆盖的
-- PIOS 的 Validation-Risk-Challenge-Documentation 是 IOS 未系统覆盖的
-
-PIOS 可考虑在工作流层面补充"执行后管理"阶段（Position Management），完成从研究到退出的全生命周期覆盖。
-
----
-
-## 六、原始资料清单
-
-以下为分析所依据的原始资料：
-
-1. **Part 1** — [Building Your Personal Finance Knowledge Base with Claude Code](https://austinxyz.github.io/blogs/blog/2026/05/04/wealth-llm-wiki)
-2. **Part 2** — [From LLM Wiki to Investment Agent: Lessons from Building rwh-overlay](https://austinxyz.github.io/blogs/blog/2026/05/04/rwh-overlay-lessons)
-3. **Part 3** — [The Investment Operating System](https://austinxyz.github.io/blogs/blog/2026/05/04/investment-os)
-4. **GitHub 仓库** — [austinxyz/wealth-llm-wiki](https://github.com/austinxyz/wealth-llm-wiki)
-5. **Karpathy LLM Wiki Gist** — https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
-6. **RWH 仓库** — [kgajjala/rwh](https://github.com/kgajjala/rwh)
-7. **finance-skills** — [kgajjala/finance-skills](https://github.com/kgajjala/finance-skills)
+| 项目 | 链接 | 关注点 |
+|------|------|--------|
+| ai-berkshire | https://github.com/xbtlin/ai-berkshire | 主要参考：Skill/Agent/Tool 架构、反偏见机制、精确计算层 |
+| Austin — rwh-overlay Lessons | https://austinxyz.github.io/blogs/blog/2026/05/04/rwh-overlay-lessons | 设计原则：脚本取数据/LLM 做解释、目录边界、从痛点出发 |
+| Austin — Investment OS | https://austinxyz.github.io/blogs/blog/2026/05/04/investment-os | 六阶段框架、命令体系、金融技能集成 |
+| wealthfolio | https://github.com/wealthfolio/ | 本地优先哲学、Addon 扩展模式 |
+| ghostfolio | https://github.com/ghostfolio/ghostfolio | 数据模型参考、组合分析维度 |

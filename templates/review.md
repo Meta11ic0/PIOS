@@ -14,6 +14,7 @@ information_cutoff_at:
 pipeline_version:
 ips_id:
 source_refs: []
+references_review_ids: []
 upstream_ids: []
 run_id:
 committee_id:

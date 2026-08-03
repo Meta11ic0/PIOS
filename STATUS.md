@@ -20,21 +20,6 @@
 | 8. 筛选运行输入 | 缺失 | [runs 模板](database/screening/runs/_template.yaml) | 使用已核验生产数据生成字段比较 run；排除 `runs/demo/`。 |
 | 9. Committee 输入包 | 缺失 | [Committee Skill](skills/committee/SKILL.md) | 补齐 IPS、组合、候选动作和已核验资料后再使用。 |
 
-## 已知文档缺口
-
-面向人的说明仍缺两块（不影响门禁语义；补齐前靠 `AGENTS.md` / `skills/` 与会话讲解兜底）：
-
-| 缺口 | 现状 | 建议落点 | 原始记录 |
-|---|---|---|---|
-| Read 清单无固定格式 | `AGENTS.md` 只规定「须列出」与最少覆盖项；无模板/版式；`templates/` 无开场清单样例 | 在 `AGENTS.md` 或 `templates/` 增加开场清单样例（Agent 侧短格式即可） | [AGENTS.md](AGENTS.md)「Read 清单」、[review_pipeline 授权表](prompts/review_pipeline.md) |
-| Pipeline 逐步「做什么」缺用户向讲解 | `review_pipeline` / 各 Skill 仍是契约正文；[ARCHITECTURE.md](ARCHITECTURE.md)「快速入门」已补框架 + 路径 A/B 人机分工，逐步细例仍可再补 | 继续在快速入门或模块节用例子补 Modeling/Reasoning 等 | [ARCHITECTURE.md](ARCHITECTURE.md)「快速入门」、[review_pipeline.md](prompts/review_pipeline.md) |
-
-## 进行中
-
-| 对象 | 工作状态 | 下一步 | 阻塞 | 原始记录 |
-|---|---|---|---|---|
-| 架构与门禁硬化 | active | 按初始化顺序录入真实非敏感数据 | 无真实组合数据 | [架构说明](ARCHITECTURE.md) |
-
 ## 待复核
 
 当前没有已登记的生产 Decision 或知识条目复核日期。新增工件时在其 `review_at` 字段登记，并在本表添加链接。`decision_log/demo/` 与 `reports/demo/` 不计入生产复核。
