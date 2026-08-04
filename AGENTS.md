@@ -16,7 +16,7 @@ Agent 可直接读写仓库文件，每次写入后在对话中明确告知改�
 
 - 本文件
 - 下节规定的 Prompt
-- 投资行动时：将用到的 `skills/<name>/SKILL.md`；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序时含 `skills/committee/SKILL.md`
+- 投资行动时：将用到的 `skills/<name>/SKILL.md`；新资产暴露、首次买入、改目标、重大再平衡或 产品排序时含 `skills/committee/SKILL.md`
 - 有场景入口时：对应 `workflow/*.md`
 
 未按触发条件加载对应 Prompt/Skill 时，不得推进该结论或写入。
@@ -71,7 +71,7 @@ Prompt 是常驻规则。阶段顺序在 [`review_pipeline.md`](prompts/review_p
 | Reasoning | [skills/reasoning/SKILL.md](skills/reasoning/SKILL.md) | 4 | 分析为什么、为何现在、为何该方案 |
 | Risk | [skills/risk/SKILL.md](skills/risk/SKILL.md) | 5 | 任何投资行动、产品审核或组合复核 |
 | Challenge | [skills/challenge/SKILL.md](skills/challenge/SKILL.md) | 6 | 形成建议或重大个人决策前 |
-| Committee（辅助） | [skills/committee/SKILL.md](skills/committee/SKILL.md) | 3–6 编排 | 新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序 |
+| Committee（辅助） | [skills/committee/SKILL.md](skills/committee/SKILL.md) | 3–6 编排 | 新资产暴露、首次买入、改目标、重大再平衡或 产品排序 |
 | Decision | [skills/decision/SKILL.md](skills/decision/SKILL.md) | 7 | 完成审查流水线或比较行动方案 |
 | Documentation | [skills/documentation/SKILL.md](skills/documentation/SKILL.md) | 8 | 生成报告、更新知识库或记录决策 |
 

@@ -13,7 +13,7 @@
 
 任何阶段发现关键数据缺失、来源冲突未解决或风险超出约束，应暂停决策，不得跳过后续问题直接推荐。
 
-**审查深度**：例行小额定投可走轻量路径，跳过 Committee 但仍须完成八步的简化检查。新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序必须走完整路径（含 Committee）。
+**审查深度**：例行小额定投可走轻量路径，跳过 Committee 但仍须完成八步的简化检查。新资产暴露、首次买入、改目标、重大再平衡或 产品排序必须走完整路径（含 Committee）。
 
 每个阶段都回答：
 
@@ -44,7 +44,7 @@
 
 `act` 仅为结论，表示建议满足执行条件，绝不表示已获交易授权或已执行。用户授权与用户自行交易的结果须在 Decision Log 中独立记录；本系统不代下单、不接入券商交易 API。
 
-新资产暴露、首次买入、目标配置变更、重大再平衡或 ETF 排序时，必须调用 `skills/committee/SKILL.md`；例行小额定投除外。Committee 只编排既有阶段：其 `fail`/`unknown`、IPS 硬约束冲突、Risk `Critical` 或反方 `revise`/`reject` 均阻断 Decision；它不新增 Pipeline 阶段，也不以多数表决替代证据。`unknown` 演示只证明停止条件成立，不代表 Modeling 或 Decision 已通过。**触发条件不适用时**，Agent 须在审查记录的 Committee 节写明不适用理由，不可跳过不记录。
+新资产暴露、首次买入、目标配置变更、重大再平衡或 产品排序时，必须调用 `skills/committee/SKILL.md`；例行小额定投除外。Committee 只编排既有阶段：其 `fail`/`unknown`、IPS 硬约束冲突、Risk `Critical` 或反方 `revise`/`reject` 均阻断 Decision；它不新增 Pipeline 阶段，也不以多数表决替代证据。`unknown` 演示只证明停止条件成立，不代表 Modeling 或 Decision 已通过。**触发条件不适用时**，Agent 须在审查记录的 Committee 节写明不适用理由，不可跳过不记录。
 
 ## 审查记录生命周期
 
