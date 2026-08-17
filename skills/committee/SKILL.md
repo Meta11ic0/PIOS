@@ -5,7 +5,7 @@ description: 对新资产暴露、首次买入、目标配置变更、重大再�
 
 # Committee
 
-Committee 是 Review Pipeline 第 3–6 阶段的编排辅助，不是第九阶段，不替代 Modeling、Reasoning、Risk 或 Challenge。不新增 Pipeline 阶段，不以投票或平均分代替事实核验。
+Committee 是 DD Pipeline 第 3–6 阶段的编排辅助，不是第九阶段，不替代 Modeling、Reasoning、Risk 或 Challenge。不新增 Pipeline 阶段，不以投票或平均分代替事实核验。
 
 ## 触发条件
 
@@ -65,7 +65,7 @@ Committee 是 Review Pipeline 第 3–6 阶段的编排辅助，不是第九阶�
 
 ## 统一输出
 
-在审查记录 Committee 节记录：
+在 DD 记录 Committee 节记录：
 
 ```text
 committee_id:

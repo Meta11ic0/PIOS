@@ -2,7 +2,7 @@
 
 状态：active
 
-再平衡属于调仓行动，必须按 [Review Pipeline](../prompts/review_pipeline.md) 完整八步执行；深度见 [OPERATIONS.md](../OPERATIONS.md)「审查深度分级」。细则在各 Skill，本文不重复展开。
+再平衡属于调仓行动，必须按 [DD Pipeline](../prompts/dd_pipeline.md) 完整八步执行；深度见 [OPERATIONS.md](../OPERATIONS.md)「DD 深度分级」。细则在各 Skill，本文不重复展开。
 
 ## 流程
 
@@ -14,7 +14,7 @@
 6. 计算交易费、税费、价差、折溢价和机会成本。
 7. 比较一次调整与分批调整，列出各自风险。
 8. 重大再平衡、改目标或改变资产暴露时必须执行 [Committee Skill](../skills/committee/SKILL.md)；不适用时记录理由。
-9. 完成 Review Pipeline 完整八步；禁止因近期涨跌临时修改目标权重。
+9. 完成 DD Pipeline 完整八步；禁止因近期涨跌临时修改目标权重。
 10. 形成具体行动边界和执行顺序。
 11. 执行前保存 Decision Log。Agent 向用户呈现执行清单；Agent 不得下单。用户执行后更新组合数据，并在同一 Decision Log 追加实际执行结果。
 

@@ -1,7 +1,7 @@
 ---
 id: research-demo-non-action-v1
 type: research_note
-title: 非行动演示：关键输入缺失时停止审查
+title: 非行动演示：关键输入缺失时停止 DD
 work_status: closed
 data_status: unknown
 created_at: 2026-07-27T15:40:00+08:00
@@ -26,7 +26,7 @@ scope: demo_only
 - 组合、产品和动态数据：空白骨架。
 - Validation：`unknown`；关键数据缺失，不能放行到比较或行动。
 
-# 审查运行
+# DD 运行
 
 运行包：[2026-07-27-demo-non-action-v0.1.yaml](../../database/screening/runs/demo/2026-07-27-demo-non-action-v0.1.yaml)。
 

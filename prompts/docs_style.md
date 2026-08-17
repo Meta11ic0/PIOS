@@ -14,7 +14,7 @@
 
 - CSV 表头、schema、数据契约字段名
 - Decision Log 冻结字段与状态取值
-- Review Pipeline 停止条件、放行/阻断条件、阶段契约表
+- DD Pipeline 停止条件、放行/阻断条件、阶段契约表
 - Skill / workflow 中的硬门槛
 
 ## 规则

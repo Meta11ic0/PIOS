@@ -1,6 +1,6 @@
 # PIOS — Agent 入口
 
-仓库是个人投资决策操作系统：文件 + 审查流水线 + AI 辅助。目标是让每条判断事后可追溯——当时看见什么、为何这样选、何时该失效。
+仓库是个人投资决策操作系统：文件 + DD 流水线 + AI 辅助。目标是让每条判断事后可追溯——当时看见什么、为何这样选、何时该失效。
 
 可执行规则正文只在 [`prompts/`](prompts/) 与 [`skills/`](skills/)。读完本文件不等于读完规则正文；动手前须 Read 对应正文。
 
@@ -8,9 +8,9 @@
 
 ## Read 清单
 
-动手前列出本轮将 Read 的文件，并**显式标注本轮类型**：`[知识调研]` 或 `[投资动作审查]`。涉及买入、卖出、持有、定投、调仓、产品排序任一即为投资动作审查。涉及投资行动时同时列出将执行的 Pipeline 阶段。
+动手前列出本轮将 Read 的文件，并**显式标注本轮类型**：`[知识调研]` 或 `[投资动作 DD]`。涉及买入、卖出、持有、定投、调仓、产品排序任一即为投资动作 DD。涉及投资行动时同时列出将执行的 Pipeline 阶段。
 
-Agent 可直接读写仓库文件，每次写入后在对话中明确告知改了什么；用户通过 `git diff` 审核变更。本系统不接入券商、不代下单。
+Agent 可直接读写仓库文件（推荐用户使用 git 进行文件管理；Agent 在没有收到明确指令之前不会执行 git 操作），每次写入后在对话中明确告知改了什么；用户通过 `git diff` 审核变更。本系统不接入券商、不代下单。
 
 清单至少覆盖：
 
@@ -33,18 +33,18 @@ Agent 可直接读写仓库文件，每次写入后在对话中明确告知改�
 6. **免责与交易边界**：不构成投资建议。不接入券商、不自动下单、不代下单、不设计或接入券商交易 API。`act` 仅为结论，不是交易授权。用户自行在券商操作。
 7. **停止条件**：关键数据缺失、来源冲突未解决、或风险超出约束时，暂停并输出 `research` / `wait` / `reject`，不得跳过问题继续推荐。
 
-细则见 [`citation.md`](prompts/citation.md)、[`review_pipeline.md`](prompts/review_pipeline.md)、[`data_contracts.md`](database/data_contracts.md)。
+细则见 [`citation.md`](prompts/citation.md)、[`dd_pipeline.md`](prompts/dd_pipeline.md)、[`data_contracts.md`](database/data_contracts.md)。
 
 ## Prompt 加载
 
-Prompt 是常驻规则。阶段顺序在 [`review_pipeline.md`](prompts/review_pipeline.md) 与各 Skill。得出结论后不要再跑后置 Prompt 校验。
+Prompt 是常驻规则。阶段顺序在 [`dd_pipeline.md`](prompts/dd_pipeline.md) 与各 Skill。得出结论后不要再跑后置 Prompt 校验。
 
 ### 加载时机
 
 | 时机 | Read | 说明 |
 |------|------|------|
 | 会话开始 | [`system.md`](prompts/system.md)、[`answer_style.md`](prompts/answer_style.md)、[`citation.md`](prompts/citation.md) | 必读 |
-| 本轮涉及买入、卖出、持有、定投、调仓或产品排序 | 同时 Read [`review_pipeline.md`](prompts/review_pipeline.md) | 严格按全文执行八步与停止条件 |
+| 本轮涉及买入、卖出、持有、定投、调仓或产品排序 | 同时 Read [`dd_pipeline.md`](prompts/dd_pipeline.md) | 严格按全文执行八步与停止条件 |
 | 编写或改写仓库说明 | 再 Read [`docs_style.md`](prompts/docs_style.md) | 纯投资行动且不改文档时不必读 |
 | 投资行动各阶段 | 按阶段 Read 对应 `skills/*/SKILL.md` | Committee 触发场景再读 committee |
 
@@ -55,13 +55,13 @@ Prompt 是常驻规则。阶段顺序在 [`review_pipeline.md`](prompts/review_p
 权威定义见：
 
 - [`skills/decision/SKILL.md`](skills/decision/SKILL.md) — 四结论、硬门禁 5 条、镜像测试、价格区间绑定
-- [`prompts/review_pipeline.md`](prompts/review_pipeline.md) — 阶段契约表、停止条件、Committee 触发
+- [`prompts/dd_pipeline.md`](prompts/dd_pipeline.md) — 阶段契约表、停止条件、Committee 触发
 
 索引提示：`act` 仅 Decision 阶段可讨论，须同时满足 IPS 状态为 `active`、有效目标配置、时效内动态事实、Validation/Risk/Challenge/Committee 门禁通过、适用例外已批准；缺一项则落到 `wait` / `reject` / `research`。`act` 仅为结论，不是交易授权。
 
 ## Skills
 
-涉及买入、卖出、持有、定投、调仓或产品排序时，按 Review Pipeline 顺序：Research → … → Documentation。
+涉及买入、卖出、持有、定投、调仓或产品排序时，按 DD Pipeline 顺序：Research → … → Documentation。
 
 | 阶段 | Skill 路径 | Pipeline | 何时加载 |
 |------|------------|:--------:|----------|
@@ -72,7 +72,7 @@ Prompt 是常驻规则。阶段顺序在 [`review_pipeline.md`](prompts/review_p
 | Risk | [skills/risk/SKILL.md](skills/risk/SKILL.md) | 5 | 任何投资行动、产品审核或组合复核 |
 | Challenge | [skills/challenge/SKILL.md](skills/challenge/SKILL.md) | 6 | 形成建议或重大个人决策前 |
 | Committee（辅助） | [skills/committee/SKILL.md](skills/committee/SKILL.md) | 3–6 编排 | 新资产暴露、首次买入、改目标、重大再平衡或 产品排序 |
-| Decision | [skills/decision/SKILL.md](skills/decision/SKILL.md) | 7 | 完成审查流水线或比较行动方案 |
+| Decision | [skills/decision/SKILL.md](skills/decision/SKILL.md) | 7 | 完成 DD 流水线或比较行动方案 |
 | Documentation | [skills/documentation/SKILL.md](skills/documentation/SKILL.md) | 8 | 生成报告、更新知识库或记录决策 |
 
 ## 编辑规则

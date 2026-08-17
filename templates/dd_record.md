@@ -1,20 +1,20 @@
 ---
-review_id:
-type: review
+dd_id:
+type: dd_record
 title:
 work_status: draft
 decision_status:
 data_status: unknown
-review_target:
+dd_target:
 created_at:
 updated_at:
-reviewed_at:
+dd_completed_at:
 valid_at:
 information_cutoff_at:
 pipeline_version:
 ips_id:
 source_refs: []
-references_review_ids: []
+references_dd_ids: []
 upstream_ids: []
 run_id:
 committee_id:
@@ -92,7 +92,7 @@ review_trigger:
 - 下一步：
 - 复核触发器：
 
-# Final Review
+# Final Gate
 
 - 是否允许进入 Decision：
 - IPS（Investment Policy Statement，投资政策）状态是否为 `active`、目标配置集是否有效：

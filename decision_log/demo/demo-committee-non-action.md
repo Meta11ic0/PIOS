@@ -13,17 +13,17 @@ content_hash:
 review_at:
 valid_at:
 information_cutoff_at: 2026-07-27T15:51:00+08:00
-pipeline_version: review-pipeline-v1
+pipeline_version: dd-pipeline-v1
 ips_id: ips-personal-v1
 allocation_set_id:
 applicable_exception_ids: []
-review_id: review-demo-committee-non-action-v1
+dd_id: dd-demo-committee-non-action-v1
 run_id: run-demo-committee-non-action-v1
 committee_id: committee-demo-non-action-v1
 source_refs:
   - source-demo-committee-v1
 upstream_ids:
-  - review-demo-committee-non-action-v1
+  - dd-demo-committee-non-action-v1
 parent_decision_id:
 supersedes_decision_id:
 user_authorization: not_required

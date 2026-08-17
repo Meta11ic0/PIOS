@@ -33,7 +33,7 @@ Tool 层（Python 精确计算、MCP 实时检索、报告抽检）
 |------|-------------|------|
 | 入口方式 | 20 个独立 `/` 命令，按场景选用 | workflow 文件定义场景入口 → 统一进入 8 步 Pipeline |
 | 审查方式 | `/investment-team` 并行 4 Agent 对抗 | Committee 四席制（配置/暴露/实施/风险反方），编排第 3–6 步 |
-| 输出产物 | 一份完整投研报告（15 节 thesis） | 审查记录 + Decision Log + 可选持仓更新 |
+| 输出产物 | 一份完整投研报告（15 节 thesis） | DD 记录 + Decision Log + 可选持仓更新 |
 | 数据层 | `data/` + `reports/` 简单分层 | `database/` 结构化数据 + `knowledge/` + `raw_material/` 三级 |
 | 决策记录 | 报告即记录，无独立 Decision Log | 独立的 Decision Log（四结论、冻结证据、触发器、复核） |
 | 模型选择 | 用户按风险自选（"关键判断用最强模型"） | Agent 跟随会话模型 |
@@ -61,7 +61,7 @@ ai-berkshire 严禁 LLM 做数学——PE、市值、DCF 全部走 Python `decim
 
 **C. 技能分类体系**
 
-ai-berkshire 将 20 个 skill 按用户意图分类（深度研究/财报分析/行业筛选/持仓管理/思维工具），而不是按 pipeline 阶段分类。PIOS 的 skill 严格按 pipeline 阶段分类（research / validation / modeling / ...）。两种分类互补——PIOS 的阶段分类适合"有纪律的审查"，ai-berkshire 的意图分类适合"按需使用"。PIOS 可以保留阶段分类，同时在 workflow 层做意图映射。
+ai-berkshire 将 20 个 skill 按用户意图分类（深度研究/财报分析/行业筛选/持仓管理/思维工具），而不是按 pipeline 阶段分类。PIOS 的 skill 严格按 pipeline 阶段分类（research / validation / modeling / ...）。两种分类互补——PIOS 的阶段分类适合"有纪律的 DD"，ai-berkshire 的意图分类适合"按需使用"。PIOS 可以保留阶段分类，同时在 workflow 层做意图映射。
 
 **D. 无授权运行**
 
@@ -145,16 +145,16 @@ Austin 总结了五条教训，PIOS 直接借鉴其中三条：
 ```
 "发现机会"                           "验证决策"                        "追踪结果"
 ai-berkshire                          PIOS                      wealthfolio/ghostfolio
-多视角投研 + 生成 thesis              八步审查 + 门禁 + 留痕           持仓追踪 + 业绩分析
+多视角投研 + 生成 thesis              八步 DD + 门禁 + 留痕           持仓追踪 + 业绩分析
 ```
 
-PIOS 填补的是**决策纪律**这个空白——不是帮你发现买什么，也不是帮你记录买了什么，而是在"有想法"和"执行"之间加一层结构化的审查。
+PIOS 填补的是**决策纪律**这个空白——不是帮你发现买什么，也不是帮你记录买了什么，而是在"有想法"和"执行"之间加一层结构化的 DD。
 
 ### 4.2 PIOS 的独特优势（相比三个外部参考）
 
 | 优势 | 说明 | 外部参考状况 |
 |------|------|------------|
-| **8 阶段审查 Pipeline** | 从取证到留痕的完整阶段契约，每步有明确的放行/阻断条件 | ai-berkshire 无阶段化 pipeline，Austin IOS 有 6 阶段但侧重执行 |
+| **8 阶段 DD Pipeline** | 从取证到留痕的完整阶段契约，每步有明确的放行/阻断条件 | ai-berkshire 无阶段化 pipeline，Austin IOS 有 6 阶段但侧重执行 |
 | **Committee 四席对抗** | 配置/暴露/实施/风险反方四个视角的正式对抗审查 | ai-berkshire 有四大师分析但侧重研究，不是决策门禁 |
 | **Decision Log 体系** | 四结论 + 冻结证据 + 触发器 + 追溯链 | 三个参考项目均无独立的决策记录层 |
 | **Data Contracts** | 数据时效分类 + 最大年龄 + 超期阻断 | 三个参考项目均无数据时效管理体系 |

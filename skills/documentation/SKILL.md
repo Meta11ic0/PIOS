@@ -7,7 +7,7 @@ description: 将投资研究、数据更新和决策沉淀为统一、可追溯�
 
 ## 写入时机
 
-- 审查记录各阶段小节：每步完成后立即写入
+- DD 记录各阶段小节：每步完成后立即写入
 - Decision Log：Decision 阶段完成后创建，Documentation 阶段补完 `frozen_at` 与内容哈希
 - 成交记录：用户告知明细后追加
 

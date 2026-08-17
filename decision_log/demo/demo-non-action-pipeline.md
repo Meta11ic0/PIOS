@@ -13,11 +13,11 @@ content_hash:
 review_at:
 valid_at:
 information_cutoff_at: 2026-07-27T15:40:00+08:00
-pipeline_version: review-pipeline-v1
+pipeline_version: dd-pipeline-v1
 ips_id: ips-personal-v1
 allocation_set_id:
 applicable_exception_ids: []
-review_id:
+dd_id:
 run_id: run-demo-non-action-v1
 committee_id:
 source_refs: []

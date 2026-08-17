@@ -39,4 +39,4 @@
 | 对象 | 关闭日期 | 结果 | 原始记录 |
 |---|---|---|---|
 | 非行动流程演示 | 2026-07-27 | 停止/预检证明：Validation `unknown` 阻断行动，Decision 为 `research`。这不代表 Modeling 已通过。 | [研究](reports/demo/demo-non-action-pipeline.md)、[Decision](decision_log/demo/demo-non-action-pipeline.md) |
-| 非行动 Committee 演示 | 2026-07-27 | 停止/预检证明：输入质量 C，ETF 实施席 `unknown`，Committee 阻断并输出 `research`。 | [审查](reports/demo/demo-committee-non-action-review.md)、[Decision](decision_log/demo/demo-committee-non-action.md) |
+| 非行动 Committee 演示 | 2026-07-27 | 停止/预检证明：输入质量 C，ETF 实施席 `unknown`，Committee 阻断并输出 `research`。 | [DD 记录](reports/demo/demo-committee-non-action-dd.md)、[Decision](decision_log/demo/demo-committee-non-action.md) |

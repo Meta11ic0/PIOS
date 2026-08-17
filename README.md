@@ -1,8 +1,8 @@
 # PIOS
 
-Personal Investment Operating System。用文件和审查流水线管理投资研究、组合数据、审查记录和决策日志——每笔判断事后都能对上：当时看见什么、为何这样选、何时该失效。文件自己维护，需要时让 Claude Code 或 Cursor 按项目规则帮忙。本仓库不接入券商、不自动下单；交易由用户自行完成，系统只记录建议与授权。
+Personal Investment Operating System。用文件和 DD 流水线（DD 即 Due Diligence，行动前的系统核查）管理投资研究、组合数据、DD 记录和决策日志——每笔判断事后都能对上：当时看见什么、为何这样选、何时该失效。文件自己维护，需要时让 Claude Code 或 Cursor 按项目规则帮忙。本仓库不接入券商、不自动下单；交易由用户自行完成，系统只记录建议与授权。
 
-项目起源于一个具体问题：场外 QDII 联接基金限额后，纳指、标普一类的场外定投没法按预期执行，只能去看大陆证券账户可交易的场内跨境 ETF。同一指数下场内产品很多，得尽量凑齐候选集再横向对比。还要弄清境内联接与场内产品各自追踪的源头，以及上游和底层怎么挂在一起。一张简单的清单不够用，就扩成了决策系统：方法、数据口径、组合约束、审查顺序、决策留痕，都要能留下来。
+项目起源于一个具体问题：场外 QDII 联接基金限额后，纳指、标普一类的场外定投没法按预期执行，只能去看大陆证券账户可交易的场内跨境 ETF。同一指数下场内产品很多，得尽量凑齐候选集再横向对比。还要弄清境内联接与场内产品各自追踪的源头，以及上游和底层怎么挂在一起。一张简单的清单不够用，就扩成了决策系统：方法、数据口径、组合约束、DD 顺序、决策留痕，都要能留下来。
 
 业务数据还没补齐，现在不能拿来做真实决策。进度见 [STATUS.md](STATUS.md)。
 
@@ -12,7 +12,7 @@ Personal Investment Operating System。用文件和审查流水线管理投资�
 2. [ARCHITECTURE.md](ARCHITECTURE.md) — 为什么这样设计；「何时调用」见其中「如何串联」
 3. [OPERATIONS.md](OPERATIONS.md) 文首「阅读地图」— 日常怎么用；按需要跳，不必通读
 4. [STATUS.md](STATUS.md) — 开发进度与下一步；初始化从 [investment_policy.md](database/portfolio/investment_policy.md) 开始
-5. 按事找文件：场景看 `workflow/`；操作细节回 OPERATIONS 相关节；审查顺序见 [prompts/review_pipeline.md](prompts/review_pipeline.md)，各步做法见 `skills/`；新暴露、首次买入、改目标、重大再平衡或 ETF 排序时加 [Committee Skill](skills/committee/SKILL.md)
+5. 按事找文件：场景看 `workflow/`；操作细节回 OPERATIONS 相关节；DD 顺序见 [prompts/dd_pipeline.md](prompts/dd_pipeline.md)，各步做法见 `skills/`；新暴露、首次买入、改目标、重大再平衡或 ETF 排序时加 [Committee Skill](skills/committee/SKILL.md)
 
 补数据见 [OPERATIONS.md](OPERATIONS.md)「当前初始化顺序」。
 
@@ -26,7 +26,7 @@ PIOS/
 ├── AGENTS.md                 # 助手入口
 ├── CLAUDE.md                 # Claude Code 入口
 ├── prompts/                  # 项目规则
-├── skills/                   # 各审查阶段怎么做
+├── skills/                   # 各 DD 阶段怎么做
 ├── workflow/                 # 场景步骤
 ├── templates/                # 空白模板
 ├── knowledge/                # 稳定知识

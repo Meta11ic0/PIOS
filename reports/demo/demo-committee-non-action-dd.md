@@ -1,17 +1,17 @@
 ---
-review_id: review-demo-committee-non-action-v1
-type: review
+dd_id: dd-demo-committee-non-action-v1
+type: dd_record
 title: 非行动演示：Committee因关键输入未知而阻断
 work_status: closed
 decision_status: research
 data_status: unknown
-review_target: demo_only
+dd_target: demo_only
 created_at: 2026-07-27T15:51:00+08:00
 updated_at: 2026-07-27T15:51:00+08:00
-reviewed_at: 2026-07-27T15:51:00+08:00
+dd_completed_at: 2026-07-27T15:51:00+08:00
 valid_at:
 information_cutoff_at: 2026-07-27T15:51:00+08:00
-pipeline_version: review-pipeline-v1
+pipeline_version: dd-pipeline-v1
 ips_id: ips-personal-v1
 source_refs:
   - source-demo-committee-v1
@@ -28,7 +28,7 @@ scope: demo_only
 # Validation
 
 - 状态：`unknown`
-- 发现：演示材料不含可验证的外部事实；关键输入无法支持 Modeling、Reasoning 或产品比较。本审查是**停止/预检证明**，不是Committee通过。
+- 发现：演示材料不含可验证的外部事实；关键输入无法支持 Modeling、Reasoning 或产品比较。本 DD 是**停止/预检证明**，不是Committee通过。
 
 # Committee
 
@@ -45,7 +45,7 @@ scope: demo_only
 - 下一步：research
 - 复核触发器：STATUS 门禁补齐后重新进入 Research。
 
-# Final Review
+# Final Gate
 
 - 是否允许进入 Decision：仅允许 `research`，不允许 `act`。
 - 未解决事项：按 `STATUS.md` 补齐 IPS、持仓、产品核验和动态事实。

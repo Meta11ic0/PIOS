@@ -1,7 +1,7 @@
 run_id: run-demo-non-action-v1
 scope: demo_only
 model_version: etf_model_v0.1
-pipeline_version: review-pipeline-v1
+pipeline_version: dd-pipeline-v1
 input_valid_at: null
 created_at: 2026-07-27T15:40:00+08:00
 universe: []

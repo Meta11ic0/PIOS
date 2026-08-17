@@ -22,4 +22,4 @@
 
 任何行情平台都不能替代交易所与基金公司正式资料。
 
-研究结论不得超出证据日期。发现产品不等于推荐产品；形成排序或投资建议时须进入 [Review Pipeline](../prompts/review_pipeline.md)。
+研究结论不得超出证据日期。发现产品不等于推荐产品；形成排序或投资建议时须进入 [DD Pipeline](../prompts/dd_pipeline.md)。

@@ -4,7 +4,7 @@
 
 **它不是可执行规则的权威源。** 强制规则以 `prompts/` 与 `skills/` 正文为准。设计原因已在 [ARCHITECTURE.md](ARCHITECTURE.md)，本文只管怎么用。
 
-审查顺序的权威源：[prompts/review_pipeline.md](prompts/review_pipeline.md)，八步为 Research → … → Documentation。本文只写操作场景与数据落盘，不再展开逐步细则。
+DD 顺序的权威源：[prompts/dd_pipeline.md](prompts/dd_pipeline.md)，八步为 Research → … → Documentation。本文只写操作场景与数据落盘，不再展开逐步细则。
 
 ---
 
@@ -15,7 +15,7 @@
 建议先读完 [README.md](README.md)（是什么）与 [ARCHITECTURE.md](ARCHITECTURE.md)（为什么），再按下面跳读本文。
 
 1. 本页「就绪条件」+ 文内「§14 当前初始化顺序」
-2. 文内「§1 当前运行方式」与「§1.1 审查深度分级」
+2. 文内「§1 当前运行方式」与「§1.1 DD 深度分级」
 3. 按你要做的事跳到场景节，见下表
 4. 需要字段细节时再读文内「§8 个人持仓」「§9 目标配置」
 
@@ -23,7 +23,7 @@
 
 ### 与助手协作时
 
-1. [AGENTS.md](AGENTS.md) → `prompts/system.md`、`answer_style.md`、`citation.md`；投资行动时同时读 `review_pipeline.md`
+1. [AGENTS.md](AGENTS.md) → `prompts/system.md`、`answer_style.md`、`citation.md`；投资行动时同时读 `dd_pipeline.md`
 2. 编写或改写 README、STATUS 等说明时另读 `prompts/docs_style.md`。投资行动会话若不改文档，不必每轮强制五份。
 3. 涉及投资行动时：本次用到的 `skills/*/SKILL.md`
 4. 场景入口：对应 `workflow/*.md` + 本文相关场景节
@@ -69,7 +69,7 @@ PIOS 目前是文件驱动：
 2. Agent 读取项目规则和相关 Skill；须实际 Read，见上文协作清单。
 3. 一起收集和核验数据。
 4. 结果写入 Markdown、CSV 或 YAML。
-5. 涉及投资行动时按 [Review Pipeline](prompts/review_pipeline.md) 过审。
+5. 涉及投资行动时按 [DD Pipeline](prompts/dd_pipeline.md) 过审。
 6. 成交后更新持仓和决策日志。
 7. 定期复核组合，并把新认识积累进知识、数据、模型或工作流。
 
@@ -77,9 +77,9 @@ PIOS 目前是文件驱动：
 
 因此行动前都要核对数据日期。Agent 可以整理和审查，不能假设仓库里的动态数据仍然有效。
 
-### 1.1 审查深度分级
+### 1.1 DD 深度分级
 
-权威顺序与停止条件见 [review_pipeline.md](prompts/review_pipeline.md)。深度只在这里约定：
+权威顺序与停止条件见 [dd_pipeline.md](prompts/dd_pipeline.md)。深度只在这里约定：
 
 | 路径 | 适用 | 要求 |
 |---|---|---|
@@ -122,7 +122,7 @@ decision_log/YYYY-MM-DD-decision-id.md
 ```text
 reports/2026-07-27-us-index-etf-research.md
 reports/2026-09-30-portfolio-review.md
-decision_log/2026-07-27-dca-review.md
+decision_log/2026-07-27-dca.md
 ```
 
 名称只用于定位。文件中的创建时间、更新时间、适用时点、决定时间等正式时间字段，才是时间依据。
@@ -145,7 +145,7 @@ decision_log/2026-07-27-dca-review.md
 
 ```text
 请先读取当前持仓、目标配置和 workflow/buy_etf.md，
-再按 prompts/review_pipeline.md 执行审查；完整或轻量见 OPERATIONS「审查深度分级」。
+再按 prompts/dd_pipeline.md 执行 DD；完整或轻量见 OPERATIONS「DD 深度分级」。
 关键动态数据无法验证时停止，不要补造结论。
 ```
 
@@ -158,7 +158,7 @@ Cursor 通过 `.cursor/rules/` 注入引用层，指向 `AGENTS.md` 与 `prompts
 若回答没有体现规则，明确要求：
 
 ```text
-先读取 AGENTS.md、prompts/review_pipeline.md 和本任务涉及的所有 SKILL.md，
+先读取 AGENTS.md、prompts/dd_pipeline.md 和本任务涉及的所有 SKILL.md，
 列出本次将执行的阶段，再开始研究。持仓/目标不足时标明「cannot act」。
 ```
 
@@ -181,7 +181,7 @@ Cursor 通过 `.cursor/rules/` 注入引用层，指向 `AGENTS.md` 与 `prompts
 
 - 只更新知识或事实：Research + Validation 即可。
 - 只做字段对照、不形成产品排序或投资建议：可停在 Research、Validation，必要时做 Modeling 字段对比。
-- 形成产品排序，或可能影响买入、卖出、持有、定投、调仓：走完 [Review Pipeline](prompts/review_pipeline.md)。
+- 形成产品排序，或可能影响买入、卖出、持有、定投、调仓：走完 [DD Pipeline](prompts/dd_pipeline.md)。
 
 ### 5.2 创建研究记录
 
@@ -250,12 +250,12 @@ ETF 查找顺序，操作提示：
 
 [ETF 候选种子](database/watchlist/us_index_etf_candidates.csv) 当前全部是 `pending` / `seed_pending`，观察池非完备。使用前按 [database/README.md](database/README.md) 人工核验；不要根据种子行填造官方名称。
 
-### 6.4 执行审查
+### 6.4 执行 DD
 
 本小节不展开逐步细则。
 
-1. 复制 [审查模板](templates/review.md)。
-2. 按 [Review Pipeline](prompts/review_pipeline.md) 顺序执行；深度见文内「§1.1 审查深度分级」。
+1. 复制 [DD 模板](templates/dd_record.md)。
+2. 按 [DD Pipeline](prompts/dd_pipeline.md) 顺序执行；深度见文内「§1.1 DD 深度分级」。
 3. 每步操作以对应 [Skill](skills/) 为准；索引见 [AGENTS.md](AGENTS.md)。
 4. 操作落盘要点：
    - **Modeling**：当前模型草案，只做字段对比与否决项，不自动输出买入评分；见 [etf_model_v0.1](database/screening/etf_model_v0.1.md)。
@@ -388,7 +388,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ### 9.1 修改目标配置
 
-目标变化属于新的投资决策：走完 Review Pipeline → 在 `decision_log/` 说明原因 → 旧记录 `superseded` → 新增带 `effective_from` 的 `active` 记录。
+目标变化属于新的投资决策：走完 DD Pipeline → 在 `decision_log/` 说明原因 → 旧记录 `superseded` → 新增带 `effective_from` 的 `active` 记录。
 
 普通再平衡只把实际配置拉回现有目标区间，不改目标本身。
 
@@ -409,13 +409,13 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 5. 检查集中度、相关性、流动性和最大可承受损失。
 6. 读原 Decision Log，检查原始逻辑和失效条件。
 7. 更新费用、税务、法规和产品状态。
-8. 对继续持有、追加、减少和不行动分别按 [Review Pipeline](prompts/review_pipeline.md) 过审；走完整路径，见「§1.1」。
+8. 对继续持有、追加、减少和不行动分别按 [DD Pipeline](prompts/dd_pipeline.md) 过审；走完整路径，见「§1.1」。
 9. 结果写入 `reports/`，复核结论写入 Decision Log。
 10. 触发调整时进入再平衡流程。
 
 ## 11. 场景五：再平衡
 
-使用 [再平衡工作流](workflow/rebalance.md)。再平衡属于调仓，须按 [review_pipeline.md](prompts/review_pipeline.md) 走完整八步。
+使用 [再平衡工作流](workflow/rebalance.md)。再平衡属于调仓，须按 [dd_pipeline.md](prompts/dd_pipeline.md) 走完整八步。
 
 1. 确认目标配置仍然有效。
 2. 统一估值时点计算实际配置。
@@ -423,7 +423,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 4. 先评估用新增现金修复偏离。
 5. 必要时再评估卖出，计算费用、税务、价差和机会成本。
 6. 比较一次调整与分批调整。
-7. 按 Review Pipeline 过审。
+7. 按 DD Pipeline 过审。
 8. 写清金额、顺序、执行条件和停止条件。
 9. 执行前保存 Decision Log；执行后更新持仓，并在同一日志追加实际结果。
 
@@ -454,14 +454,14 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ## 13. 停止条件
 
-出现以下情况时暂停行动。与 [review_pipeline.md](prompts/review_pipeline.md) 一致，此处作操作备忘：
+出现以下情况时暂停行动。与 [dd_pipeline.md](prompts/dd_pipeline.md) 一致，此处作操作备忘：
 
 - 关键数据缺失、产品身份冲突、来源冲突未解决、动态数据过期、公式无法复算
 - 模型阈值未确认却试图输出精确排名
 - Risk 为`Critical`，或关键风险无法评估
 - Challenge 为 `revise` / `reject`
 - 追加买入时目标资产已达或超过上限
-- Decision 执行条件已失效，或下单信息与审查对象不一致
+- Decision 执行条件已失效，或下单信息与 DD 对象不一致
 
 超过目标配置可能是卖出或再平衡的触发条件，不应当作全局「永远停止」。暂停后把 Decision 记为 `research` / `wait` / `reject`，并列出重新进入流程所需条件。
 
@@ -496,7 +496,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 **阶段 4（完成以上后）**
 
 8. 完成第一份研究报告。
-9. 跑一次完整审查，即使最终 Decision 是`research`或`wait`。
+9. 跑一次完整 DD，即使最终 Decision 是`research`或`wait`。
 10. 建立第一份生产 Decision Log。不要写在 `decision_log/demo/`。
 11. 在约定周期后进行复盘：先过程评估，再看结果。
 
@@ -507,7 +507,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 - 全局目标与边界 → `prompts/system.md`
 - 回答结构 → `prompts/answer_style.md`
 - 证据规范 → `prompts/citation.md`
-- Pipeline 顺序与停止条件 → `prompts/review_pipeline.md`
+- Pipeline 顺序与停止条件 → `prompts/dd_pipeline.md`
 - 某项能力怎么做 → 对应 `skills/<name>/SKILL.md`
 
 改完后检查 `AGENTS.md`、`CLAUDE.md` 和 `.cursor/` 引用仍指向正确路径。
@@ -532,7 +532,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 - 没有交易流水；持仓依赖人工追加快照。
 - **没有自动测试能阻止跳过某项 Skill**；执行质量依赖 Agent 遵守开场清单与人工复核。
 - 无自动行情抓取、无券商导入、无定时任务、无自动评分、无自动下单；全部动态数据依赖人工收集与核对。
-- 无紧急/加速审查路径；极端市场事件时用户可能被迫在"遵守纪律但不操作"与"绕过系统直接下单"之间选择。
+- 无紧急/加速 DD 路径；极端市场事件时用户可能被迫在"遵守纪律但不操作"与"绕过系统直接下单"之间选择。
 
 这些问题先记着，等实际案例积累后再决定是否继续简化规则。
 
@@ -570,7 +570,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 1. 发现后立即暂停当前阶段。
 2. 补读遗漏文件。
 3. 检查已产出内容是否违背漏读文件的规则；如有违背，回退该阶段产出并重做。
-4. 在 review 记录中标注补读时间与影响范围。
+4. 在 DD 记录中标注补读时间与影响范围。
 
 ## 18. 外部工具对接
 

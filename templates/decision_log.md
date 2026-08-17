@@ -17,7 +17,7 @@ pipeline_version:
 ips_id:
 allocation_set_id:
 applicable_exception_ids: []
-review_id:
+dd_id:
 run_id:
 committee_id:
 source_refs: []

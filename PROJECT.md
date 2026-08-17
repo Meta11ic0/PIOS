@@ -4,13 +4,13 @@
 
 ## 当前阶段
 
-**架构设计与框架硬化** — 核心审查框架已建立，正在整理和简化设计，为后续录入真实数据做准备。
+**架构设计与框架硬化** — 核心 DD 框架已建立，正在整理和简化设计，为后续录入真实数据做准备。
 
 ## 已知设计缺口
 
 | 缺口 | 现状 | 优先级 | 备注 |
 |------|------|--------|------|
-| Pipeline 逐步讲解缺用户向文档 | `review_pipeline.md` / 各 Skill 为契约正文，缺少面向用户的逐步示例 | 中 | 可继续用 ARCHITECTURE.md 快速入门补示例 |
+| Pipeline 逐步讲解缺用户向文档 | `dd_pipeline.md` / 各 Skill 为契约正文，缺少面向用户的逐步示例 | 中 | 可继续用 ARCHITECTURE.md 快速入门补示例 |
 | 持仓监控（Position Management） | 成交后缺少系统化的定期检查机制（价格区间、失效条件、复核日）。Austin IOS 的 Stage 6 可作为参考 | 低 | 可通过新建 `workflow/position_monitor.md` 解决 |
 | 数据获取脚本层 | 当前完全依赖 LLM 联网获取数据，无可复现的脚本化数据获取。Austin 的"脚本取数据，LLM 做解释"原则值得引入 | 低 | 后续引入 finance-skills 类 MCP 工具 |
 | 知识保鲜机制 | `knowledge/` 条目无 `freshness` / `valid_until` 标记，无定期扫描过期条目的机制 | 低 | 参考 Austin 的 `/wealth-freshness` |
@@ -21,9 +21,9 @@
 
 | 事项 | 状态 | 讨论记录 |
 |------|------|---------|
-| 审查记录 = 每轮对话一个文件 | ✅ 已决定 (2026-08-03) | 20 轮讨论结论 |
+| DD 记录 = 每轮对话一个文件 | ✅ 已决定 (2026-08-03) | 20 轮讨论结论 |
 | 移除 read-auth / write-auth / checklist-auth | ✅ 已决定 (2026-08-03) | 20 轮讨论结论 |
-| 模板增加 `references_review_ids` 字段 | ✅ 已决定 (2026-08-03) | 20 轮讨论结论 |
+| 模板增加 `references_dd_ids` 字段 | ✅ 已决定 (2026-08-03) | 20 轮讨论结论 |
 | `knowledge/` 引入 freshness + status 标记 | 📋 待讨论 | EXTERNAL_REFERENCES.md P0 |
 | 引入运维型 Skill（knowledge-sync 等） | 📋 待讨论 | EXTERNAL_REFERENCES.md P1 |
 | POSITION_MONITOR workflow | 📋 待讨论 | 20 轮讨论第 15 轮 |
@@ -32,11 +32,11 @@
 
 | 日期 | 变更 | 影响范围 |
 |------|------|---------|
-| 2026-08-03 | 八步 Skill + Pipeline + Committee 全面审查并执行增强修改 | `skills/research/`、`skills/modeling/`、`skills/reasoning/`、`skills/risk/`、`skills/challenge/`、`skills/documentation/`、`skills/committee/`、`prompts/review_pipeline.md` |
-| 2026-08-03 | 移除三层授权体系（read-auth/write-auth/checklist-auth） | `prompts/review_pipeline.md`、`AGENTS.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`skills/decision/SKILL.md`、`workflow/*.md`、`templates/decision_log.md` |
-| 2026-08-03 | 审查记录生命周期明确化：每轮一个文件 + `references_review_ids` 交叉引用 | `prompts/review_pipeline.md`、`templates/review.md` |
+| 2026-08-03 | 八步 Skill + Pipeline + Committee 全面审查并执行增强修改 | `skills/research/`、`skills/modeling/`、`skills/reasoning/`、`skills/risk/`、`skills/challenge/`、`skills/documentation/`、`skills/committee/`、`prompts/dd_pipeline.md` |
+| 2026-08-03 | 移除三层授权体系（read-auth/write-auth/checklist-auth） | `prompts/dd_pipeline.md`、`AGENTS.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`skills/decision/SKILL.md`、`workflow/*.md`、`templates/decision_log.md` |
+| 2026-08-03 | DD 记录生命周期明确化：每轮一个文件 + `references_dd_ids` 交叉引用 | `prompts/dd_pipeline.md`、`templates/dd_record.md` |
 | 2026-08-03 | 新建 PROJECT.md，STATUS.md 清理为纯投资就绪状态 | `PROJECT.md`（新建）、`STATUS.md` |
-| 2026-08-03 | AGENTS.md 增加开场类型标注 + review_pipeline 增加中途升级规则 | `AGENTS.md`、`prompts/review_pipeline.md` |
+| 2026-08-03 | AGENTS.md 增加开场类型标注 + dd_pipeline 增加中途升级规则 | `AGENTS.md`、`prompts/dd_pipeline.md` |
 | 2026-07-28 | 外部参考分析完成 | `EXTERNAL_REFERENCES.md`（新建） |
 | 2026-07-27 | 非行动流程演示 + 非行动 Committee 演示完成 | `reports/demo/`、`decision_log/demo/` |
 
@@ -134,7 +134,7 @@
 - **Dev**：5 条原则是对的，但太抽象。Agent 拿到这个 Skill 后，仍然不知道"怎么给 ETF 打分"。缺少一个具体的 ETF 比较模板——比如费率 30% 权重、规模 20% 权重、跟踪误差 25% 权重、流动性 25% 权重。当前 Skill 只说了"怎么设计模型"，没说"模型长什么样"。
 - **PM**：对。用户看到"指标定义、方向、权重和公式"这个要求，是给 Agent 看的。但用户需要的是"我能理解和复现的比较结果"。Modeling 的输出应该是用户可以自己复算的。
 - **Inv**：Austin 的 BAIT/Moneyball 是针对个股的，PIOS 针对 ETF——不需要照搬。但"硬性门槛"这个概念在 ETF 比较中非常重要——比如"规模低于 1 亿的 ETF 直接排除"、"日均成交额低于 500 万的排除"。当前 Skill 提到了硬门槛但没给 ETF 场景的具体例子。
-- **AIM**：当前 Skill 的抽象程度对 Agent 来说其实刚刚好——它提供了方法论框架，具体的指标和权重应该根据本轮审查的决策目标来定。过于具体的模板反而会限制 Agent 的灵活性。但可以增加一个 ETF 场景的示例作为参考。
+- **AIM**：当前 Skill 的抽象程度对 Agent 来说其实刚刚好——它提供了方法论框架，具体的指标和权重应该根据本轮 DD 的决策目标来定。过于具体的模板反而会限制 Agent 的灵活性。但可以增加一个 ETF 场景的示例作为参考。
 
 **投票**：
 
@@ -147,7 +147,7 @@
 **最终修改意见**：
 
 1. **增加硬性门槛示例**（4/4）：在"硬性门槛与加权评分分开"原则后，增加 ETF 场景的典型硬门槛示例（规模下限、日均成交额下限、成立时间下限、跟踪误差上限、折溢价上限等）
-2. **保留当前框架**（僵局，维持现状）：不做结构性改动，不增加评分模板。具体指标和权重由 Agent 根据决策目标在 Review 中确定
+2. **保留当前框架**（僵局，维持现状）：不做结构性改动，不增加评分模板。具体指标和权重由 Agent 根据决策目标在 DD 中确定
 3. **注意**：draft 模型"只做信息项对比与否决，不自动给出买入评分"这条规则非常重要，保留
 
 ---
@@ -308,21 +308,21 @@
 **四方讨论摘要**：
 
 - **Dev**：归属判断的 5 条路径（knowledge/database/workflow/decision_log/reports）是好的分类法。但缺少"何时写、写多少"的指导——Agent 是每完成一步就写，还是全部审查完成后再写？当前 ARCHITECTURE.md §3.2 的映射表说明了"何时写入"，但 Documentation Skill 本身没有引用这个映射表。
-- **PM**：对用户来说，Documentation 阶段是"审查完成的标志"。但当前描述太技术化。用户需要知道的是"Agent 会在哪些文件里留下什么记录"，而不是"Agent 先判断归属再写"。
+- **PM**：对用户来说，Documentation 阶段是"DD 完成的标志"。但当前描述太技术化。用户需要知道的是"Agent 会在哪些文件里留下什么记录"，而不是"Agent 先判断归属再写"。
 - **Inv**：Decision Log 的冻结机制（`frozen_at` + `content_hash`）是整个系统的信任基石。事后不能改写当时理由——这条必须保留且强化。
-- **AIM**：当前 Skill 对于"什么时候写入审查记录的小节"没有明确指令。Agent 在执行过程中是逐步写入 review 文件还是最后一次性写入？这会影响 Agent 的行为。建议引用 ARCHITECTURE.md 的阶段→小节映射表。
+- **AIM**：当前 Skill 对于"什么时候写入 DD 记录的小节"没有明确指令。Agent 在执行过程中是逐步写入 DD 记录还是最后一次性写入？这会影响 Agent 的行为。建议引用 ARCHITECTURE.md 的阶段→小节映射表。
 
 **投票**：
 
 | 投票项 | Dev | PM | Inv | AIM | 结果 |
 |--------|-----|-----|-----|-----|------|
-| 增加审查记录写入时机的说明 | ✅ | ✅ | ✅ | ✅ | **4/4 通过** |
+| 增加 DD 记录写入时机的说明 | ✅ | ✅ | ✅ | ✅ | **4/4 通过** |
 | 增加对 ARCHITECTURE.md 阶段→小节映射表的引用 | ✅ | ❌ | ❌ | ✅ | 2/4 否决 |
 | 保留归属判断 + 冻结机制 | ✅ | ✅ | ✅ | ✅ | **4/4 通过** |
 
 **最终修改意见**：
 
-1. **写入时机**（4/4）：增加"审查记录各阶段小节在每步完成后立即写入，不等到全部审查结束；Decision Log 在 Decision 阶段完成后创建，Documentation 阶段补完冻结字段"
+1. **写入时机**（4/4）：增加"DD 记录各阶段小节在每步完成后立即写入，不等到全部审查结束；Decision Log 在 Decision 阶段完成后创建，Documentation 阶段补完冻结字段"
 2. **保留核心结构**（4/4）：归属判断 5 路径 + 必含字段 + 去重检查 + Decision Log 必含内容，均不做改动
 
 ---
@@ -345,7 +345,7 @@
 - **Dev**：Committee 的设计与 ai-berkshire 的四大师分析在结构上同构——都是多角色独立审查后合议。区别在于：ai-berkshire 的四大师是研究阶段的并行分析（生成 thesis），PIOS 的 Committee 是决策阶段的对抗审查（门禁验证）。这是 PIOS 的差异化优势。
 - **PM**：四席的角色定义清晰，每个席位有"判断什么"和"禁止什么"。但缺少一个明确的"Chair"角色来综合四席意见并给出最终 Committee 结论。当前是四席平等，合议时如果 2v2 僵局怎么办？
 - **Inv**：Committee 的门禁规则（fail/unknown 阻断、IPS 冲突阻断、Risk Critical 阻断、反方 revise/reject 阻断）比多数表决更可靠。这是对的——投资决策不是民主投票。
-- **AIM**：四席的输出格式（committee_id/input_package/information_quality/seat_a-d/...）是结构化的，适合写入审查记录。C 级不得进入 act 的规则与 Research 阶段的信息丰富度评级（前述建议）联动。
+- **AIM**：四席的输出格式（committee_id/input_package/information_quality/seat_a-d/...）是结构化的，适合写入 DD 记录。C 级不得进入 act 的规则与 Research 阶段的信息丰富度评级（前述建议）联动。
 
 **投票**：
 
@@ -380,9 +380,9 @@
 
 ---
 
-### 10. Review Pipeline — 阶段编排（Meta-Skill）
+### 10. DD Pipeline — 阶段编排（Meta-Skill）
 
-**现状**：[prompts/review_pipeline.md](prompts/review_pipeline.md) 定义了八步顺序、5 个贯穿性问题、阶段契约表（最小输入/必填产物/放行条件/阻断条件）、Committee 触发规则、审查记录生命周期。
+**现状**：[prompts/dd_pipeline.md](prompts/dd_pipeline.md) 定义了八步顺序、5 个贯穿性问题、阶段契约表（最小输入/必填产物/放行条件/阻断条件）、Committee 触发规则、DD 记录生命周期。
 
 **对照外部参考**：
 
@@ -392,13 +392,13 @@
 | Austin IOS | 一条命令可覆盖多个阶段（如 `/stock-analyze` 覆盖 Stage 1-3） | PIOS 严格串行，每步有契约 |
 | ai-berkshire | 无 Pipeline 概念，20 个独立 `/` 命令按需使用 | PIOS 是唯一有阶段契约表的项目 |
 | ai-berkshire | 运营模式建议 `--dangerously-skip-permissions` | PIOS 已移除授权体系 |
-| OPERATIONS.md | 审查深度分级（完整八步 vs 轻量路径） | Pipeline 自身未引用此分级 |
+| OPERATIONS.md | DD 深度分级（完整八步 vs 轻量路径） | Pipeline 自身未引用此分级 |
 
 **四方讨论摘要**：
 
-- **Dev**：阶段契约表是整个 PIOS 的核心——它把"审查"从一个模糊概念变成了可执行的合约。但表格的"最小输入"列过于简略。例如 Research 的"最小输入"写的是"研究问题、范围"，但实际 Research Skill 要求 source_id 登记、来源优先级、双来源验证等。契约表和 Skill 文件之间存在粒度差异——契约表是 10 秒速览，Skill 是完整手册。这种差异是故意的还是需要对齐？
-- **PM**：5 个贯穿性问题（事实准确吗？/推理由证据支持吗？/...）给用户一个统一的审查质量视角。但"能积累为可复用资产吗？"这个问题在 Risk 或 Challenge 阶段可能没有意义——Risk 的输出（特定方案的风险评估）不一定能复用。建议将 5 个问题分配优先级：前 4 个是每个阶段的硬性检查，第 5 个是"尽量做"。
-- **Inv**：Committee 触发规则（新资产暴露、首次买入、改目标、重大再平衡、ETF 排序）和审查深度分级（完整八步 vs 轻量定投）是两个不同的维度——什么场景触发 Committee，什么场景走轻量路径。当前 Pipeline 定义了 Committee 触发条件，但没有定义"什么时候可以走轻量路径"。这导致轻量路径的定义只存在于 OPERATIONS.md 和 workflow/dca.md 中，不在 Pipeline 的权威规则里。
+- **Dev**：阶段契约表是整个 PIOS 的核心——它把"DD"从一个模糊概念变成了可执行的合约。但表格的"最小输入"列过于简略。例如 Research 的"最小输入"写的是"研究问题、范围"，但实际 Research Skill 要求 source_id 登记、来源优先级、双来源验证等。契约表和 Skill 文件之间存在粒度差异——契约表是 10 秒速览，Skill 是完整手册。这种差异是故意的还是需要对齐？
+- **PM**：5 个贯穿性问题（事实准确吗？/推理由证据支持吗？/...）给用户一个统一的 DD 质量视角。但"能积累为可复用资产吗？"这个问题在 Risk 或 Challenge 阶段可能没有意义——Risk 的输出（特定方案的风险评估）不一定能复用。建议将 5 个问题分配优先级：前 4 个是每个阶段的硬性检查，第 5 个是"尽量做"。
+- **Inv**：Committee 触发规则（新资产暴露、首次买入、改目标、重大再平衡、ETF 排序）和 DD 深度分级（完整八步 vs 轻量定投）是两个不同的维度——什么场景触发 Committee，什么场景走轻量路径。当前 Pipeline 定义了 Committee 触发条件，但没有定义"什么时候可以走轻量路径"。这导致轻量路径的定义只存在于 OPERATIONS.md 和 workflow/dca.md 中，不在 Pipeline 的权威规则里。
 - **AIM**：从 Agent 执行角度，Pipeline 是最先加载的规则（AGENTS.md 规定投资行动必须 Read）。Agent 读到这个文件后，会严格按八步执行。但有一个问题——阶段契约表的"最小输入"和 Skill 文件的"输入"定义不完全一致。Agent 以哪个为准？建议明确：契约表是摘要，Skill 是执行细则。当两者冲突时，Skill 优先；当两者都不覆盖时，契约表的"放行/阻断条件"是兜底。
 
 **投票**：
@@ -408,16 +408,16 @@
 | 契约表与 Skill 的优先级关系显式声明 | ✅ | ✅ | ❌ | ✅ | **3/4 通过** |
 | 5 个贯穿性问题区分"必须"和"尽量" | ❌ | ✅ | ❌ | ✅ | 2/4 否决 |
 | Committee 触发条件增加"不适用记录"模板 | ✅ | ❌ | ✅ | ✅ | **3/4 通过** |
-| 在 Pipeline 中引用审查深度分级 | ✅ | ✅ | ✅ | ✅ | **4/4 通过** |
+| 在 Pipeline 中引用 DD 深度分级 | ✅ | ✅ | ✅ | ✅ | **4/4 通过** |
 | 将分类步骤（知识调研/投资动作）纳入契约表 | ❌ | ✅ | ✅ | ✅ | **3/4 通过** |
 
 **最终修改意见**：
 
 1. **显式声明 Skill 优先级**（3/4）：在阶段契约表上方增加"契约表为各阶段摘要；执行细则以对应 `skills/<阶段>/SKILL.md` 为准。冲突时 Skill 优先；契约表放行/阻断条件为兜底。"
 
-2. **引用审查深度分级**（4/4）：在八步列表后增加"审查深度：例行小额定投可走轻量路径（见 OPERATIONS.md 审查深度分级），跳过 Committee，但仍须完成八步结构的简化版。新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序必须走完整路径。"
+2. **引用 DD 深度分级**（4/4）：在八步列表后增加"DD 深度：例行小额定投可走轻量路径（见 OPERATIONS.md DD 深度分级），跳过 Committee，但仍须完成八步结构的简化版。新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序必须走完整路径。"
 
-3. **Committee 不适用记录**（3/4）：在 Committee 触发规则后增加"触发条件不适用时，Agent 须在审查记录的 Committee 节写明不适用理由，不可跳过不记录。"
+3. **Committee 不适用记录**（3/4）：在 Committee 触发规则后增加"触发条件不适用时，Agent 须在 DD 记录的 Committee 节写明不适用理由，不可跳过不记录。"
 
 4. **5 个贯穿性问题保留**（僵局，维持现状）：当前 5 个问题作为软性检查项保留，不区分优先级
 
@@ -438,6 +438,6 @@
 | `skills/challenge/SKILL.md` | 反例增加独立削弱结论的质量要求；裁决增加用户覆盖机制 |
 | `skills/documentation/SKILL.md` | 新增"写入时机"段 |
 | `skills/committee/SKILL.md` | 冲突与阻断新增 2v2 僵局处理规则 |
-| `prompts/review_pipeline.md` | 契约表前增加 Skill 优先级声明；八步后增加审查深度分级引用；Committee 触发段增加不适用记录规则 |
+| `prompts/dd_pipeline.md` | 契约表前增加 Skill 优先级声明；八步后增加 DD 深度分级引用；Committee 触发段增加不适用记录规则 |
 
 Validation 和 Decision 两个 Skill 未做修改（四方全票保留）。
