@@ -1,6 +1,5 @@
 # PIOS — Personal Investment Operating System
-# 私人 GitHub 仓库：决策日志、报告、持仓 CSV 可纳入版本控制，便于备份与复盘。
-# 仍忽略：SpecStory 会话、密钥/环境变量、OS/IDE 垃圾、依赖缓存、private/ 额外保险、*.local.md 本机覆盖。
+# 公开仓库。提交项目入口与规则正文；不提交本机权限、密钥、个人持仓与生产决策/报告。
 
 # --- OS & editor ---
 .DS_Store
@@ -13,6 +12,14 @@ Thumbs.db
 # VS Code: ignore local cache; keep shared project settings
 .vscode/*
 !.vscode/settings.json
+
+# Cursor：提交 rules（指向 AGENTS.md）与 skills（发现层）；忽略本机缓存
+.cursor/*.log
+.cursor/debug.log
+
+# Claude Code：提交根目录 CLAUDE.md；不提交本机权限
+.claude/settings.local.json
+.claude/*.local.json
 
 # --- SpecStory (session history, stats) ---
 .specstory/
@@ -41,10 +48,17 @@ credentials.json
 secrets/
 private/
 
-# --- 原个人数据忽略（私人仓库已取消，可入库）---
-# database/portfolio/holdings.csv
-# decision_log/** 与 !decision_log/.gitkeep
-# reports/** 与 !reports/.gitkeep
+# --- 公开仓库：个人生产数据不入库；demo 可入库 ---
+database/portfolio/holdings.csv
+decision_log/**
+!decision_log/.gitkeep
+!decision_log/README.md
+!decision_log/demo/
+!decision_log/demo/**
+reports/**
+!reports/.gitkeep
+!reports/demo/
+!reports/demo/**
 
 # Local-only notes overrides
 *.local.md

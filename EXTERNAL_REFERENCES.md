@@ -109,8 +109,8 @@ Austin 总结了五条教训，PIOS 直接借鉴其中三条：
 
 - **14 个自定义命令**：Austin 的命令体系针对美股个股，PIOS 的 focus 是中国大陆证券账户可交易的场内跨境 ETF。场景不同，不需要照搬。
 - **Obsidian 集成**：PIOS 以 Claude Code 终端为主要交互界面，Obsidian 作为阅读工具是锦上添花，不是必需。
-- **Quartz 发布**：PIOS 是私有仓库，暂无公开分享需求。
-- **隐私分层（公开/私有目录）**：PIOS 整个仓库私有，不需要目录级隐私隔离。
+- **Quartz 发布**：PIOS 按公开仓库设计，暂无 Quartz 静态站点发布需求。
+- **隐私分层（公开/私有目录）**：个人持仓与生产 reports/decision_log 通过 `.gitignore` 隔离，不入库；规则正文与 demo 可入库。
 
 ---
 

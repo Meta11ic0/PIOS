@@ -1,6 +1,6 @@
 # 数据契约与校验
 
-本文件定义 PIOS 本地 CSV/YAML 数据集的最小契约。它补充而不替代 [`products/schema.yaml`](products/schema.yaml)、各工作流和 [Validation Skill](../skills/validation/SKILL.md)。
+本文件定义 PIOS 本地 CSV/YAML 数据集的最小契约。列名与顺序以 [`../prompts/csv_schema.md`](../prompts/csv_schema.md) 为准。它补充而不替代 [`products/schema.yaml`](products/schema.yaml)、各工作流和 [Validation Skill](../skills/validation/SKILL.md)。
 
 ## 通用约定
 
@@ -50,8 +50,9 @@
 4. **血缘**：`verified` 记录能定位到 `source_id`；每个 screening run 有输入数据、规则/模型版本和限制说明。
 5. **绩效**：TWR/MWR 仅使用完整、连续且同一报告币种的估值与外部现金流输入；不完整时标记 `unknown` 或“不可计算”。
 6. **范围**：生产运行的输入清单只能包含 `scope: production` 且 `verification_status: verified` 的事实；演示、样例、归档和 pending 材料必须显式排除。
+7. **双来源**：关键动态至少两个独立来源；同一机构两个页面不算独立来源。仅官方唯一来源且已说明的，该项可为 `pass`；其余无双来源记关键 `unknown`。
 
-失败或关键 `unknown`阻断后续 Decision；非关键 `warning` 可以继续，但必须写入限制和复核条件。关键时效过期不得降级为可放行的 `warning`。
+失败、关键 `unknown` 或未关闭的关键 `warning` 阻断后续 Decision；非关键 `warning` 可以继续，但必须写入限制和复核条件。关键时效过期不得降级为可放行的 `warning`。
 
 ## 原始材料蒸馏
 

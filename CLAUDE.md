@@ -9,6 +9,6 @@
 
 ## 会话开始
 
-1. Read [AGENTS.md](AGENTS.md)，按其中 Prompt 加载时机表加载对应文件。
-2. 任务相关时 Read `workflow/*.md` 和对应的 `skills/<name>/SKILL.md`。
-3. 开场先列 Read 清单与 Pipeline 阶段——见 AGENTS.md。
+1. Read [AGENTS.md](AGENTS.md)，按其中「先判断目的」读该路线下一步（`building` / `learning` / `diligence`）。
+2. 阶段与 Skill 由该路线下一步 Prompt 规定；不要把 `workflow/` 当作开场必读。
+3. 开场先判断目的并列出本轮将 Read 的文件。

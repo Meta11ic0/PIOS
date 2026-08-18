@@ -4,7 +4,7 @@
 
 建议按固定周期或重大事件触发，不因日常波动频繁复核。
 
-涉及继续持有、追加、减少、不行动或调仓结论时，必须按 [DD Pipeline](../prompts/dd_pipeline.md) 完整八步执行。本文不展开逐步细则。
+涉及继续持有、追加、减少、不行动或调仓结论时，必须按 [Diligence 八步](../prompts/diligence.md) 完整八步执行。本文不展开逐步细则。
 
 ## 流程
 
@@ -16,6 +16,6 @@
 6. 检查集中度、相关性、流动性和最大可承受损失；跨境持仓核对 QDII/申赎与估值时差。
 7. 复核各持仓原始投资逻辑及失效条件。
 8. 检查费用、税务、法规和产品状态变化。
-9. 对继续持有、追加、减少和不行动分别按 DD Pipeline 过审，走完整路径；见 [OPERATIONS.md](../OPERATIONS.md)「DD 深度分级」。若结论涉及新暴露、改目标或重大再平衡，必须先执行 [Committee Skill](../skills/committee/SKILL.md)。
+9. 对继续持有、追加、减少和不行动分别按 Diligence 八步过审，走完整路径；见 [OPERATIONS.md](../OPERATIONS.md)「DD 深度分级」。若结论涉及新暴露、改目标或重大再平衡，必须先执行 [Committee Skill](../skills/committee/SKILL.md)。
 10. 输出需要研究的事项；若触发再平衡条件，进入 `rebalance.md`。
 11. 使用报告模板记录 IPS 版本、数据日期和下一次复核触发条件，并写入 Decision Log。Agent 不得下单。

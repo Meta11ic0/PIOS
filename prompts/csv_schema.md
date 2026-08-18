@@ -1,0 +1,25 @@
+# CSV Schema
+
+新建或写入 `database/` 下 CSV 时读本文件。列名与顺序以本文件为准，不得自造列。含义、填法和时效见 `OPERATIONS.md` 与 `database/data_contracts.md`。未知值留空。更正追加新行，不覆盖旧行。
+
+`database/portfolio/holdings.csv` 为本地操作表，不入库。没有该文件时按下列列名生成，不要把真实持仓写入仓库。
+
+database/sources.csv：主键 `source_id`。列：source_id,scope,status,source_tier,publisher,title,source_url_or_file_ref,published_at,fetched_at,content_hash,hash_status,locator,raw_material_path,material_type,distillation_status,collector,collection_method,license_or_access_note,notes
+
+database/watchlist/us_index_etf_candidates.csv：主键 `product_id`。列：product_id,asset_type,name,market,exchange,ticker,underlying_id,verification_status,coverage_status,notes
+
+database/portfolio/holdings.csv：主键 `record_id`。列：record_id,holding_id,valid_at,fetched_at,account_alias,product_id,asset_type,trade_currency,fund_currency,underlying_exposure_currency,quantity,cost_basis,cost_basis_scope,market_value,report_currency,market_value_reporting,fx_rate_to_reporting,fx_source_id,fx_valid_at,fx_quote_convention,valuation_method,valuation_price,valuation_price_currency,valuation_source,valuation_valid_at,portfolio_snapshot_id,source_id,source,verification_status,supersedes_record_id,correction_reason,notes
+
+database/portfolio/target_allocation.csv：主键 `allocation_id`。列：allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset_class,market,report_currency,target_weight,min_weight,max_weight,rationale,review_trigger,review_at,status
+
+database/portfolio/external_cashflows.csv：主键 `cashflow_id`。列：cashflow_id,occurred_at,account_alias,flow_type,amount_signed,currency,report_currency,amount_reporting_signed,fx_rate_to_reporting,fx_source_id,fx_valid_at,fx_quote_convention,source_id,verification_status,supersedes_cashflow_id,correction_reason,notes
+
+database/portfolio/performance_periods.csv：主键 `period_id`。列：period_id,portfolio_scope_id,calculation_method,period_start,period_end,opening_value_reporting,closing_value_reporting,mwr_terminal_value_reporting,external_cashflow_reporting,external_cashflow_timing,linked_cashflow_ids,twr_subperiod_ids,report_currency,opening_snapshot_id,closing_snapshot_id,valuation_source,fx_source_ids,fx_quote_convention,annualization_basis_days,return_value,calculation_status,verification_status,notes
+
+database/portfolio/allocation_snapshots.csv：去重键 `snapshot_id` + `allocation_id`。列：snapshot_id,portfolio_snapshot_id,valid_at,fetched_at,report_currency,ips_id,allocation_set_id,applicable_exception_ids,allocation_id,current_value_reporting,current_weight,target_weight,min_weight,max_weight,deviation_pp,deviation_unit,includes_cash,source_id,fx_source_id,valuation_valid_at,verification_status,notes
+
+database/portfolio/policy_exceptions.csv：主键 `exception_id`。列：exception_id,ips_id,decision_id,review_id,status,created_at,effective_from,expires_at,affected_allocation_id,constraint_type,impact_limit,approval_reference,approved_by,approved_at,authorization_evidence,source_id,verification_status,invalidation_condition,return_path,closed_at,closure_evidence,review_at,notes
+
+database/products/history/etf_metrics.csv：主键 `record_id`。列：record_id,product_id,valid_at,fetched_at,market_price,market_price_currency,market_price_timestamp,price_source_id,nav,nav_valid_at,nav_source_id,iopv,iopv_valid_at,iopv_source_id,premium_discount_rate,premium_discount_basis,size,size_unit,turnover,turnover_unit,turnover_window,bid_ask_spread,bid_ask_spread_basis,tracking_error,tracking_error_window,tracking_difference,tracking_difference_window,creation_redemption_status,qdii_quota_status,trading_status,source_id,source_url,source_tier,source_locator,supersedes_record_id,correction_reason,verification_status,notes
+
+database/products/history/asset_profile_exposure.csv：主键 `record_id`。列：record_id,product_id,valid_at,profile_type,dimension,dimension_value,weight,weight_unit,weight_basis,coverage_sum,coverage_status,source_id,source_url,fetched_at,supersedes_record_id,correction_reason,verification_status,notes

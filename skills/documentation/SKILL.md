@@ -14,7 +14,7 @@ description: 将投资研究、数据更新和决策沉淀为统一、可追溯�
 ## 归属判断
 
 - 稳定概念 → `knowledge/`
-- 结构化事实 → `database/`
+- 结构化事实 → `database/`。写入 CSV 时列名见 `prompts/csv_schema.md`，不得自造列。
 - 可重复步骤 → `workflow/`
 - 一次决策 → `decision_log/`
 - 阶段性分析 → `reports/`

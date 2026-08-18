@@ -10,12 +10,13 @@
 
 | 缺口 | 现状 | 优先级 | 备注 |
 |------|------|--------|------|
-| Pipeline 逐步讲解缺用户向文档 | `dd_pipeline.md` / 各 Skill 为契约正文，缺少面向用户的逐步示例 | 中 | 可继续用 ARCHITECTURE.md 快速入门补示例 |
+| Pipeline 逐步讲解缺用户向文档 | `diligence.md` / 各 Skill 为契约正文，缺少面向用户的逐步示例 | 中 | 可继续用 ARCHITECTURE.md 快速入门补示例 |
 | 持仓监控（Position Management） | 成交后缺少系统化的定期检查机制（价格区间、失效条件、复核日）。Austin IOS 的 Stage 6 可作为参考 | 低 | 可通过新建 `workflow/position_monitor.md` 解决 |
 | 数据获取脚本层 | 当前完全依赖 LLM 联网获取数据，无可复现的脚本化数据获取。Austin 的"脚本取数据，LLM 做解释"原则值得引入 | 低 | 后续引入 finance-skills 类 MCP 工具 |
 | 知识保鲜机制 | `knowledge/` 条目无 `freshness` / `valid_until` 标记，无定期扫描过期条目的机制 | 低 | 参考 Austin 的 `/wealth-freshness` |
 | raw_material 未启用 | `raw_material/` 目录结构已建但无真实内容，无 frontmatter schema | 低 | 见 EXTERNAL_REFERENCES.md 的借鉴清单 |
 | Obsidian 兼容 | `knowledge/` 文件无 Obsidian frontmatter，无法用图谱浏览 | 低 | 成本低，按需引入 |
+| workflow 场景缺失：数据维护类无入口 | `workflow/` 现有 6 个均为投资行动类（买/卖/定投/复核/再平衡）；**IPS 写入、种子写入与核验、来源与信息登记**等场景无 workflow 入口，步骤散落在 OPERATIONS §14、STATUS 九门禁、database/README 写入要求中 | 中 | 可新建 `workflow/ips_setup.md`、`workflow/seed_ingest.md`、`workflow/register.md`（信息登记）作为场景入口，细则仍引用 OPERATIONS 与 database/README，不复制正文 |
 
 ## 待决策事项
 
@@ -32,6 +33,9 @@
 
 | 日期 | 变更 | 影响范围 |
 |------|------|---------|
+| 2026-08-18 | 三路线改名为 `[building]` / `[learning]` / `[diligence]`；`system.md` 收成 `evidence.md` 模块；`dd_pipeline.md` 改名为 `diligence.md` | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/research/`、`skills/validation/`、`skills/committee/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`README.md`、`workflow/` |
+| 2026-08-18 | 删除 `workflow/research.md`；ETF 取数顺序迁入 Research Skill；知识调研标准取证只读两份 Skill | `skills/research/SKILL.md`、`prompts/system.md`、`ARCHITECTURE.md`、`OPERATIONS.md` |
+| 2026-08-18 | 四席合议落盘：加载协议对齐、citation 并入 system.md、Validation 增双来源维（10 维）、关键 warning 门禁、手册隐私口径 | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/validation/`、`skills/decision/`、`skills/research/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`database/data_contracts.md`、`workflow/buy_etf.md` |
 | 2026-08-03 | 八步 Skill + Pipeline + Committee 全面审查并执行增强修改 | `skills/research/`、`skills/modeling/`、`skills/reasoning/`、`skills/risk/`、`skills/challenge/`、`skills/documentation/`、`skills/committee/`、`prompts/dd_pipeline.md` |
 | 2026-08-03 | 移除三层授权体系（read-auth/write-auth/checklist-auth） | `prompts/dd_pipeline.md`、`AGENTS.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`skills/decision/SKILL.md`、`workflow/*.md`、`templates/decision_log.md` |
 | 2026-08-03 | DD 记录生命周期明确化：每轮一个文件 + `references_dd_ids` 交叉引用 | `prompts/dd_pipeline.md`、`templates/dd_record.md` |
@@ -86,32 +90,34 @@
 
 ### 2. Validation — 质检
 
-**现状**：[skills/validation/SKILL.md](skills/validation/SKILL.md) 定义了 9 维检查（身份匹配、来源支持、口径一致、时效、公式复算、缺失值、证据边界、scope 隔离）和四状态（pass/warning/fail/unknown）。
+> **2026-08-18 更新**：证据规则现位于 `prompts/evidence_standards.md`（由原 `system.md` §证据迁入；此前 `citation.md` 已并入后删除）。Validation 现为 **10 维**（新增关键动态双来源）；关键 `warning` 须关闭后才可进入 Modeling 或 `act`。下列 2026-08-03 四方讨论保留历史记录。
+
+**现状（2026-08-18）**：[skills/validation/SKILL.md](skills/validation/SKILL.md) 定义了 10 维检查（身份匹配、来源支持、**关键动态双来源**、口径一致、时效、公式复算、缺失值、证据边界、scope 隔离）和四状态（pass/warning/fail/unknown）。证据优先级与双来源规则见 [prompts/evidence_standards.md](prompts/evidence_standards.md)。
 
 **对照外部参考**：
 
 | 外部参考 | 相关设计 | PIOS 现状 |
 |---------|---------|----------|
 | ai-berkshire | 财务数据精确校验（`financial_rigor.py`，偏差 >1% 告警） | 公式复算有提及但无工具支持 |
-| ai-berkshire | 双来源交叉验证（同一机构两个页面不算独立来源） | Citation 定义了此规则，Validation 引用了它 |
+| ai-berkshire | 双来源交叉验证（同一机构两个页面不算独立来源） | `prompts/evidence_standards.md` 定义规则；Validation 第 3 维执行 |
 | Austin IOS | freshness 到期自动标记 + `/wealth-freshness` 扫描 | Data Contracts 定义了时效，但无自动扫描 |
-| Austin IOS | "数据适用时点"必须标注，区分 `valid_at`/`fetched_at`/`published_at` | 已覆盖（第 4、5 维） |
+| Austin IOS | "数据适用时点"必须标注，区分 `valid_at`/`fetched_at`/`published_at` | 已覆盖（第 5、6 维） |
 
-**四方讨论摘要**：
+**四方讨论摘要**（2026-08-03）：
 
-- **Dev**：9 维检查全面且严谨。这是八个 Skill 中设计最成熟的一个。唯一问题是第 6 维（公式复算）在没有脚本工具的情况下，依赖 LLM 手动复算——LLM 的算术不可靠。但没有工具层之前，这已经是能做到的最好状态。
+- **Dev**：10 维检查全面且严谨。这是八个 Skill 中设计最成熟的一个。唯一问题是第 7 维（公式复算）在没有脚本工具的情况下，依赖 LLM 手动复算——LLM 的算术不可靠。但没有工具层之前，这已经是能做到的最好状态。
 - **PM**：四状态体系（pass/warning/fail/unknown）是 PIOS 的核心资产之一。它给用户清晰的信号——哪些可以放心用，哪些需要小心，哪些不能用。不需要改动。
-- **Inv**：第 5 维（时效检查）和第 9 维（scope 隔离）是我最看重的。在实际使用中，最容易犯的错误就是把过期的净值当成当前的，或者把 demo 数据当成生产数据。这两条必须保留。
+- **Inv**：第 6 维（时效检查）和第 10 维（scope 隔离）是我最看重的。在实际使用中，最容易犯的错误就是把过期的净值当成当前的，或者把 demo 数据当成生产数据。这两条必须保留。
 - **AIM**：执行指令清晰。四个状态的边界定义得很好——特别是"关键动态过期记为 unknown，不得降成 warning 再放进 act"这条规则，直接封堵了一个常见的作弊路径。
 
-**投票**：Validation 是八个 Skill 中设计最成熟的，无结构性修改建议。
+**投票**（2026-08-03）：Validation 是八个 Skill 中设计最成熟的，当时无结构性修改建议。
 
 | 投票项 | Dev | PM | Inv | AIM | 结果 |
 |--------|-----|-----|-----|-----|------|
 | 保留现有 9 维 + 四状态，不做结构性改动 | ✅ | ✅ | ✅ | ✅ | **4/4 通过** |
 | 增加脚本化公式校验（后续引入工具层后再做） | ✅ | ✅ | ❌ | ✅ | **记入 PROJECT.md 未来扩展** |
 
-**最终修改意见**：无结构性修改。9 维检查 + 四状态体系完整且严谨。公式复算的脚本化留待工具层引入后增强。
+**最终修改意见**（2026-08-03）：无结构性修改。2026-08-18 增第 3 维双来源与关键 `warning` 关闭规则。公式复算的脚本化留待工具层引入后增强。
 
 ---
 
@@ -303,7 +309,7 @@
 | Austin IOS | `output/` 按日期标记输出文件，`wiki/` 按 ticker 组织知识 | PIOS 的归属判断更结构化（5 类路径） |
 | Austin IOS | 知识保鲜：`freshness` 标记 + `/wealth-freshness` 扫描 | PIOS 无保鲜机制 |
 | ai-berkshire | 报告即记录，无独立 Decision Log | PIOS 的 Decision Log 是差异化优势 |
-| Austin IOS | 隐私隔离：`data/` gitignore、`wiki/` 公开 | PIOS 全仓库私有，不适用 |
+| Austin IOS | 隐私隔离：`data/` gitignore、`wiki/` 公开 | PIOS 按公开仓库 + `.gitignore` 隔离个人生产数据 |
 
 **四方讨论摘要**：
 
@@ -382,7 +388,7 @@
 
 ### 10. DD Pipeline — 阶段编排（Meta-Skill）
 
-**现状**：[prompts/dd_pipeline.md](prompts/dd_pipeline.md) 定义了八步顺序、5 个贯穿性问题、阶段契约表（最小输入/必填产物/放行条件/阻断条件）、Committee 触发规则、DD 记录生命周期。
+**现状**：[prompts/diligence.md](prompts/diligence.md) 定义了八步顺序、5 个贯穿性问题、阶段契约表（最小输入/必填产物/放行条件/阻断条件）、Committee 触发规则、DD 记录生命周期。
 
 **对照外部参考**：
 

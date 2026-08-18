@@ -1,14 +1,15 @@
 # PIOS 架构说明
 
-PIOS（Personal Investment Operating System）是一个用文件管理研究、组合、Due Diligence 记录和决策理由，辅助用户进行**投资动作审查**或**知识探索与市场调研**的项目。其中 Due Diligence，后面简称DD，意为尽职调查。
+PIOS（Personal Investment Operating System）是一个用文件管理金融知识、产品与组合数据、Due Diligence 记录和投资决策理由，辅助用户进行**投资动作审查**或**知识探索与市场调研**的项目。其中 Due Diligence，后面简称DD，意为尽职调查。
 
-1. 通过固定的 DD Pipeline 执行后给出结论。
+1. 通过对具体标的走 Diligence 八步审查后给出结论。
 2. **真正成交只在用户自己的券商客户端，本项目不接入券商 API、不自动下单、不代下单。**
 
 **知识探索与市场调研：** 了解概念、规则、产品，项目内部数据维护等
 
-1. 依然从 DD Pipeline进入，但只进行前面的 Research → Validation。
-2. Agent 将相关结论写入 `knowledge/`、`database/`、`reports/` 等约定路径。
+1. 加载上只读 `prompts/learning.md`（文内再读 `evidence_standards.md`），不加载 `diligence.md`，不写四结论。
+2. 步骤上可复用 Research → Validation；标准取证再读对应 Skill。用户确认要对标的形成买入、卖出、持有、定投、调仓或产品排序结论时，改走 `[diligence]`。
+3. Agent 将相关结论写入 `knowledge/`、`database/`、`reports/` 等约定路径。稳定概念先入 `knowledge/`，结构化事实入 `database/`；只有 `[diligence]` 才组装八步并给出四结论。
 
 Agent 可直接读写仓库文件，每次写入后在对话中明确告知改了什么。用户自己用编辑器读写不受此限。**约定可被故意违反或绕过，但同时也会失去本项目的意义。**
 
@@ -17,13 +18,13 @@ Agent 可直接读写仓库文件，每次写入后在对话中明确告知改�
 ### 1.1 主要流程
 
 1. 用户提出问题 → Agent 列出本轮要读的仓库内文件，以及打算怎么审查。
-2. Agent 读取本地规则和数据，按 DD Pipeline 推进。
+2. Agent 读取本地规则和数据；`[diligence]` 按八步审查推进。
 3. Agent 持续在对话里查证、比较、挑毛病、写结论。Agent 可直接写入仓库文件（推荐用户使用 git 进行文件管理；Agent 在没有收到明确指令之前不会执行 git 操作），每次写入后在对话中明确告知改了什么；用户通过 `git diff` 审核变更。用户自己用编辑器改文件不受此限。
 4. **真正下单只在用户的券商客户端**，当结论为 `act` 之后，Agent 在对话中呈现交易核对清单（也可不出），用户自行在券商操作，成交后用户提交明细，Agent 写入 Decision Log 并更新持仓。
 
-### 1.2 DD Pipeline
+### 1.2 Diligence 八步
 
-固定八步如下，任一步可按契约停下。细则见 [prompts/dd_pipeline.md](prompts/dd_pipeline.md)。
+固定八步如下，任一步可按契约停下。细则见 [prompts/diligence.md](prompts/diligence.md)。
 
 1. **Research**：把事实和来源凑齐，查不到或暂时对不上的信息如实记录。
 2. **Validation**：核对来源、适用时点（数据对哪一天有效）、比较所用标准是否一致。
@@ -65,7 +66,7 @@ IPS 内容为用户的整体投资方向与边界：目标、风险、约束、�
 
 - 用户说清目标
 - Agent 列出本轮要读的仓库内文件以及打算怎么审查
-- 用户确认后，Agent 按 Read 清单开始读取文件并推进 DD
+- 用户确认后，Agent 按本轮将读的文件开始读取并推进审查
 
 问法示例：
 
@@ -106,10 +107,10 @@ IPS 内容为用户的整体投资方向与边界：目标、风险、约束、�
 
 ```mermaid
 flowchart TD
- S["会话开始<br/>确定日期"] --> Plan["列出本轮 Read 清单<br/>与 DD 计划"]
+ S["会话开始<br/>确定日期"] --> Plan["列出本轮将读的文件<br/>与审查计划"]
  Plan --> R["1 Research<br/>取证与来源"]
 
- subgraph RP["DD Pipeline"]
+ subgraph RP["Diligence 八步"]
   R --> V["2 Validation<br/>逐项校验"]
   V --> Check{"关键项？"}
   Check -->|fail / unknown| Stop
@@ -139,13 +140,13 @@ flowchart TD
  Doc8 --> End
 ```
 
-### 3.2 DD Pipeline
+### 3.2 Diligence 八步
 
 §1.2 概述了八步顺序，§2 展示了知识调研与投资行动两条路径。以下逐阶段展开——每一步都对应一份 Agent 执行的 Skill 文件，这里把它翻译成人能读懂的版本。
 
 **DD 记录**
 
-如果要进行投资动作 DD，则会在 `reports/` 下留下一个 DD 记录文件。每轮对话一个文件，本轮结束后不改。纯调研不必建——在对话里聊清楚就行。用户中途决定要推进到投资动作，Agent 会补建。
+如果要进行投资动作审查，则会在 `reports/` 下留下一个 DD 记录文件。每轮对话一个文件，本轮结束后不改。纯调研不必建——在对话里聊清楚就行。用户中途决定要推进到投资动作，Agent 会补建。
 
 新开一轮时可以指定参考之前的 DD 记录。Agent 读完跳过还在时效内的步骤，不重复做工，`references_dd_ids` 指向被引用的 DD 记录。
 
@@ -155,7 +156,7 @@ flowchart TD
 
 完整定义：[skills/research/SKILL.md](skills/research/SKILL.md)
 
-**输入**：用户提出的问题、研究范围；`prompts/citation.md` 定义的证据标准。
+**输入**：用户提出的问题、研究范围；`prompts/evidence_standards.md` 中的证据标准。
 
 **做什么**：把事实找齐，来源记清楚，找不到的如实说找不到。先和用户在对话中确认挖多深——快速查询（对话里列清楚，不落盘）、标准取证（登记来源、写 DD 记录）、还是深度调研（原始材料摘录归档）。然后列决策需要的具体数据项，列完再搜，避免搜到什么看什么。
 
@@ -173,17 +174,17 @@ flowchart TD
 
 完整定义：[skills/validation/SKILL.md](skills/validation/SKILL.md)
 
-**输入**：Research 的结构化数据行（产品代码 + 指标 + 来源 + 时点）；`prompts/citation.md` 的证据标准；`database/data_contracts.md` 的时效规则。
+**输入**：Research 的结构化数据行（产品代码 + 指标 + 来源 + 时点）；`prompts/evidence_standards.md` 的证据标准；`database/data_contracts.md` 的时效规则。
 
-**做什么**：九维检查——身份唯一匹配、来源支持该字段、币种单位一致、日期未过期、公式可复算、缺失值未被填、结论未超证据、数据不是 demo。每项判一个状态：`pass`（能用）、`warning`（有缺陷但可继续）、`fail`（关键错误，停）、`unknown`（证据不足或时效过期）。
+**做什么**：十维检查——身份唯一匹配、来源支持该字段、关键动态双来源、币种单位一致、日期未过期、公式可复算、缺失值未被填、结论未超证据、数据不是 demo。每项判一个状态：`pass`（能用）、`warning`（有缺陷但可继续）、`fail`（关键错误，停）、`unknown`（证据不足或时效过期）。
 
-硬规则：过期关键数据标 `unknown`，不能降到 `warning`。demo 数据不能当生产输入。
+硬规则：过期关键数据标 `unknown`，不能降到 `warning`。无双来源且非「官方唯一来源已说明」的关键动态记 `unknown`。demo 数据不能当生产输入。
 
 **输出**：同样的数据行，每行加了状态标签。通过后写入 `database/` 快照。加 DD 记录 Validation 节。
 
-**通过**：关键字段都 `pass`，或用户接受了已说明的 `warning`。知识调研路径到此结束；投资行动继续。
+**通过**：关键字段都 `pass`，或关键 `warning` 已关闭并附关闭证据。非关键 `warning` 须披露。知识调研路径到此结束；投资行动继续。
 
-**不通过**：`fail` 或关键 `unknown`——停止决策，回 Research 补证据或换来源；过期关键项不得降级为 `warning` 蒙混。
+**不通过**：`fail`、关键 `unknown`、或未关闭的关键 `warning`——停止决策，回 Research 补证据或换来源；过期关键项不得降级为 `warning` 蒙混。
 
 ---
 
@@ -327,7 +328,7 @@ DD 记录是过程留痕——每一步做了什么、什么状态。Decision Lo
 `sources.csv` 有一行 = 来源存在，≠ 已验证。进 Decision 前须经 Validation，落到 `verified`。详见 §3.5.1。
 ### 3.3 Committee
 
-Committee 是第 3–6 步的特殊编排方式，不是 Pipeline 之外的第 9 步。细则见 [skills/committee/SKILL.md](skills/committee/SKILL.md)。
+Committee 是第 3–6 步的特殊编排方式，不是八步之外的第 9 步。细则见 [skills/committee/SKILL.md](skills/committee/SKILL.md)。
 
 **触发条件**：新资产暴露、首次买入、改目标、重大再平衡、产品排序时必须调用；例行小额定投默认不加。
 
@@ -344,8 +345,8 @@ Committee 是第 3–6 步的特殊编排方式，不是 Pipeline 之外的第 9
 | 锚点 | 消费模块 | 何时检查 | 未满足后果 |
 |------|----------|----------|-----------|
 | IPS | Reasoning（约束）、Modeling（阈值）、Decision（硬门禁1）、Committee（前置门禁） | Decision 前 | 非 `active` 只阻断可执行结论，不阻断研究 |
-| Citation | Research（建源）、Validation（九维） | Validation | 关键动态无双来源 → `unknown` |
-| Data Contracts | Validation（九维）、Decision（门禁3） | 行动当日 | 超期 → `unknown` → 阻断 `act` |
+| 证据标准 | Research（建源）、Validation（十维） | Validation | 关键动态无双来源且非官方唯一来源已说明 → `unknown` |
+| Data Contracts | Validation（十维）、Decision（门禁3） | 行动当日 | 超期 → `unknown` → 阻断 `act` |
 | 交易边界 | Decision（门禁）、Documentation（落盘） | 全程 | 突破边界则不构成可执行建议 |
 
 
@@ -354,9 +355,9 @@ Committee 是第 3–6 步的特殊编排方式，不是 Pipeline 之外的第 9
 
 IPS 是个人投资政策说明书。状态非 `active`（例如仍为 `draft` 或空白）时，可以继续研究产品，但不能据此给出可执行买入结论。见 [database/portfolio/investment_policy.md](database/portfolio/investment_policy.md)。
 
-#### Citation — 证据标准
+#### 证据标准
 
-来源优先级：监管、交易所、指数公司、产品发行方正式文件 → 定期报告与公告 → 可靠数据平台 → 新闻与社区只作线索。关键动态至少两个独立来源。交易币种、产品计价币种、底层暴露币种、报告币种分开写。引用要紧挨它所支持的事实。见 [prompts/citation.md](prompts/citation.md)。
+来源优先级：监管、交易所、指数公司、产品发行方正式文件 → 定期报告与公告 → 可靠数据平台 → 新闻与社区只作线索。关键动态至少两个独立来源；仅官方唯一来源时须说明，否则记 `unknown`。交易币种、产品计价币种、底层暴露币种、报告币种分开写。引用要紧挨它所支持的事实。见 [prompts/evidence_standards.md](prompts/evidence_standards.md)。
 
 #### Data Contracts — 数据能用多久
 
@@ -386,7 +387,7 @@ Agent 可直接读写仓库文件（推荐用户使用 git 进行文件管理；
 
 ```mermaid
 flowchart TD
-  Start["会话开始"] --> Agent["Agent 读取文件<br/>按 Pipeline 推进"]
+  Start["会话开始"] --> Agent["Agent 读取文件<br/>按路线推进"]
   Agent --> Write["Agent 写入文件<br/>告知用户改了什么"]
   Write --> Decision{"Decision: act？"}
   Decision -->|否| Done["继续审查或停止"]
@@ -455,28 +456,30 @@ raw_material/ → Research → Validation
 ### 4.1 强制加载对照
 
 
-| 条件             | 必须 Read                            | 强制行为                                                   |
-| -------------- | ---------------------------------- | ------------------------------------------------------ |
-| 任意会话开始         | `system`、`answer_style`、`citation` | 证据优先；区分事实、假设、推理、结论；不下单                                 |
-| 投资行动           | + `dd_pipeline`                | 八步顺序、阶段契约、停止条件 |
-| 进入第 N 步        | + `skills/<phase>/SKILL.md`        | 该步流程与阻断不可跳过                                            |
-| Committee 触发场景 | + `committee`                      | 编排 3–6；硬性条件未过时，即使多数意见赞成也不得放行                           |
-| 有对应场景          | + `workflow/*.md`                  | 操作顺序；不得放宽 Prompt/Skill                                 |
+| 条件 | 必须 Read | 强制行为 |
+| --- | --- | --- |
+| 任意会话开始 | `AGENTS.md` | 先判断目的；按该路线读下一步 |
+| `[building]` | `building.md` | 再读 `PROJECT.md`、`ARCHITECTURE.md`；产品 prompt 当文件不当身份；改人读文档时加 `docs_style.md` |
+| `[learning]` | `learning.md` | 文内再读 `evidence_standards.md`；概念问答即可；标准取证加 Research/Validation；不写四结论 |
+| `[diligence]` | `diligence.md` | 文内再读 `evidence_standards.md`；八步与停止条件；结论格式见 Decision Skill |
+| 进入第 N 步 | `skills/<phase>/SKILL.md` | 该步流程与阻断不可跳过 |
+| Committee 触发场景 | `committee` | 编排 3–6；硬性条件未过时，即使多数意见赞成也不得放行 |
+| 有对应场景 | `workflow/*.md` | 操作顺序；不得放宽 Prompt/Skill |
 
 
 没按触发条件加载对应 Prompt 或 Skill，就不能推进该结论或写入。
 
-没有「后置 Prompt 校验链」。阶段顺序由 `dd_pipeline` 与各 Skill 决定，不靠把 Prompt 再排一遍。结论出来以后，不要再跑一套 system → citation → …。Citation 与时效应在 Validation、Decision 阶段内做完。仓库也没有程序强制校验「是否已读」，靠开场确认（本轮要读的文件与 DD 步骤）和抽查。
+没有「后置 Prompt 校验链」。阶段顺序由 `diligence.md` 与各 Skill 决定，不靠把 Prompt 再排一遍。结论出来以后，不要再跑一套 evidence → diligence。证据与时效应在 Validation、Decision 阶段内做完。仓库也没有程序强制校验「是否已读」，靠开场确认（本轮要读的文件与 DD 步骤）和抽查。
 
 ### 4.2 投资路径 vs 文档路径
 
 
 | 本轮任务                          | 是否走八步                   | 关键 Prompt                                                            |
 | ----------------------------- | ----------------------- | -------------------------------------------------------------------- |
-| 买入 / 卖出 / 持有 / 定投 / 调仓 / 产品排序 | 是                       | + `dd_pipeline` + 阶段 Skill                                       |
-| 知识 / 市场调研（无投资意见）              | 否；Research + Validation | 见 OPERATIONS「§5.1 开始前」与 [workflow/research.md](workflow/research.md) |
+| 买入 / 卖出 / 持有 / 定投 / 调仓 / 产品排序 | 是                       | + `diligence.md` + 阶段 Skill                                       |
+| 知识 / 市场调研（无投资意见）              | 否；Research + Validation | 加载 `learning.md`；标准取证再读 Research/Validation Skill；笔记用 [templates/research_note.md](templates/research_note.md) |
 | 改 README / STATUS / 手册 / 知识条目 | 否                       | + `docs_style`                                                       |
-| 概念问答且无行动                      | 否                       | 常驻三份即可；不虚构 Pipeline                                                  |
+| 概念问答且无行动                      | 否                       | `AGENTS.md` + `prompts/learning.md`（不含 `diligence.md` / 阶段 Skill）；不虚构八步审查 |
 
 
 
@@ -526,20 +529,21 @@ Prompt 管红线，Skill 管步骤。Research、Reasoning 在方法上空间大�
 
 ```text
 工具入口
-├── AGENTS.md              # 加载协议（Agent：Read 清单）+ 质量底线
+├── AGENTS.md              # 加载协议（先判断目的）+ 质量底线
 ├── CLAUDE.md              # Claude Code 入口
 ├── OPERATIONS.md          # 日常操作手册
 ├── ARCHITECTURE.md        # 本文件（设计说明）
 ├── PROJECT.md             # 项目开发进度与已知缺口
-└── .cursor/               # Cursor 引用 / 发现层
+└── .cursor/               # Cursor 入口：rules 指向 AGENTS.md；skills 为发现层
 
 规则与能力正文
-├── prompts/               # 常驻规则
-│   ├── system.md
-│   ├── answer_style.md
-│   ├── citation.md
-│   ├── dd_pipeline.md # 八步契约 + DD 记录生命周期
-│   └── docs_style.md
+├── prompts/               # 按路线加载
+│   ├── building.md        # 系统建设
+│   ├── learning.md        # 知识调研
+│   ├── evidence_standards.md  # 证据标准模块（非路线）
+│   ├── csv_schema.md      # database CSV 列名
+│   ├── diligence.md       # 投资动作审查：八步契约 + DD 记录生命周期
+│   └── docs_style.md      # 改人读文档时
 └── skills/                # 按阶段加载；committee 编排 3–6
 
 研究与 DD

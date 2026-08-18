@@ -34,7 +34,7 @@
 - 使用稳定 ID 关联数据，不用显示名称作为唯一键。
 - 数值与单位分开，日期使用 ISO 8601。
 - 市场、指数、产品和评价数据保留 `source_id`、来源 URL、来源等级和取得时间；来源登记见 [`sources.csv`](sources.csv)，字段契约与校验见 [`data_contracts.md`](data_contracts.md)。
-- 个人组合表 `portfolio/holdings.csv` 与 `portfolio/target_allocation.csv` 是操作表：持仓用 `source` 记录对账单或人工核对即可；目标配置用 `rationale` 记录依据。更细证据放在 Decision Log。
+- 个人组合表 `portfolio/holdings.csv` 与 `portfolio/target_allocation.csv` 是操作表。CSV 列名以 [`../prompts/csv_schema.md`](../prompts/csv_schema.md) 为准；`holdings.csv` 本地生成、不入库。持仓用 `source` 记录对账单或人工核对即可；目标配置用 `rationale` 记录依据。更细证据放在 Decision Log。
 - 未知值留空，并将验证状态设为 `missing` 或 `pending`。
 - 不在静态基础表中覆盖历史动态值；动态记录按时间追加。
 - 任何评分都必须关联模型版本和输入数据日期；draft 模型阶段只做字段对比与否决项。

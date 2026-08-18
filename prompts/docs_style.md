@@ -1,6 +1,6 @@
 # Docs Style
 
-仓库说明文档的写法。会话回答与投资结论结构见 [`answer_style.md`](answer_style.md)。
+仓库说明文档的写法。会话怎么回答见 `AGENTS.md`。投资结论结构见 `skills/decision/SKILL.md`。
 
 ## 适用
 
@@ -12,9 +12,9 @@
 
 下列处可润色句式，不得改门禁含义或字段语义：
 
-- CSV 表头、schema、数据契约字段名
+- CSV 表头、schema、数据契约字段名（列名权威为 `prompts/csv_schema.md`）
 - Decision Log 冻结字段与状态取值
-- DD Pipeline 停止条件、放行/阻断条件、阶段契约表
+- diligence 八步停止条件、放行/阻断条件、阶段契约表
 - Skill / workflow 中的硬门槛
 
 ## 规则
