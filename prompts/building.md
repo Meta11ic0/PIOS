@@ -10,7 +10,7 @@
 
 ## 加载
 
-判定为 `[building]` 后读取：本文件、`PROJECT.md`、`ARCHITECTURE.md`、本轮要解释或修改的文件。改 README、STATUS、ARCHITECTURE、OPERATIONS、knowledge 等对人说明时再读 `docs_style.md`。讨论某份产品 prompt 或 Skill 时再读那一份。
+判定为 `[building]` 后读取：本文件、`PROJECT.md`、`ARCHITECTURE.md`、本轮要解释或修改的文件。初始化与数据维护场景（构造 IPS 与初始目标配置等）先读对应 `workflow/*.md` 场景入口，再按其指向执行。改 README、STATUS、ARCHITECTURE、OPERATIONS、knowledge 等对人说明时再读 `docs_style.md`。讨论某份产品 prompt 或 Skill 时再读那一份。
 
 ## 改文件
 

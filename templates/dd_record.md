@@ -11,7 +11,7 @@ updated_at:
 dd_completed_at:
 valid_at:
 information_cutoff_at:
-pipeline_version:
+pipeline_version:  # 本轮 diligence 规则标识；未版本化时留空
 ips_id:
 source_refs: []
 references_dd_ids: []
@@ -61,7 +61,7 @@ scope:
 
 # Committee：适用时
 
-适用触发：新资产暴露、首次买入、改目标、重大再平衡、ETF 排序。不适用时写明理由。
+适用触发：新资产暴露、首次买入、修改 IPS 或目标配置、重大再平衡、产品排序。不适用时写明理由。按 skills/committee/SKILL.md 的统一输出填写；信息丰富度 `C` 不得进入 `act`。
 
 ```text
 committee_id:
@@ -74,23 +74,10 @@ seat_d:
 fact_conflicts:
 blocking_gates:
 unresolved_disagreements: # material / non_material
-committee_outcome: pass / revise / reject / research  # `pass` / `revise` / `reject` / `research`
+committee_outcome: pass / revise / reject / research
 next_action:
 review_trigger:
 ```
-
-- 输入包：
-- 信息丰富度：A / B / C。`C` 不得进入 `act`
-- 目标与战略配置席：
-- 资产暴露与组合结构席：
-- ETF 实施与数据验证席：
-- 风险与反方席：
-- 事实冲突：
-- 阻断项：
-- 未解决分歧：material / non_material：
-- Committee 结论：`pass` / `revise` / `reject` / `research`
-- 下一步：
-- 复核触发器：
 
 # Final Gate
 

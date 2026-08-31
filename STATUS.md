@@ -12,7 +12,7 @@
 |---|---|---|---|
 | 1. 投资政策声明 IPS（Investment Policy Statement） | draft | [investment_policy.md](database/portfolio/investment_policy.md) | 填完约束并批准，使 IPS 状态为 `active`。状态为 `draft` 时不可支撑 `act`。 |
 | 2. 目标配置集 | 缺失 | [target_allocation.csv](database/portfolio/target_allocation.csv) | IPS 状态为 `active` 后填写完整 `allocation_set_id`。 |
-| 3. 当前持仓 | 缺失 | [holdings.csv](database/portfolio/holdings.csv) | 录入不含敏感账号的当前快照；币种拆分并带 `record_id`。 |
+| 3. 当前持仓 | 缺失 | [holdings.csv](database/portfolio/holdings.csv)（本地文件，不入库） | 录入不含敏感账号的当前快照；币种拆分并带 `record_id`。 |
 | 4. 产品身份核验 | 缺失 | [ETF 候选种子](database/watchlist/us_index_etf_candidates.csv) | 用基金公司与交易所资料核验 1–2 个候选。 |
 | 5. 动态事实快照 | 缺失 | [etf_metrics.csv](database/products/history/etf_metrics.csv) | 追加带 `source_id`、适用时点和取得时间的记录；遵守最大允许时效。 |
 | 6. 原始材料蒸馏 | 缺失 | [raw_material/README.md](raw_material/README.md)、[sources.csv](database/sources.csv) | 先登记 `source_id`，再保存合规摘录；经 Validation 后分流。 |

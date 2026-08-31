@@ -353,7 +353,7 @@ Committee 是第 3–6 步的特殊编排方式，不是八步之外的第 9 步
 
 #### IPS（Investment Policy Statement，投资政策）
 
-IPS 是个人投资政策说明书。状态非 `active`（例如仍为 `draft` 或空白）时，可以继续研究产品，但不能据此给出可执行买入结论。见 [database/portfolio/investment_policy.md](database/portfolio/investment_policy.md)。
+IPS 是个人投资政策说明书。状态非 `active`（例如仍为 `draft` 或空白）时，可以继续研究产品，但不能据此给出可执行买入结论。首次构造与批准走 [workflow/ips_setup.md](workflow/ips_setup.md)。见 [database/portfolio/investment_policy.md](database/portfolio/investment_policy.md)。
 
 #### 证据标准
 

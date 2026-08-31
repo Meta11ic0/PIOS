@@ -8,7 +8,7 @@ PIOS（Personal Investment Operating System）用文件管理金融知识、产�
 
 开场先判断本轮目的，标注恰好一种，再只读该路线下一步。阶段、Skill 与投资结论格式由下一步规定。
 
-用户要修改或说明规则、架构、加载协议或建设进度：`[building]`（系统建设），读 `prompts/building.md`。
+用户要修改或说明规则、架构、加载协议或建设进度，或做系统初始化与数据维护（构造 IPS、目标配置、种子数据等）：`[building]`（系统建设），读 `prompts/building.md`。
 用户要弄清概念或产品事实、且本轮不形成投资行动结论：`[learning]`（知识调研），读 `prompts/learning.md`。
 用户要对具体标的形成买入、卖出、持有、定投、调仓或产品排序的结论：`[diligence]`（投资动作审查），读 `prompts/diligence.md`。
 

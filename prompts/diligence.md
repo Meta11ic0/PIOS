@@ -17,7 +17,7 @@
 
 任何阶段发现关键数据缺失、来源冲突未解决或风险超出约束，应暂停决策，不得跳过后续问题直接推荐。
 
-例行小额定投仅在满足 `workflow/dca.md`「有效轻量定投 Decision」五要素时可走轻量路径：跳过 Committee，并按该文件完成八步简化检查；Challenge 仍按 Skill 全文。除此以外不得简化。新资产暴露、首次买入、改目标、重大再平衡或产品排序必须走完整路径并含 Committee。Committee 不是八步之外的另一步；触发时进入 Modeling 前按 `skills/committee/SKILL.md` 编排第 3–6 步。
+例行小额定投仅在满足 [OPERATIONS.md](../OPERATIONS.md)「DD 深度分级」的「有效轻量定投 Decision」五要素时可走轻量路径：跳过 Committee，完成八步简化检查；Challenge 仍按 Skill 全文。除此以外不得简化。新资产暴露、首次买入、改目标、重大再平衡或产品排序必须走完整路径并含 Committee。Committee 不是八步之外的另一步；触发时进入 Modeling 前按 `skills/committee/SKILL.md` 编排第 3–6 步。
 
 每个阶段都回答：事实准确吗？推理由证据支持吗？风险充分披露吗？符合长期目标吗？能积累为可复用资产吗？
 

@@ -16,7 +16,7 @@
 | 知识保鲜机制 | `knowledge/` 条目无 `freshness` / `valid_until` 标记，无定期扫描过期条目的机制 | 低 | 参考 Austin 的 `/wealth-freshness` |
 | raw_material 未启用 | `raw_material/` 目录结构已建但无真实内容，无 frontmatter schema | 低 | 见 EXTERNAL_REFERENCES.md 的借鉴清单 |
 | Obsidian 兼容 | `knowledge/` 文件无 Obsidian frontmatter，无法用图谱浏览 | 低 | 成本低，按需引入 |
-| workflow 场景缺失：数据维护类无入口 | `workflow/` 现有 6 个均为投资行动类（买/卖/定投/复核/再平衡）；**IPS 写入、种子写入与核验、来源与信息登记**等场景无 workflow 入口，步骤散落在 OPERATIONS §14、STATUS 九门禁、database/README 写入要求中 | 中 | 可新建 `workflow/ips_setup.md`、`workflow/seed_ingest.md`、`workflow/register.md`（信息登记）作为场景入口，细则仍引用 OPERATIONS 与 database/README，不复制正文 |
+| workflow 场景缺失：数据维护类无入口 | IPS 构造入口已建（2026-08-30）：`workflow/ips_setup.md` + `skills/ips_setup/`；**种子写入与核验、来源与信息登记**仍无 workflow 入口，步骤散落在 OPERATIONS §14、STATUS 九门禁、database/README 写入要求中 | 低 | 可新建 `workflow/seed_ingest.md`、`workflow/register.md`（信息登记）作为场景入口，细则仍引用 OPERATIONS 与 database/README，不复制正文 |
 
 ## 待决策事项
 
@@ -27,12 +27,19 @@
 | 模板增加 `references_dd_ids` 字段 | ✅ 已决定 (2026-08-03) | 20 轮讨论结论 |
 | `knowledge/` 引入 freshness + status 标记 | 📋 待讨论 | EXTERNAL_REFERENCES.md P0 |
 | 引入运维型 Skill（knowledge-sync 等） | 📋 待讨论 | EXTERNAL_REFERENCES.md P1 |
+| `workflow/` 去留 | ✅ 已决定 (2026-08-30)：瘦身为场景卡片（只指路，不复制规则正文）；dca 五要素权威移至 OPERATIONS「DD 深度分级」；buy_etf 核对清单时序对齐 ARCHITECTURE（act 后即可出清单，用户确认后记 `approved`） | 2026-08-30 一致性检查 |
+| IPS 与目标配置的「批准」留痕方式 | ✅ 已决定 (2026-08-30)：混合方案——IPS 与初始配置集用对话确认 + frontmatter（`ips-approval:<ips_id>`），防篡改靠 git 历史；此后目标配置变更走完整八步 + Decision Log。落地见 investment_policy.md、OPERATIONS §9/§14、decision 门禁 1 | 2026-08-30 一致性检查 |
 | POSITION_MONITOR workflow | 📋 待讨论 | 20 轮讨论第 15 轮 |
 
 ## 变更日志
 
 | 日期 | 变更 | 影响范围 |
 |------|------|---------|
+| 2026-08-30 | 新建 IPS 构造入口：`skills/ips_setup/SKILL.md`（对话收集顺序、质量标准、一致性检查、落盘与批准）+ `workflow/ips_setup.md` 薄卡片 + `.cursor/skills/ips_setup/` 引用占位；`AGENTS.md` building 路线扩及系统初始化与数据维护；`building.md` 加场景入口指向；OPERATIONS 场景跳转表与 §14 挂链接；ARCHITECTURE §1.4 加指向 | `skills/ips_setup/`、`workflow/ips_setup.md`、`.cursor/skills/ips_setup/`、`AGENTS.md`、`prompts/building.md`、`OPERATIONS.md`、`ARCHITECTURE.md` |
+| 2026-08-30 | workflow 六文件瘦身为场景卡片（适用范围、前置输入、Committee 触发、流程指向，不复制规则正文）；「有效轻量定投 Decision」五要素权威移至 OPERATIONS「DD 深度分级」，`diligence.md` 引用同步改指；buy_etf 核对清单时序对齐（`act` 后即可出清单，用户确认后记 `user_authorization: approved`） | `workflow/*.md`、`prompts/diligence.md`、`PROJECT.md` |
+| 2026-08-30 | IPS 批准留痕定案（混合方案）：`investment_policy.md` 增「批准记录的留痕方式」段；`skills/decision` 门禁 1 加指向；OPERATIONS §14 阶段 1 写明批准留痕、阶段 2 与 §9 的 `approval_decision_id` 接受 `ips-approval:<ips_id>` | `database/portfolio/investment_policy.md`、`skills/decision/`、`OPERATIONS.md` |
+| 2026-08-30 | 一致性修复：Decision 缺输入时改落 `research`/`wait`，移除「暂缓」；Research 状态枚举补 `pending`；`database/README.md` schema 版本回填 0.5.0；csv_schema 与 data_contracts 统一 target_allocation 去重键（`allocation_id` + `effective_from`）；`templates/dd_record.md` Committee 节去重、席位名与触发清单对齐 `skills/committee/SKILL.md`；`templates/product_report.md` `scope` 留空；两模板 `pipeline_version` 加注释；`sources.csv` demo 行 status 留空；OPERATIONS §17 注明 git 恢复不覆盖不入库的生产留痕；STATUS holdings 链接注明本地文件；buy_etf 小节引用改文字备注 | `skills/decision/`、`skills/research/`、`database/README.md`、`prompts/csv_schema.md`、`templates/`、`database/sources.csv`、`OPERATIONS.md`、`STATUS.md`、`workflow/buy_etf.md` |
+| 2026-07-29（补记） | schema 0.4.0→0.5.0：时间列名统一 `as_of`→`valid_at`、`retrieved_at`→`fetched_at`；新增组合绩效口径知识条目；`sources.csv` 材料蒸馏字段落地 | `database/products/schema.yaml`、各 CSV 表头、`knowledge/portfolio/performance_measurement.md`、`database/sources.csv` |
 | 2026-08-18 | 三路线改名为 `[building]` / `[learning]` / `[diligence]`；`system.md` 收成 `evidence.md` 模块；`dd_pipeline.md` 改名为 `diligence.md` | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/research/`、`skills/validation/`、`skills/committee/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`README.md`、`workflow/` |
 | 2026-08-18 | 删除 `workflow/research.md`；ETF 取数顺序迁入 Research Skill；知识调研标准取证只读两份 Skill | `skills/research/SKILL.md`、`prompts/system.md`、`ARCHITECTURE.md`、`OPERATIONS.md` |
 | 2026-08-18 | 四席合议落盘：加载协议对齐、citation 并入 system.md、Validation 增双来源维（10 维）、关键 warning 门禁、手册隐私口径 | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/validation/`、`skills/decision/`、`skills/research/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`database/data_contracts.md`、`workflow/buy_etf.md` |

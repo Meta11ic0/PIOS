@@ -43,6 +43,7 @@ DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，八步为
 | 组合复核 | [workflow/portfolio_review.md](workflow/portfolio_review.md) | 文内「§10 场景四：组合复核」 |
 | 再平衡 | [workflow/rebalance.md](workflow/rebalance.md) | 文内「§11 场景五：再平衡」 |
 | 补齐骨架数据 | [database/README.md](database/README.md) | 文内「§14 当前初始化顺序」 |
+| 初始化 IPS / 目标配置 | [workflow/ips_setup.md](workflow/ips_setup.md)、[IPS Setup Skill](skills/ips_setup/SKILL.md) | 文内「§14 当前初始化顺序」 |
 | 首次搭建系统 | — | 文内「§14」；README → 本文就绪条件 → 初始化顺序 |
 | 数据更正 / 修复 | — | 文内「§17 常见错误与恢复」 |
 | 修改 Prompt / Skill / 规则 | [prompts/building.md](prompts/building.md)、[PROJECT.md](PROJECT.md) | 文内「§15 维护项目本身」+「§17」验证流程 |
@@ -358,7 +359,7 @@ rec-1,broker_a-CN-<ticker>,2026-07-27T15:00:00+08:00,2026-07-27T15:00:00+08:00,b
 | `allocation_id` | 配置桶的稳定 ID | 同一配置范围保持稳定 |
 | `allocation_set_id` | 同一生效配置集 ID | 一次批准的完整桶集合共用 |
 | `ips_id` | 投资政策版本 | 对应 `investment_policy.md` 的 IPS ID；IPS 状态须为 `active` |
-| `approval_decision_id` | 批准本配置集的 Decision | 无批准记录则不得用于 `act` |
+| `approval_decision_id` | 批准本配置集的 Decision 或 IPS 批准引用 | 初始配置集随 IPS 批准生效时填 `ips-approval:<ips_id>`；此后的配置变更须指向新 Decision。无批准记录则不得用于 `act` |
 | `effective_from` | 生效日期 | ISO 8601 日期 |
 | `asset_class` | 资产类别 | 按自己的分类体系统一 |
 | `market` | 市场范围 | 使用一致的市场编码 |
@@ -474,12 +475,14 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md)，使 IPS（Investment Policy Statement，投资政策）状态为 `active`。
    - **最低完成标准**：目的、风险承受能力、应急现金要求、约束条件、报告币种 5 节非空；IPS ID 已分配；有批准记录。
+   - **批准留痕方式**：用户在对话中明确批准后，Agent 将 `approved_at` 与 `approval_evidence` 写入 IPS frontmatter，不建 Decision Log、不走八步；详见该文件「批准记录的留痕方式」。
+   - **构造方式**：对话式构造读 [workflow/ips_setup.md](workflow/ips_setup.md) 与 [skills/ips_setup/SKILL.md](skills/ips_setup/SKILL.md)，含收集顺序与质量标准。
    - IPS 状态仍为 `draft` 时 cannot act。
 
 **阶段 2（可并行）**
 
 2. 在 `target_allocation.csv` 录入与该 IPS 绑定的有效配置集。
-   - **最低完成标准**：至少一个 `allocation_set_id`；所有 active 桶的 `target_weight` 之和 = 1.0；有 `approval_decision_id`。
+   - **最低完成标准**：至少一个 `allocation_set_id`；所有 active 桶的 `target_weight` 之和 = 1.0；`approval_decision_id` 填 `ips-approval:<ips_id>`（初始配置集随 IPS 批准生效）。
 3. 在本地 `holdings.csv` 录入不含敏感账号的当前持仓快照。该文件仅本机有效，勿 commit。公开仓库设计见 README 隐私节。
    - **最低完成标准**：至少一条 `verified` 记录；统一估值时点；填写交易/基金/底层暴露三种币种。
 
@@ -542,6 +545,8 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 ## 17. 常见错误与恢复
 
 ### 文件误改或误删
+
+生产留痕文件——`database/portfolio/holdings.csv`、非 demo 的 `reports/` 与 `decision_log/`——被 `.gitignore` 排除，不在 git 历史里。上表 git 恢复命令对它们不生效；误删后只能从本机或异地备份恢复，或按下方追加/重建流程重建。请按 README「隐私」与 §12.1 保持加密、可恢复的备份并定期验证。
 
 1. **持仓数据写错**：不要直接修改旧行。追加新行，填写 `supersedes_record_id` 指向被更正行，`correction_reason` 记录原因。
 2. **Decision Log 写错**：追加 `amendment` 段，标注修正时间和原因；不覆盖原记录。

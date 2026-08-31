@@ -13,7 +13,7 @@ content_hash:
 review_at:
 valid_at:
 information_cutoff_at:
-pipeline_version:
+pipeline_version:  # 本轮 diligence 规则标识；未版本化时留空
 ips_id:
 allocation_set_id:
 applicable_exception_ids: []

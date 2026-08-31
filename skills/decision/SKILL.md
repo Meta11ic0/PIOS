@@ -5,13 +5,13 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 # Decision
 
-决策输入必须包含：目标与约束、已验证事实、模型结果、风险报告、Challenge 裁决和当前组合状态。关键输入缺失时输出"暂缓"，不补造结论。
+决策输入必须包含：目标与约束、已验证事实、模型结果、风险报告、Challenge 裁决和当前组合状态。关键输入缺失时不得输出 act，按缺口落到 research 或 wait，不补造结论。
 
 ## `act` 硬门禁
 
 以下五条同时满足才可讨论 `act`，否则只能输出 `wait` / `reject` / `research`：
 
-1. IPS 状态为 `active`，有批准记录，必填约束已填。
+1. IPS 状态为 `active`，有批准记录（留痕方式见 `database/portfolio/investment_policy.md`），必填约束已填。
 2. 存在与该 IPS 绑定的有效目标配置集 `allocation_set_id`。
 3. 持仓与关键产品动态事实未超过最大允许时效；过期关键项视为 `unknown`，阻断 `act`。
 4. Validation 无关键 `fail`/`unknown`、无未关闭的关键 `warning`；Risk 无 `Critical`；Challenge 非 `revise` / `reject`；Committee 触发场景已通过或已记录不适用理由。

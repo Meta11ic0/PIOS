@@ -26,7 +26,7 @@ description: 收集并组织投资、市场、指数和产品事实，建立可�
 - 来源名称、文档标题和 URL
 - `source_id`；若保存原始材料，记录相对路径和蒸馏状态
 - 来源等级：primary / secondary
-- 状态：verified / conflicting / missing
+- 状态：verified / conflicting / missing / pending
 - 信息丰富度：`A` / `B` / `C`
 
 禁止根据旧报告推断当前规模、成交额或交易状态。无法获取时保留空值并解释。

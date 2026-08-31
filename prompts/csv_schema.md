@@ -10,7 +10,7 @@ database/watchlist/us_index_etf_candidates.csv：主键 `product_id`。列：pro
 
 database/portfolio/holdings.csv：主键 `record_id`。列：record_id,holding_id,valid_at,fetched_at,account_alias,product_id,asset_type,trade_currency,fund_currency,underlying_exposure_currency,quantity,cost_basis,cost_basis_scope,market_value,report_currency,market_value_reporting,fx_rate_to_reporting,fx_source_id,fx_valid_at,fx_quote_convention,valuation_method,valuation_price,valuation_price_currency,valuation_source,valuation_valid_at,portfolio_snapshot_id,source_id,source,verification_status,supersedes_record_id,correction_reason,notes
 
-database/portfolio/target_allocation.csv：主键 `allocation_id`。列：allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset_class,market,report_currency,target_weight,min_weight,max_weight,rationale,review_trigger,review_at,status
+database/portfolio/target_allocation.csv：去重键 `allocation_id` + `effective_from`。列：allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset_class,market,report_currency,target_weight,min_weight,max_weight,rationale,review_trigger,review_at,status
 
 database/portfolio/external_cashflows.csv：主键 `cashflow_id`。列：cashflow_id,occurred_at,account_alias,flow_type,amount_signed,currency,report_currency,amount_reporting_signed,fx_rate_to_reporting,fx_source_id,fx_valid_at,fx_quote_convention,source_id,verification_status,supersedes_cashflow_id,correction_reason,notes
 

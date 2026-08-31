@@ -5,7 +5,7 @@ product_id:
 market:
 work_status: draft
 data_status: unknown
-scope: production
+scope:
 created_at:
 updated_at:
 valid_at:
