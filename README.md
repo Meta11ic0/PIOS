@@ -9,7 +9,7 @@ Personal Investment Operating System。用文件和 DD 流水线（DD 即 Due Di
 ## 怎么读
 
 1. 本文件 — 项目是什么、当前状态
-2. [ARCHITECTURE.md](ARCHITECTURE.md) — 为什么这样设计；「何时调用」见其中「如何串联」
+2. [ARCHITECTURE.md](ARCHITECTURE.md) — 为什么这样设计；「何时调用」见其中「加载协议与文档分工」
 3. [OPERATIONS.md](OPERATIONS.md) 文首「阅读地图」— 日常怎么用；按需要跳，不必通读
 4. [STATUS.md](STATUS.md) — 投资就绪与九项门禁；初始化从 [investment_policy.md](database/portfolio/investment_policy.md) 开始
 5. [PROJECT.md](PROJECT.md) — 系统建设进度、已知缺口与 Skill 审查记录（非投资就绪）

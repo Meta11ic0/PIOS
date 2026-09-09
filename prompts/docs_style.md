@@ -14,7 +14,7 @@
 
 - CSV 表头、schema、数据契约字段名（列名权威为 `prompts/csv_schema.md`）
 - Decision Log 冻结字段与状态取值
-- diligence 八步停止条件、放行/阻断条件、阶段契约表
+- diligence 七步停止条件、放行/阻断条件、阶段契约表
 - Skill / workflow 中的硬门槛
 
 ## 规则

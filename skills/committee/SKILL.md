@@ -5,7 +5,7 @@ description: 对新资产暴露、首次买入、目标配置变更、重大再�
 
 # Committee
 
-Committee 是 diligence 八步第 3–6 阶段的编排辅助，不是第九阶段，不替代 Modeling、Reasoning、Risk 或 Challenge。不新增八步之外的阶段，不以投票或平均分代替事实核验。
+Committee 是 diligence 七步第 3–6 阶段的编排辅助，不是第八阶段，不替代 Modeling、Reasoning、Risk 或 Challenge。不新增七步之外的阶段，不以投票或平均分代替事实核验。
 
 ## 触发条件
 

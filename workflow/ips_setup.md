@@ -1,6 +1,6 @@
 # IPS 构造场景入口
 
-适用：首次构造 IPS 与初始目标配置集，对象为 [database/portfolio/investment_policy.md](../database/portfolio/investment_policy.md)。修订已生效的 IPS 属于政策变更，不走本入口：按 [prompts/diligence.md](../prompts/diligence.md) 完整八步并触发 Committee。
+适用：首次构造 IPS 与初始目标配置集，对象为 [database/portfolio/investment_policy.md](../database/portfolio/investment_policy.md)。修订已生效的 IPS 属于政策变更，不走本入口：按 [prompts/diligence.md](../prompts/diligence.md) 完整七步并触发 Committee。
 
 流程：
 

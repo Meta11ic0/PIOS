@@ -4,7 +4,7 @@
 
 **它不是可执行规则的权威源。** 强制规则以 `prompts/` 与 `skills/` 正文为准。设计原因已在 [ARCHITECTURE.md](ARCHITECTURE.md)，本文只管怎么用。
 
-DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，八步为 Research → … → Documentation。本文只写操作场景与数据落盘，不再展开逐步细则。
+DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，七步为 Research → … → Decision。本文只写操作场景与数据落盘，不再展开逐步细则。
 
 ---
 
@@ -54,8 +54,8 @@ DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，八步为
 
 | | 可跑流程 | 可作真实决策 |
 |---|---|---|
-| 含义 | 工作流、模板、八步审查、Skill 齐；可练习写法与门禁 | 持仓与目标已填；IPS（Investment Policy Statement，投资政策）状态为 `active`；关键产品已核验；动态数据有适用时点且未超时效；比较用真实生产输入 |
-| 典型产物 | 研究笔记、`research` / `wait` Decision、结构演示 | 可讨论 `act`，但仍须过 Diligence 八步 |
+| 含义 | 工作流、模板、七步审查、Skill 齐；可练习写法与门禁 | 持仓与目标已填；IPS（Investment Policy Statement，投资政策）状态为 `active`；关键产品已核验；动态数据有适用时点且未超时效；比较用真实生产输入 |
+| 典型产物 | 研究笔记、`research` / `wait` Decision、结构演示 | 可讨论 `act`，但仍须过 Diligence 七步 |
 | 当前仓库 | **多数处于此态** | 须按文内「§14 当前初始化顺序」补齐后才进入 |
 
 持仓或目标为空、或 IPS 状态仍为 `draft`：可以继续产品研究，**不能**根据组合得出买入结论。观察池种子在核验前不是产品目录。`reports/demo/`、`decision_log/demo/`、`screening/runs/demo/`不得作为生产输入。
@@ -70,7 +70,7 @@ PIOS 目前是文件驱动：
 2. Agent 读取项目规则和相关 Skill；须实际 Read，见上文协作清单。
 3. 一起收集和核验数据。
 4. 结果写入 Markdown、CSV 或 YAML。
-5. 涉及投资行动时按 [Diligence 八步](prompts/diligence.md) 过审。
+5. 涉及投资行动时按 [Diligence 七步](prompts/diligence.md) 过审。
 6. 成交后更新持仓和决策日志。
 7. 定期复核组合，并把新认识积累进知识、数据、模型或工作流。
 
@@ -84,10 +84,10 @@ PIOS 目前是文件驱动：
 
 | 路径 | 适用 | 要求 |
 |---|---|---|
-| **完整八步** | 新标的、首次买入、加仓超原计划、卖出、调仓、改目标、产品排序 | 各 Skill 全文；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序同时加载Committee Skill；Modeling 在 draft 阶段只做字段对比与否决项，不自动评分 |
-| **轻量路径** | 已有**有效轻量定投 Decision** 的例行买入，且标的与金额边界未变 | 仍过八个检查点，可写简短；关键动态数据须在最大允许时效内；Challenge 仍按 Skill 全文；Documentation 可追加原 Decision Log |
+| **完整七步** | 新标的、首次买入、加仓超原计划、卖出、调仓、改目标、产品排序 | 各 Skill 全文；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序同时加载Committee Skill；Modeling 在 draft 阶段只做字段对比与否决项，不自动评分 |
+| **轻量路径** | 已有**有效轻量定投 Decision** 的例行买入，且标的与金额边界未变 | 仍过七个检查点，可写简短；关键动态数据须在最大允许时效内；Challenge 仍按 Skill 全文；落盘可追加原 Decision Log |
 
-**有效轻量定投 Decision** 必须同时具备：`valid_until` 或等价到期日、允许的 `product_id` 列表、单笔金额上限、频率上限、失效/复核触发器，且 IPS 与目标配置仍有效。任一缺失、过期、改标的、超原计划金额/频率，或关键动态数据过期 → 回退完整八步。
+**有效轻量定投 Decision** 必须同时具备：`valid_until` 或等价到期日、允许的 `product_id` 列表、单笔金额上限、频率上限、失效/复核触发器，且 IPS 与目标配置仍有效。任一缺失、过期、改标的、超原计划金额/频率，或关键动态数据过期 → 回退完整七步。
 
 场景入口：[buy_etf.md](workflow/buy_etf.md)、[sell_etf.md](workflow/sell_etf.md)、[dca.md](workflow/dca.md)、[rebalance.md](workflow/rebalance.md)、[portfolio_review.md](workflow/portfolio_review.md)。
 
@@ -182,7 +182,7 @@ Cursor 通过 `.cursor/rules/agents.mdc` 注入，只指向 `AGENTS.md`，不复
 
 - 只更新知识或事实：Research + Validation 即可。
 - 只做字段对照、不形成产品排序或投资建议：可停在 Research、Validation，必要时做 Modeling 字段对比。
-- 形成产品排序，或可能影响买入、卖出、持有、定投、调仓：走完 [Diligence 八步](prompts/diligence.md)。
+- 形成产品排序，或可能影响买入、卖出、持有、定投、调仓：走完 [Diligence 七步](prompts/diligence.md)。
 
 ### 5.2 创建研究记录
 
@@ -243,7 +243,7 @@ ETF 查找顺序是人读提示，执行以 Research Skill 为准：
 
 回答：这笔资金解决什么配置问题？目标资产是否仍低于区间？买入后集中度如何？是否影响应急现金或近期支出？目标配置本身是否仍有效？
 
-目标配置若要改，应单独做一次 Decision，不能为给当前买入找理由临时改目标。
+目标配置若要改，应单独做一次 Decision（见 [decision Skill](skills/decision/SKILL.md)「决策粒度」），不能为给当前买入找理由临时改目标。
 
 ### 6.3 确定指数与候选集
 
@@ -256,12 +256,12 @@ ETF 查找顺序是人读提示，执行以 Research Skill 为准：
 本小节不展开逐步细则。
 
 1. 复制 [DD 模板](templates/dd_record.md)。
-2. 按 [Diligence 八步](prompts/diligence.md) 顺序执行；深度见文内「§1.1 DD 深度分级」。
+2. 按 [Diligence 七步](prompts/diligence.md) 顺序执行；深度见文内「§1.1 DD 深度分级」。
 3. 每步操作以对应 [Skill](skills/) 为准；索引见 [AGENTS.md](AGENTS.md)。
 4. 操作落盘要点：
    - **Modeling**：当前模型草案，只做字段对比与否决项，不自动输出买入评分；见 [etf_model_v0.1](database/screening/etf_model_v0.1.md)。
    - **Decision**：仅用`act` / `wait` / `reject` / `research`；`act` 须写清金额或比例、频率、执行条件、失效条件、下次复核触发器。
-   - **Documentation**：在真正执行前用 [决策日志模板](templates/decision_log.md) 建档；成交后再追加实际结果，不要等成交后才首次创建。
+   - **落盘**：在真正执行前用 [决策日志模板](templates/decision_log.md) 建档；成交后再追加实际结果，不要等成交后才首次创建。
 
 ### 6.5 执行前检查
 
@@ -285,7 +285,7 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成。成交
 
 ### 7.2 追加 Decision Log
 
-打开 Documentation 阶段已创建的 Decision Log，只追加：实际成交时间、产品和数量、实际价格与费用、是否符合原 Decision、偏差原因若有、下一次复核条件。
+打开落盘时已创建的 Decision Log，只追加：实际成交时间、产品和数量、实际价格与费用、是否符合原 Decision、偏差原因若有、下一次复核条件。
 
 若最终没有成交，也在同一份日志中记录`wait` / `reject` / `research`。没有行动本身也可能是需要复盘的决策。
 
@@ -389,7 +389,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ### 9.1 修改目标配置
 
-目标变化属于新的投资决策：走完 Diligence 八步 → 在 `decision_log/` 说明原因 → 旧记录 `superseded` → 新增带 `effective_from` 的 `active` 记录。
+目标变化属于新的投资决策（见 [decision Skill](skills/decision/SKILL.md)「决策粒度」）：走完 Diligence 七步 → 在 `decision_log/` 说明原因 → 旧记录 `superseded` → 新增带 `effective_from` 的 `active` 记录。
 
 普通再平衡只把实际配置拉回现有目标区间，不改目标本身。
 
@@ -410,13 +410,13 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 5. 检查集中度、相关性、流动性和最大可承受损失。
 6. 读原 Decision Log，检查原始逻辑和失效条件。
 7. 更新费用、税务、法规和产品状态。
-8. 对继续持有、追加、减少和不行动分别按 [Diligence 八步](prompts/diligence.md) 过审；走完整路径，见「§1.1」。
+8. 对继续持有、追加、减少和不行动分别按 [Diligence 七步](prompts/diligence.md) 过审；走完整路径，见「§1.1」。
 9. 结果写入 `reports/`，复核结论写入 Decision Log。
 10. 触发调整时进入再平衡流程。
 
 ## 11. 场景五：再平衡
 
-使用 [再平衡工作流](workflow/rebalance.md)。再平衡属于调仓，须按 [diligence.md](prompts/diligence.md) 走完整八步。
+使用 [再平衡工作流](workflow/rebalance.md)。再平衡属于调仓，须按 [diligence.md](prompts/diligence.md) 走完整七步。
 
 1. 确认目标配置仍然有效。
 2. 统一估值时点计算实际配置。
@@ -424,11 +424,11 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 4. 先评估用新增现金修复偏离。
 5. 必要时再评估卖出，计算费用、税务、价差和机会成本。
 6. 比较一次调整与分批调整。
-7. 按 Diligence 八步过审。
+7. 按 Diligence 七步过审。
 8. 写清金额、顺序、执行条件和停止条件。
 9. 执行前保存 Decision Log；执行后更新持仓，并在同一日志追加实际结果。
 
-修改目标与执行再平衡是两类决策，应分别记录。
+修改目标与执行再平衡是两类决策，应分别记录（见 [decision Skill](skills/decision/SKILL.md)「决策粒度」）。
 
 ## 12. 数据更新节奏
 
@@ -475,7 +475,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md)，使 IPS（Investment Policy Statement，投资政策）状态为 `active`。
    - **最低完成标准**：目的、风险承受能力、应急现金要求、约束条件、报告币种 5 节非空；IPS ID 已分配；有批准记录。
-   - **批准留痕方式**：用户在对话中明确批准后，Agent 将 `approved_at` 与 `approval_evidence` 写入 IPS frontmatter，不建 Decision Log、不走八步；详见该文件「批准记录的留痕方式」。
+   - **批准留痕方式**：用户在对话中明确批准后，Agent 将 `approved_at` 与 `approval_evidence` 写入 IPS frontmatter，不建 Decision Log、不走七步；详见该文件「批准记录的留痕方式」。
    - **构造方式**：对话式构造读 [workflow/ips_setup.md](workflow/ips_setup.md) 与 [skills/ips_setup/SKILL.md](skills/ips_setup/SKILL.md)，含收集顺序与质量标准。
    - IPS 状态仍为 `draft` 时 cannot act。
 
@@ -513,7 +513,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 - 会话怎么回答 → `AGENTS.md`
 - 人读文档文风 → `prompts/docs_style.md`
 - 证据规范 → `prompts/evidence_standards.md`
-- Diligence 八步与停止条件 → `prompts/diligence.md`
+- Diligence 七步与停止条件 → `prompts/diligence.md`
 - 某项能力怎么做 → 对应 `skills/<name>/SKILL.md`
 
 改完后检查 `AGENTS.md`、`CLAUDE.md`；Cursor 入口仍为 `.cursor/rules/agents.mdc` 指向 `AGENTS.md`。
@@ -565,7 +565,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 1. 立即停止当前流程，Decision 暂记为 `research`。
 2. 重新核验所有关键动态字段的时效（对照 [data_contracts.md](database/data_contracts.md) 最大允许时效表）。
 3. 将过期数据在来源登记中标记为 `outdated`。
-4. 用新数据重新走 Validation → 继续被阻断的八步阶段。
+4. 用新数据重新走 Validation → 继续被阻断的七步阶段。
 
 ### 误操作需要回退
 

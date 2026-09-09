@@ -28,13 +28,16 @@
 | `knowledge/` 引入 freshness + status 标记 | 📋 待讨论 | EXTERNAL_REFERENCES.md P0 |
 | 引入运维型 Skill（knowledge-sync 等） | 📋 待讨论 | EXTERNAL_REFERENCES.md P1 |
 | `workflow/` 去留 | ✅ 已决定 (2026-08-30)：瘦身为场景卡片（只指路，不复制规则正文）；dca 五要素权威移至 OPERATIONS「DD 深度分级」；buy_etf 核对清单时序对齐 ARCHITECTURE（act 后即可出清单，用户确认后记 `approved`） | 2026-08-30 一致性检查 |
-| IPS 与目标配置的「批准」留痕方式 | ✅ 已决定 (2026-08-30)：混合方案——IPS 与初始配置集用对话确认 + frontmatter（`ips-approval:<ips_id>`），防篡改靠 git 历史；此后目标配置变更走完整八步 + Decision Log。落地见 investment_policy.md、OPERATIONS §9/§14、decision 门禁 1 | 2026-08-30 一致性检查 |
+| IPS 与目标配置的「批准」留痕方式 | ✅ 已决定 (2026-08-30)：混合方案——IPS 与初始配置集用对话确认 + frontmatter（`ips-approval:<ips_id>`），防篡改靠 git 历史；此后目标配置变更走完整七步 + Decision Log。落地见 investment_policy.md、OPERATIONS §9/§14、decision 门禁 1 | 2026-08-30 一致性检查 |
 | POSITION_MONITOR workflow | 📋 待讨论 | 20 轮讨论第 15 轮 |
 
 ## 变更日志
 
 | 日期 | 变更 | 影响范围 |
 |------|------|---------|
+| 2026-09-09 | ARCHITECTURE.md 重写：按运转链路重组（一次完整运转 → 七步骨架 → 场景入口 → 逐阶段详解 → 全局锚点与数据 → 加载协议与文档分工 → 边界与目录）；合并四处重叠（会话流程/Committee/IPS/路径判断）；场景与七步关系上移为主线 2.5；新增三路线表与每步放行/阻断摘要表；删交易边界 mermaid；README 与 EXTERNAL_REFERENCES 的章节引用同步修正 | `ARCHITECTURE.md`、`README.md`、`EXTERNAL_REFERENCES.md` |
+| 2026-09-09 | 「修改目标与执行调仓是两类决策、分别记录」上收至 decision Skill 新增「决策粒度」节；rebalance.md 与 OPERATIONS §6.2/§9.1/§11 改为场景化指向，消除场景层自设规则 | `skills/decision/SKILL.md`、`workflow/rebalance.md`、`OPERATIONS.md` |
+| 2026-09-09 | Pipeline 8 步收窄为 7 步：Documentation 移出步骤列表，落盘产物并入 Decision 步描述；其阻断条件「无法定位上游来源或输入」并入 Decision 放行条件；OPERATIONS 深度分级「完整八步/八个检查点」改「完整七步/七个检查点」；ARCHITECTURE mermaid 节点 8 改落盘收口、3.2.8 改为非 pipeline 小节；documentation Skill 定位改为全程留痕与落盘收口；EXTERNAL_REFERENCES 文首加注记，正文保留 2026-08-03 分析时措辞 | `prompts/diligence.md`、`prompts/docs_style.md`、`OPERATIONS.md`、`workflow/*.md`、`skills/committee/`、`skills/ips_setup/`、`skills/documentation/`、`ARCHITECTURE.md`、`EXTERNAL_REFERENCES.md`、`database/portfolio/investment_policy.md` |
 | 2026-08-30 | 新建 IPS 构造入口：`skills/ips_setup/SKILL.md`（对话收集顺序、质量标准、一致性检查、落盘与批准）+ `workflow/ips_setup.md` 薄卡片 + `.cursor/skills/ips_setup/` 引用占位；`AGENTS.md` building 路线扩及系统初始化与数据维护；`building.md` 加场景入口指向；OPERATIONS 场景跳转表与 §14 挂链接；ARCHITECTURE §1.4 加指向 | `skills/ips_setup/`、`workflow/ips_setup.md`、`.cursor/skills/ips_setup/`、`AGENTS.md`、`prompts/building.md`、`OPERATIONS.md`、`ARCHITECTURE.md` |
 | 2026-08-30 | workflow 六文件瘦身为场景卡片（适用范围、前置输入、Committee 触发、流程指向，不复制规则正文）；「有效轻量定投 Decision」五要素权威移至 OPERATIONS「DD 深度分级」，`diligence.md` 引用同步改指；buy_etf 核对清单时序对齐（`act` 后即可出清单，用户确认后记 `user_authorization: approved`） | `workflow/*.md`、`prompts/diligence.md`、`PROJECT.md` |
 | 2026-08-30 | IPS 批准留痕定案（混合方案）：`investment_policy.md` 增「批准记录的留痕方式」段；`skills/decision` 门禁 1 加指向；OPERATIONS §14 阶段 1 写明批准留痕、阶段 2 与 §9 的 `approval_decision_id` 接受 `ips-approval:<ips_id>` | `database/portfolio/investment_policy.md`、`skills/decision/`、`OPERATIONS.md` |
@@ -54,6 +57,8 @@
 ---
 
 ## 八步 Skill 审查结果（2026-08-03）
+
+> 注：本节是 2026-08-03 的审查记录，当时 Pipeline 为 8 步；已于 2026-09-09 收窄为 7 步，Documentation 降为落盘收口。本节保留当时措辞。
 
 以下为四方（开发者/产品经理/投资者/AI 管理）对照外部参考（ai-berkshire、Austin IOS）对每个 Skill 的审查结论与投票。
 

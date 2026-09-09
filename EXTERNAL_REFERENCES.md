@@ -1,6 +1,7 @@
 # 外部参考分析
 
 > 分析日期：2026-08-03
+> 注：2026-08-03 分析时 Pipeline 为 8 步（Documentation 是第 8 阶段）；已于 2026-09-09 收窄为 7 步，Documentation 降为落盘收口，不再占 pipeline 序号。正文保留当时措辞。
 > 分析依据：
 > - Austin Xu — [rwh-overlay Lessons (Part 2)](https://austinxyz.github.io/blogs/blog/2026/05/04/rwh-overlay-lessons) / [Investment OS (Part 3)](https://austinxyz.github.io/blogs/blog/2026/05/04/investment-os)
 > - [ai-berkshire](https://github.com/xbtlin/ai-berkshire) — AI 时代价值投资研究框架（14,901 stars）
@@ -99,7 +100,7 @@ Austin 总结了五条教训，PIOS 直接借鉴其中三条：
 
 **B. "目录边界是承重墙"**
 
-`raw_material/`、`knowledge/`、`reports/`、`decision_log/` 之间的边界一旦模糊，整个系统的可追溯性就崩塌。PIOS 已在 ARCHITECTURE.md §3.5.1 定义了数据生命周期和信任阶梯，需要保持这一纪律。
+`raw_material/`、`knowledge/`、`reports/`、`decision_log/` 之间的边界一旦模糊，整个系统的可追溯性就崩塌。PIOS 已在 ARCHITECTURE.md 文内「数据生命周期：信任阶梯」定义了数据生命周期和信任阶梯，需要保持这一纪律。
 
 **C. "从痛点建工作流"**
 

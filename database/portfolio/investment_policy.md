@@ -25,7 +25,7 @@ portfolio_scope:
 
 只有 IPS 状态为 `active`（`status: active`）、存在批准记录且所有必填约束已填的 IPS 才能支持`act`。
 
-批准记录的留痕方式：用户在对话中明确批准（说清批准的是哪个 IPS 版本）后，Agent 将 `approved_at` 与 `approval_evidence`（引用用户消息与时间）写入本文件 frontmatter，`approval_decision_id` 填 `ips-approval:<ips_id>`。批准 IPS 不是投资行动，不建 Decision Log、不走八步；本文件在 git 中，历史即防篡改记录。此后修改 IPS 属于政策变更，须单独形成 Decision 并触发 Committee。
+批准记录的留痕方式：用户在对话中明确批准（说清批准的是哪个 IPS 版本）后，Agent 将 `approved_at` 与 `approval_evidence`（引用用户消息与时间）写入本文件 frontmatter，`approval_decision_id` 填 `ips-approval:<ips_id>`。批准 IPS 不是投资行动，不建 Decision Log、不走七步；本文件在 git 中，历史即防篡改记录。此后修改 IPS 属于政策变更，须单独形成 Decision 并触发 Committee。
 
 # 目的与适用范围
 

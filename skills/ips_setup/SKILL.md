@@ -7,7 +7,7 @@ description: 通过对话构造个人投资政策声明 IPS 与初始目标配�
 
 本 Skill 管 IPS 的首次构造、批准落盘与初始目标配置集。政策内容只能由用户决定：Agent 提问、结构化、检验可复核性，不代设投资目标、风险承受或配置比例。
 
-修订已生效（`status: active`）的 IPS 属于政策变更，不走本 Skill：改走 [prompts/diligence.md](../../prompts/diligence.md) 完整八步，触发 [skills/committee/SKILL.md](../committee/SKILL.md)，单独形成 Decision。
+修订已生效（`status: active`）的 IPS 属于政策变更，不走本 Skill：改走 [prompts/diligence.md](../../prompts/diligence.md) 完整七步，触发 [skills/committee/SKILL.md](../committee/SKILL.md)，单独形成 Decision。
 
 ## 对话收集顺序
 
