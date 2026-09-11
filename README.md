@@ -13,7 +13,7 @@ Personal Investment Operating System。用文件和 DD 流水线（DD 即 Due Di
 3. [OPERATIONS.md](OPERATIONS.md) 文首「阅读地图」— 日常怎么用；按需要跳，不必通读
 4. [STATUS.md](STATUS.md) — 投资就绪与九项门禁；初始化从 [investment_policy.md](database/portfolio/investment_policy.md) 开始
 5. [PROJECT.md](PROJECT.md) — 系统建设进度、已知缺口与 Skill 审查记录（非投资就绪）
-6. 按事找文件：场景看 `workflow/`；操作细节回 OPERATIONS 相关节；DD 顺序见 [prompts/diligence.md](prompts/diligence.md)，各步做法见 `skills/`；新暴露、首次买入、改目标、重大再平衡或 ETF 排序时加 [Committee Skill](skills/committee/SKILL.md)
+6. 按事找文件：场景看 `workflow/`；操作细节回 OPERATIONS 相关节；DD 顺序见 [orchestration/diligence/SKILL.md](orchestration/diligence/SKILL.md)，各步做法见 `skills/`；新暴露、首次买入、改目标、重大再平衡或 ETF 排序时加 [Committee Skill](orchestration/committee/SKILL.md)
 
 补数据见 [OPERATIONS.md](OPERATIONS.md)「当前初始化顺序」。
 
@@ -27,9 +27,10 @@ PIOS/
 ├── OPERATIONS.md             # 怎么用
 ├── AGENTS.md                 # 助手入口
 ├── CLAUDE.md                 # Claude Code 入口
-├── prompts/                  # 项目规则
-├── skills/                   # 各 DD 阶段怎么做
-├── workflow/                 # 场景步骤
+├── orchestration/            # 五个编排：步骤序列、停止条件与产物
+├── skills/                   # 能力单元：一件事怎么做
+├── vendor/                   # humanizer-zh，第三方文风工具
+├── workflow/                 # 场景入口，三条路线共用
 ├── templates/                # 空白模板
 ├── knowledge/                # 稳定知识
 ├── raw_material/             # 待整理的原始材料

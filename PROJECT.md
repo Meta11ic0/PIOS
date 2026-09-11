@@ -10,13 +10,16 @@
 
 | 缺口 | 现状 | 优先级 | 备注 |
 |------|------|--------|------|
-| Pipeline 逐步讲解缺用户向文档 | `diligence.md` / 各 Skill 为契约正文，缺少面向用户的逐步示例 | 中 | 可继续用 ARCHITECTURE.md 快速入门补示例 |
+| Pipeline 逐步讲解缺用户向文档 | `orchestration/diligence/SKILL.md` 与各能力单元为契约正文，缺少面向用户的逐步示例 | 中 | 可继续用 ARCHITECTURE.md 快速入门补示例 |
 | 持仓监控（Position Management） | 成交后缺少系统化的定期检查机制（价格区间、失效条件、复核日）。Austin IOS 的 Stage 6 可作为参考 | 低 | 可通过新建 `workflow/position_monitor.md` 解决 |
 | 数据获取脚本层 | 当前完全依赖 LLM 联网获取数据，无可复现的脚本化数据获取。Austin 的"脚本取数据，LLM 做解释"原则值得引入 | 低 | 后续引入 finance-skills 类 MCP 工具 |
 | 知识保鲜机制 | `knowledge/` 条目无 `freshness` / `valid_until` 标记，无定期扫描过期条目的机制 | 低 | 参考 Austin 的 `/wealth-freshness` |
 | raw_material 未启用 | `raw_material/` 目录结构已建但无真实内容，无 frontmatter schema | 低 | 见 EXTERNAL_REFERENCES.md 的借鉴清单 |
 | Obsidian 兼容 | `knowledge/` 文件无 Obsidian frontmatter，无法用图谱浏览 | 低 | 成本低，按需引入 |
-| workflow 场景缺失：数据维护类无入口 | IPS 构造入口已建（2026-08-30）：`workflow/ips_setup.md` + `skills/ips_setup/`；**种子写入与核验、来源与信息登记**仍无 workflow 入口，步骤散落在 OPERATIONS §14、STATUS 九门禁、database/README 写入要求中 | 低 | 可新建 `workflow/seed_ingest.md`、`workflow/register.md`（信息登记）作为场景入口，细则仍引用 OPERATIONS 与 database/README，不复制正文 |
+| 编排无索引 | 五个编排已集中到 `orchestration/`（2026-09-11），DD、Committee、IPS 构造、知识调研、系统建设各一份，但目录内没有一份索引列出各自的适用场景、加载正文与停止条件 | 低 | 见 ARCHITECTURE.md 第九章；加索引须同时改 `.cursor/skills/` 引用层 |
+| 系统建设编排未验证 | `orchestration/building/SKILL.md` 的五步与停止条件是本轮新写的，尚未按它完整走过一次真实建设任务 | 低 | 跑一次真实改规则任务后回填经验 |
+| 落盘记录的必含字段无权威位置 | 2026-09-11 删除 `skills/documentation/SKILL.md` 后，其独有的一节「必含字段」（标题、状态、创建时间、最后更新时间、适用范围与数据适用时点、来源或上游记录、已知限制与待办、复核条件或更新频率）在仓库内已无对应正文 | 低 | 待「按能力动作的运行阶段记日志」的方案确定后一并规定 |
+| `CLAUDE.md` 会话开始与路线行脱节 | `CLAUDE.md:16`「不要把 `workflow/` 当作开场必读」写于 `workflow/` 只是 `[invest]` 场景卡的时期；现 `AGENTS.md:11` 与 `AGENTS.md:13` 两条路线行都指向场景卡，`AGENTS.md:9` 要求场景名取自该卡。另 `CLAUDE.md:15` 复述了 `AGENTS.md:9` 的「先判断目的、再读该路线指定的正文」流程 | 低 | 措辞与复述两处都在 `local` 档内可改 |
 
 ## 待决策事项
 
@@ -30,23 +33,40 @@
 | `workflow/` 去留 | ✅ 已决定 (2026-08-30)：瘦身为场景卡片（只指路，不复制规则正文）；dca 五要素权威移至 OPERATIONS「DD 深度分级」；buy_etf 核对清单时序对齐 ARCHITECTURE（act 后即可出清单，用户确认后记 `approved`） | 2026-08-30 一致性检查 |
 | IPS 与目标配置的「批准」留痕方式 | ✅ 已决定 (2026-08-30)：混合方案——IPS 与初始配置集用对话确认 + frontmatter（`ips-approval:<ips_id>`），防篡改靠 git 历史；此后目标配置变更走完整七步 + Decision Log。落地见 investment_policy.md、OPERATIONS §9/§14、decision 门禁 1 | 2026-08-30 一致性检查 |
 | POSITION_MONITOR workflow | 📋 待讨论 | 20 轮讨论第 15 轮 |
+| 能力动作的运行阶段日志 | 📋 待讨论 | 2026-09-11 删 `skills/documentation/` 时提出：现无「能力动作运行时留一条记录」的机制 |
+| 三路线装配不对称 | ✅ 已决定 (2026-09-11)：`[learning]` 补 `orchestration/learning/SKILL.md`，三条路线各有自己的编排，入口只做最轻判断 | 2026-09-11 会议：`[invest]` 挂 3 个编排入口（diligence、committee、ips_setup）与 9 张场景卡，`[building]` 挂 1 个编排，`[learning]` 原为零编排零卡。补齐后仍待定：`[invest]` 的四个入口是否移出 `AGENTS.md` 改由 `workflow/` 索引承担；三条路线是否需要各自的场景层（见下条，已决）；`[invest]` 路线行的产物句「四结论与 Decision Log」是否迁入 `orchestration/diligence/SKILL.md`（该编排全文无路线级产物句） |
+| 三路线是否各配场景层 | ✅ 已决定 (2026-09-11)：新建 `workflow/building.md` 与 `workflow/learning.md`，`workflow/` 由 `[invest]` 独属改为三条路线共用；四层判据定为「每一层回答一个每轮必答的问题，答案放在哪由复用决定」 | 2026-09-11 会议：反方主张建卡会是空壳（`[building]` 三类事务指向同一编排、无参数分化），未采纳；采纳对称性与「场景对用户可见」。顺带发现场景判定此前散在四处（`workflow/`、`OPERATIONS §1.1`、`skills/research`、`orchestration/building`），本次收归场景层 |
+| 产品排序进出结论时 Decision 绑什么 | 📋 待讨论 | 2026-09-11 提出：`orchestration/diligence/SKILL.md:14`、`:34` 与 `ARCHITECTURE.md:47`、`:212`、`:233` 都把产品排序列为 DD 场景，但没有一处说明该场景下 Decision 绑什么对象（选品绑的是选定产品与配置格子，不绑价）。三个切法：A 走完整七步产生 Decision，在 `skills/decision/SKILL.md:45` 的价格区间规则后加一句「选品场景绑选定产品与配置格子，不绑价」；B 为选品单建编排；C 止于 Challenge、不产生 Decision。倾向 A |
+| `database/` 与 `OPERATIONS.md` 的归层 | 📋 待讨论 | 2026-09-11 提出：`ARCHITECTURE.md:41` 的四层判据只覆盖路线 / 场景 / 编排 / 能力单元；`database/` 是契约数据的家、`OPERATIONS.md` 是人读手册，两者都不在这四层里，也没有别的层名。`ARCHITECTURE.md` 第九章「无类型字段」讲的是 `skills/` 会不会混入非能力单元，不是同一件事 |
 
 ## 变更日志
 
 | 日期 | 变更 | 影响范围 |
 |------|------|---------|
+| 2026-09-11 | 把四处只在对话里、未落盘的事项补入本文件：产品排序进出结论时 Decision 绑什么（待决策，三切法，倾向 A）、`CLAUDE.md` 会话开始与路线行脱节（缺口）、`[invest]` 路线行产物句是否迁入 diligence（并入「三路线装配不对称」行的待定项）、`database/` 与 `OPERATIONS.md` 的归层（待决策）。起因：回答「当前状态与问题记在哪份文件」时逐条核查，这四处在缺口表、待决策表与 `ARCHITECTURE.md` 第九章均无对应行 | 改 `PROJECT.md` |
+| 2026-09-11 | `[building]` 的场景卡补「影响面档」。起因：上面的场景层改造本身属于 `[building]`，却不属于 `workflow/building.md` 原有三类事务中的任何一类——逐条对照时「改规则正文」「改架构与加载协议」「补缺口」三条全中，说明那三条是**同一次改动的三种对象**而非三种场景，切错了维度（它们是从 `orchestration/building/SKILL.md` 的「适用」节原样搬来的，而「适用」写的是编排的适用范围）。改按两条真实分界重切：**写不写文件**（`AGENTS.md:11` 的路线行本就写着「修改**或说明**」，`read-only` 与两张写文件档的产物不同，且不需要写入授权——编排停止条件「未获写入授权」对说明档是空的）；**改动的影响面**（原步骤 3「改规则正文后更新 AGENTS.md 路线行」预设每次全量回填，改一条 skill 判据时是多余的）。三档定为 `read-only` 只读说明 / `local` 单条改动 / `cross-layer` 跨层改动，英文短语与仓库现有词汇（`pending` / `verified` / `draft` / `act`）风格一致。本次改动按新档位自判为 `local`：加载协议、目录结构、编排分层与数据契约都未动，`ARCHITECTURE.md` 1.2 表的更新属复述回填而非跨层 | 改 `workflow/building.md`、`orchestration/building/SKILL.md`、`ARCHITECTURE.md`、`PROJECT.md` |
+| 2026-09-11 | 场景层由 `[invest]` 独属改为三条路线共用。新建 `workflow/building.md`（三类事务各自的前置输入）与 `workflow/learning.md`（本路线只走轻量查询与标准取证两档、不走深度调研）；`AGENTS.md` 的 `[building]`、`[learning]` 路线行补场景卡指向，目录表 `workflow/` 行由「只声明适用范围与前置输入」改「声明适用范围、前置输入与深度分档」。开场标注格式扩为「路线 + 该路线的一项场景」（`AGENTS.md:9`）。三处场景判定外提：`orchestration/building/SKILL.md` 步骤 1「定范围」删去（六步变五步，其尾句「同时命中多条路线时先问用户本轮做哪件」是 `AGENTS.md:19` 的副本，一并删）；`orchestration/learning/SKILL.md` 的档位选择改由卡片判定，编排收为「深度分级」节（与 diligence 的节名、结构对称，保住三样齐备）；`OPERATIONS.md §1.1` 的完整/轻量判据移入 `orchestration/diligence/SKILL.md`「深度分级」——`OPERATIONS.md:85` 原写「深度只在这里约定」，与 `AGENTS.md:5`「可执行规则正文只在 `orchestration/`、`skills/`、`vendor/`、`workflow/` 与 `database/`」冲突，`dca.md`、`sell_etf.md`、`rebalance.md` 的深度引用同步改指（后两张本无分档，引用直接删）。档名统一：`skills/research/SKILL.md` 定义的是「轻量查询」，`orchestration/learning/SKILL.md` 与 `ARCHITECTURE.md` 却写「概念问答」「快速查询」，三套名字收敛为一套。判据更新：`ARCHITECTURE.md` 1.1 的禁令由「不得自设停止条件或门禁」收窄为「不自设门禁」，结论落地后的收口动作按场景展开——`workflow/buy_etf.md` 的四步流程里，执行前核对清单与成交后回写是编排没有的收口序列，旧禁令与既成事实冲突。`ARCHITECTURE.md` 1.2 补上漏掉的「知识调研」行（原文称五个编排，表里只有四行）、7.1/7.2/7.3 表与目录树、第九章「系统建设编排未验证」六步改五步同步 | 新建 `workflow/building.md`、`workflow/learning.md`；改 `orchestration/building/SKILL.md`、`orchestration/learning/SKILL.md`、`orchestration/diligence/SKILL.md`、`OPERATIONS.md`、`workflow/dca.md`、`workflow/sell_etf.md`、`workflow/rebalance.md`、`AGENTS.md`、`ARCHITECTURE.md`、`README.md`、`PROJECT.md` |
+| 2026-09-11 | 新建 `orchestration/learning/SKILL.md`（`[learning]` 的独立编排）与对应引用层 `.cursor/skills/learning/SKILL.md`。`[learning]` 此前无编排，加载分档写在 `AGENTS.md` 里，产物句也只能留在入口；判据（自己的步骤序列、停止条件、产物）此前判它不成立，本次补齐停止条件（升格 `[invest]`）与产物（研究结论与 `knowledge/` 条目）后成立。档位与深度定义指向 `skills/research/SKILL.md` 流程第 1 条，不复制正文。`AGENTS.md` 的 `[learning]` 段由 5 行缩为 1 行，产物句随正文迁走。同时删除编排与能力单元指回 `AGENTS.md` 的定位型回指 3 处（`orchestration/building/SKILL.md:8`、`orchestration/diligence/SKILL.md:8`、`skills/docs/SKILL.md:8`）——读编排时路线已定，回指只形成「入口 → 编排 → 入口」的环，对读者是废话；`skills/research/SKILL.md:36` 的改道型回指是 `AGENTS.md` 升格档的副本，且对 `[invest]` 的读者（Research 是 DD 第 1 步）指向错误，一并删除。编排份数四改五，`AGENTS.md` 目录表、`ARCHITECTURE.md` 1.2 表与 7.1/7.2 表与目录树与第九章缺口、`OPERATIONS.md` 加载顺序、`README.md` 目录树同步；`PROJECT.md` 的「三路线装配不对称」由待讨论转为已决定 | 新建 `orchestration/learning/SKILL.md`、`.cursor/skills/learning/SKILL.md`；改 `AGENTS.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`README.md`、`orchestration/building/SKILL.md`、`orchestration/diligence/SKILL.md`、`skills/docs/SKILL.md`、`skills/research/SKILL.md`、`PROJECT.md` |
+| 2026-09-11 | `ARCHITECTURE.md` 退出加载协议。文首声明它是人读的设计说明、系统运行时不加载，其中的规则是复述、权威在 `orchestration/`、`skills/`、`database/`；`AGENTS.md` 的 `[building]` 行不再把它列为开场必读，7.1 强制加载表同步——此前 `AGENTS.md:11` 把它列为必读，与 `AGENTS.md:5`「可执行规则正文只在 `orchestration/`、`skills/`、`vendor/`、`workflow/` 与 `database/`」自相矛盾。同时清理 `AGENTS.md` 路线段里与编排正文重复的副本：`[building]` 的产物句与门禁句（逐字或同义重复 `orchestration/building/SKILL.md:10`）、`[learning]` 的「每条推荐须有依据、至少两个独立来源…」（`skills/evidence/SKILL.md` 已有）、`[invest]` 尾部的「不当知识调研身份」（归入「每次会话须遵守」的通用身份规则）。回收的判据：有编排的路线，产物句与行为约束放编排；没编排的 `[learning]`，留在入口。`CLAUDE.md` 的会话开始补「标注恰好一种路线」 | `AGENTS.md`、`ARCHITECTURE.md`、`CLAUDE.md`、`orchestration/building/SKILL.md`、`PROJECT.md` |
+| 2026-09-11 | 删除两份孤儿模板 `templates/product_report.md` 与 `templates/investment_report.md`。判据与 `skills/documentation/` 那次相同：没有任何加载规则、编排或场景卡指向它们（`investment_report.md` 全仓零引用；`product_report.md` 只在变更日志里被提过一次），且编排的七个步骤里没有哪一步会产出「产品报告」或「投资报告」这个产物。删前逐节核对无独占内容：product_report 的动态数据表 13 项有 12 项在 `database/products/schema.yaml` 已有列名与 `description`；investment_report 的十节分别是 `dd_record.md`、`decision_log.md`、`skills/reasoning/SKILL.md` 结论格式与 `skills/challenge/SKILL.md` 三件套的副本 | 删除 `templates/product_report.md`、`templates/investment_report.md`；`templates/` 由五份减为三份 |
+| 2026-09-11 | 规则正文改肯定式（双视角会议裁决后全量清理）：执行层 33 份文件、67 行含「不许 / 不得 / 不」的句子改为说明「做什么」——产物句蕴含禁令，否定句不指定替代动作，而读规则的是执行者。Decision 门禁第 3、4 条转肯定式（「在最大允许时效内」「关键项为 `pass`」）；八张场景卡的「Agent 不得下单」统一为「Agent 的产物止于执行清单；下单由用户在券商完成」；`.cursor/` 引用层固定句式「不得在此文件重复维护两份正文」改「此处只保留指向正文的指针」，并同步 `docs`、`committee` 两份 description 副本（删 documentation 时漏改）。保留 4 处判断性否定：`skills/evidence/SKILL.md:22` 与 `skills/validation/SKILL.md:14` 的「同一机构两个页面不算独立来源」（这是「独立来源」的定义）、`AGENTS.md:19` 的「发现产品不等于推荐产品」（区分两类事实）、`workflow/register.md:9` 的「来源登记不等同于事实结论」 | `AGENTS.md`、`orchestration/*/SKILL.md`、`skills/*/SKILL.md`、`workflow/*.md`、`.cursor/rules/agents.mdc`、`.cursor/skills/*/SKILL.md` |
+| 2026-09-11 | 三条路线的开场承诺句改为产物句（`[building]` 产物是文件变更与 PROJECT.md 建设记录、`[learning]` 产物是研究结论与 `knowledge/` 条目、`[invest]` 产物是四结论与 Decision Log）——产物蕴含禁令，否定式承诺句分不开 building 与 learning；删除 `skills/documentation/`（其内容与 `orchestration/diligence/SKILL.md` 的 DD 记录生命周期、`ARCHITECTURE.md` 5.8 的归属判断重复，且自 2026-09-09 移出步骤列表后已无任何加载规则指向它），`.cursor/skills/` 引用层同步删除，`skills/decision/SKILL.md` 去掉对它的调用；`[learning]` 标准取证档补 `workflow/register.md`（`verified` 事实须引用 `source_id`）；ARCHITECTURE 第九章「新场景未定编排归属」记入 seed_ingest 与 register 已判为场景卡 | 删除 `skills/documentation/`、`.cursor/skills/documentation/`；改 `AGENTS.md`、`ARCHITECTURE.md`、`skills/decision/SKILL.md`、`PROJECT.md` |
+| 2026-09-10 | 新建数据维护类场景入口 `workflow/seed_ingest.md`（种子核验与产品基础/动态数据写入，指向 database/README 核验清单与写入要求）与 `workflow/register.md`（来源登记与材料摘录，指向 data_contracts 与 raw_material/README 写入顺序）；两张卡均声明不产出四结论、不触发 Committee；`[building]` 收窄为只改系统本身（改规则、架构、加载协议、目录结构、数据契约），数据初始化与维护连同 IPS 构造一并归 `[invest]`，撤销 `AGENTS.md` building 分支的「初始化数据先读对应 `workflow/*.md`」；关闭缺口「workflow 场景缺失：数据维护类无入口」 | 新建 `workflow/seed_ingest.md`、`workflow/register.md`；改 `AGENTS.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`PROJECT.md`、`orchestration/building/SKILL.md`、`.cursor/skills/building/SKILL.md` |
+| 2026-09-10 | 第三条路线 `[diligence]` 改名 `[invest]`（`orchestration/diligence/` 是编排名，不改）；构造 IPS 与初始目标配置从 `[building]` 移入 `[invest]`（IPS 走 `orchestration/ips_setup/SKILL.md`，不出结论、不套七步，`[building]` 收窄为改规则与数据初始化）；`AGENTS.md:9` 标注格式改为「路线标签 + 一句本轮承诺 + 本轮将读的文件」 | `AGENTS.md`、`CLAUDE.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`PROJECT.md`、`skills/evidence/SKILL.md`、`skills/research/SKILL.md`、`orchestration/building/SKILL.md`、`orchestration/diligence/SKILL.md`、`.cursor/rules/agents.mdc` |
+| 2026-09-10 | 目录按类型分家：新建 `orchestration/`（diligence、committee、ips_setup、building 四份编排正文）与 `vendor/`（humanizer-zh）；`skills/` 只留能力单元，并把跨步复用的两个模块并入：`prompts/evidence_standards.md` → `skills/evidence/SKILL.md`、`prompts/docs_style.md` → `skills/docs/SKILL.md`；`prompts/csv_schema.md` → `database/csv_schema.md`；新建系统建设编排 `orchestration/building/SKILL.md`（定范围→找权威位置→改权威位置→回填引用→一致性检查→记变更 + 停止条件 + 写文件约束）；三条路线的判断条件、加载分档与边界并入 `AGENTS.md`「先判断目的」，删除 `prompts/` 整个目录；`.cursor/skills/` 重建为 15 个引用层（纯指针，正文不在其中）；确立独立成编排的判据（自己的步骤序列、停止条件、产物三样齐备，缺一只是加载分档） | `orchestration/`、`vendor/`、`skills/evidence/`、`skills/docs/`、`database/csv_schema.md`、`AGENTS.md`、`CLAUDE.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`README.md`、`workflow/*.md`、`templates/dd_record.md`、`database/README.md`、`database/data_contracts.md`、`skills/*/SKILL.md`、`.cursor/skills/`、`PROJECT.md`；删除 `prompts/` |
+| 2026-09-10 | ARCHITECTURE.md 架构重写：确立三层结构（场景 / 编排 / 能力单元），明确 DD 是默认编排而非唯一编排；新增「一、三层结构」与「九、未实现与可优化」两章；原「三、场景入口」与 2.5「包装不改骨架」合并为「四、场景」；Committee 改称第 3–6 步的另一种编排；7.3 分层表补编排层；误区表增「门禁跨编排共享」一条；PROJECT.md 缺口表增「编排未在仓库分层」 | `ARCHITECTURE.md`、`PROJECT.md` |
 | 2026-09-09 | ARCHITECTURE.md 重写：按运转链路重组（一次完整运转 → 七步骨架 → 场景入口 → 逐阶段详解 → 全局锚点与数据 → 加载协议与文档分工 → 边界与目录）；合并四处重叠（会话流程/Committee/IPS/路径判断）；场景与七步关系上移为主线 2.5；新增三路线表与每步放行/阻断摘要表；删交易边界 mermaid；README 与 EXTERNAL_REFERENCES 的章节引用同步修正 | `ARCHITECTURE.md`、`README.md`、`EXTERNAL_REFERENCES.md` |
 | 2026-09-09 | 「修改目标与执行调仓是两类决策、分别记录」上收至 decision Skill 新增「决策粒度」节；rebalance.md 与 OPERATIONS §6.2/§9.1/§11 改为场景化指向，消除场景层自设规则 | `skills/decision/SKILL.md`、`workflow/rebalance.md`、`OPERATIONS.md` |
-| 2026-09-09 | Pipeline 8 步收窄为 7 步：Documentation 移出步骤列表，落盘产物并入 Decision 步描述；其阻断条件「无法定位上游来源或输入」并入 Decision 放行条件；OPERATIONS 深度分级「完整八步/八个检查点」改「完整七步/七个检查点」；ARCHITECTURE mermaid 节点 8 改落盘收口、3.2.8 改为非 pipeline 小节；documentation Skill 定位改为全程留痕与落盘收口；EXTERNAL_REFERENCES 文首加注记，正文保留 2026-08-03 分析时措辞 | `prompts/diligence.md`、`prompts/docs_style.md`、`OPERATIONS.md`、`workflow/*.md`、`skills/committee/`、`skills/ips_setup/`、`skills/documentation/`、`ARCHITECTURE.md`、`EXTERNAL_REFERENCES.md`、`database/portfolio/investment_policy.md` |
-| 2026-08-30 | 新建 IPS 构造入口：`skills/ips_setup/SKILL.md`（对话收集顺序、质量标准、一致性检查、落盘与批准）+ `workflow/ips_setup.md` 薄卡片 + `.cursor/skills/ips_setup/` 引用占位；`AGENTS.md` building 路线扩及系统初始化与数据维护；`building.md` 加场景入口指向；OPERATIONS 场景跳转表与 §14 挂链接；ARCHITECTURE §1.4 加指向 | `skills/ips_setup/`、`workflow/ips_setup.md`、`.cursor/skills/ips_setup/`、`AGENTS.md`、`prompts/building.md`、`OPERATIONS.md`、`ARCHITECTURE.md` |
+| 2026-09-09 | Pipeline 8 步收窄为 7 步：Documentation 移出步骤列表，落盘产物并入 Decision 步描述；其阻断条件「无法定位上游来源或输入」并入 Decision 放行条件；OPERATIONS 深度分级「完整八步/八个检查点」改「完整七步/七个检查点」；ARCHITECTURE mermaid 节点 8 改落盘收口、3.2.8 改为非 pipeline 小节；documentation Skill 定位改为全程留痕与落盘收口；EXTERNAL_REFERENCES 文首加注记，正文保留 2026-08-03 分析时措辞 | `prompts/diligence.md`、`skills/docs/SKILL.md`、`OPERATIONS.md`、`workflow/*.md`、`orchestration/committee/`、`orchestration/ips_setup/`、`skills/documentation/`、`ARCHITECTURE.md`、`EXTERNAL_REFERENCES.md`、`database/portfolio/investment_policy.md` |
+| 2026-08-30 | 新建 IPS 构造入口：`orchestration/ips_setup/SKILL.md`（对话收集顺序、质量标准、一致性检查、落盘与批准）+ `workflow/ips_setup.md` 薄卡片 + `.cursor/skills/ips_setup/` 引用占位；`AGENTS.md` building 路线扩及系统初始化与数据维护；`building.md` 加场景入口指向；OPERATIONS 场景跳转表与 §14 挂链接；ARCHITECTURE §1.4 加指向 | `orchestration/ips_setup/`、`workflow/ips_setup.md`、`.cursor/skills/ips_setup/`、`AGENTS.md`、`prompts/building.md`、`OPERATIONS.md`、`ARCHITECTURE.md` |
 | 2026-08-30 | workflow 六文件瘦身为场景卡片（适用范围、前置输入、Committee 触发、流程指向，不复制规则正文）；「有效轻量定投 Decision」五要素权威移至 OPERATIONS「DD 深度分级」，`diligence.md` 引用同步改指；buy_etf 核对清单时序对齐（`act` 后即可出清单，用户确认后记 `user_authorization: approved`） | `workflow/*.md`、`prompts/diligence.md`、`PROJECT.md` |
 | 2026-08-30 | IPS 批准留痕定案（混合方案）：`investment_policy.md` 增「批准记录的留痕方式」段；`skills/decision` 门禁 1 加指向；OPERATIONS §14 阶段 1 写明批准留痕、阶段 2 与 §9 的 `approval_decision_id` 接受 `ips-approval:<ips_id>` | `database/portfolio/investment_policy.md`、`skills/decision/`、`OPERATIONS.md` |
-| 2026-08-30 | 一致性修复：Decision 缺输入时改落 `research`/`wait`，移除「暂缓」；Research 状态枚举补 `pending`；`database/README.md` schema 版本回填 0.5.0；csv_schema 与 data_contracts 统一 target_allocation 去重键（`allocation_id` + `effective_from`）；`templates/dd_record.md` Committee 节去重、席位名与触发清单对齐 `skills/committee/SKILL.md`；`templates/product_report.md` `scope` 留空；两模板 `pipeline_version` 加注释；`sources.csv` demo 行 status 留空；OPERATIONS §17 注明 git 恢复不覆盖不入库的生产留痕；STATUS holdings 链接注明本地文件；buy_etf 小节引用改文字备注 | `skills/decision/`、`skills/research/`、`database/README.md`、`prompts/csv_schema.md`、`templates/`、`database/sources.csv`、`OPERATIONS.md`、`STATUS.md`、`workflow/buy_etf.md` |
+| 2026-08-30 | 一致性修复：Decision 缺输入时改落 `research`/`wait`，移除「暂缓」；Research 状态枚举补 `pending`；`database/README.md` schema 版本回填 0.5.0；csv_schema 与 data_contracts 统一 target_allocation 去重键（`allocation_id` + `effective_from`）；`templates/dd_record.md` Committee 节去重、席位名与触发清单对齐 `orchestration/committee/SKILL.md`；`templates/product_report.md` `scope` 留空；两模板 `pipeline_version` 加注释；`sources.csv` demo 行 status 留空；OPERATIONS §17 注明 git 恢复不覆盖不入库的生产留痕；STATUS holdings 链接注明本地文件；buy_etf 小节引用改文字备注 | `skills/decision/`、`skills/research/`、`database/README.md`、`database/csv_schema.md`、`templates/`、`database/sources.csv`、`OPERATIONS.md`、`STATUS.md`、`workflow/buy_etf.md` |
 | 2026-07-29（补记） | schema 0.4.0→0.5.0：时间列名统一 `as_of`→`valid_at`、`retrieved_at`→`fetched_at`；新增组合绩效口径知识条目；`sources.csv` 材料蒸馏字段落地 | `database/products/schema.yaml`、各 CSV 表头、`knowledge/portfolio/performance_measurement.md`、`database/sources.csv` |
-| 2026-08-18 | 三路线改名为 `[building]` / `[learning]` / `[diligence]`；`system.md` 收成 `evidence.md` 模块；`dd_pipeline.md` 改名为 `diligence.md` | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/research/`、`skills/validation/`、`skills/committee/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`README.md`、`workflow/` |
+| 2026-08-18 | 三路线改名为 `[building]` / `[learning]` / `[diligence]`；`system.md` 收成 `evidence.md` 模块；`dd_pipeline.md` 改名为 `diligence.md` | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/research/`、`skills/validation/`、`orchestration/committee/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`README.md`、`workflow/` |
 | 2026-08-18 | 删除 `workflow/research.md`；ETF 取数顺序迁入 Research Skill；知识调研标准取证只读两份 Skill | `skills/research/SKILL.md`、`prompts/system.md`、`ARCHITECTURE.md`、`OPERATIONS.md` |
 | 2026-08-18 | 四席合议落盘：加载协议对齐、citation 并入 system.md、Validation 增双来源维（10 维）、关键 warning 门禁、手册隐私口径 | `AGENTS.md`、`CLAUDE.md`、`prompts/`、`skills/validation/`、`skills/decision/`、`skills/research/`、`ARCHITECTURE.md`、`OPERATIONS.md`、`database/data_contracts.md`、`workflow/buy_etf.md` |
-| 2026-08-03 | 八步 Skill + Pipeline + Committee 全面审查并执行增强修改 | `skills/research/`、`skills/modeling/`、`skills/reasoning/`、`skills/risk/`、`skills/challenge/`、`skills/documentation/`、`skills/committee/`、`prompts/dd_pipeline.md` |
+| 2026-08-03 | 八步 Skill + Pipeline + Committee 全面审查并执行增强修改 | `skills/research/`、`skills/modeling/`、`skills/reasoning/`、`skills/risk/`、`skills/challenge/`、`skills/documentation/`、`orchestration/committee/`、`prompts/dd_pipeline.md` |
 | 2026-08-03 | 移除三层授权体系（read-auth/write-auth/checklist-auth） | `prompts/dd_pipeline.md`、`AGENTS.md`、`ARCHITECTURE.md`、`OPERATIONS.md`、`skills/decision/SKILL.md`、`workflow/*.md`、`templates/decision_log.md` |
 | 2026-08-03 | DD 记录生命周期明确化：每轮一个文件 + `references_dd_ids` 交叉引用 | `prompts/dd_pipeline.md`、`templates/dd_record.md` |
 | 2026-08-03 | 新建 PROJECT.md，STATUS.md 清理为纯投资就绪状态 | `PROJECT.md`（新建）、`STATUS.md` |
@@ -58,7 +78,7 @@
 
 ## 八步 Skill 审查结果（2026-08-03）
 
-> 注：本节是 2026-08-03 的审查记录，当时 Pipeline 为 8 步；已于 2026-09-09 收窄为 7 步，Documentation 降为落盘收口。本节保留当时措辞。
+> 注：本节是 2026-08-03 的审查记录，当时 Pipeline 为 8 步；已于 2026-09-09 收窄为 7 步，Documentation 降为落盘收口。编排正文已于 2026-09-10 迁至 `orchestration/diligence/SKILL.md`，本节提到的 `dd_pipeline.md` 与 `diligence.md` 均为当时的文件名。本节保留当时措辞。
 
 以下为四方（开发者/产品经理/投资者/AI 管理）对照外部参考（ai-berkshire、Austin IOS）对每个 Skill 的审查结论与投票。
 
@@ -102,16 +122,16 @@
 
 ### 2. Validation — 质检
 
-> **2026-08-18 更新**：证据规则现位于 `prompts/evidence_standards.md`（由原 `system.md` §证据迁入；此前 `citation.md` 已并入后删除）。Validation 现为 **10 维**（新增关键动态双来源）；关键 `warning` 须关闭后才可进入 Modeling 或 `act`。下列 2026-08-03 四方讨论保留历史记录。
+> **2026-08-18 更新**：证据规则现位于 `skills/evidence/SKILL.md`（由原 `system.md` §证据迁入；此前 `citation.md` 已并入后删除）。Validation 现为 **10 维**（新增关键动态双来源）；关键 `warning` 须关闭后才可进入 Modeling 或 `act`。下列 2026-08-03 四方讨论保留历史记录。
 
-**现状（2026-08-18）**：[skills/validation/SKILL.md](skills/validation/SKILL.md) 定义了 10 维检查（身份匹配、来源支持、**关键动态双来源**、口径一致、时效、公式复算、缺失值、证据边界、scope 隔离）和四状态（pass/warning/fail/unknown）。证据优先级与双来源规则见 [prompts/evidence_standards.md](prompts/evidence_standards.md)。
+**现状（2026-08-18）**：[skills/validation/SKILL.md](skills/validation/SKILL.md) 定义了 10 维检查（身份匹配、来源支持、**关键动态双来源**、口径一致、时效、公式复算、缺失值、证据边界、scope 隔离）和四状态（pass/warning/fail/unknown）。证据优先级与双来源规则见 [skills/evidence/SKILL.md](skills/evidence/SKILL.md)。
 
 **对照外部参考**：
 
 | 外部参考 | 相关设计 | PIOS 现状 |
 |---------|---------|----------|
 | ai-berkshire | 财务数据精确校验（`financial_rigor.py`，偏差 >1% 告警） | 公式复算有提及但无工具支持 |
-| ai-berkshire | 双来源交叉验证（同一机构两个页面不算独立来源） | `prompts/evidence_standards.md` 定义规则；Validation 第 3 维执行 |
+| ai-berkshire | 双来源交叉验证（同一机构两个页面不算独立来源） | `skills/evidence/SKILL.md` 定义规则；Validation 第 3 维执行 |
 | Austin IOS | freshness 到期自动标记 + `/wealth-freshness` 扫描 | Data Contracts 定义了时效，但无自动扫描 |
 | Austin IOS | "数据适用时点"必须标注，区分 `valid_at`/`fetched_at`/`published_at` | 已覆盖（第 5、6 维） |
 
@@ -312,7 +332,7 @@
 
 ### 8. Documentation — 留痕
 
-**现状**：[skills/documentation/SKILL.md](skills/documentation/SKILL.md) 定义了：归属判断（knowledge/database/workflow/decision_log/reports）、模板使用、必含字段、去重检查、Decision Log 必须记录的内容。
+**现状**：`skills/documentation/SKILL.md`（2026-09-11 已删除）定义了：归属判断（knowledge/database/workflow/decision_log/reports）、模板使用、必含字段、去重检查、Decision Log 必须记录的内容。
 
 **对照外部参考**：
 
@@ -347,7 +367,7 @@
 
 ### 9. Committee — 多角色编排（3-6 步辅助）
 
-**现状**：[skills/committee/SKILL.md](skills/committee/SKILL.md) 前面已审查过。此处补充对照外部参考的发现。
+**现状**：[orchestration/committee/SKILL.md](orchestration/committee/SKILL.md) 前面已审查过。此处补充对照外部参考的发现。
 
 **对照外部参考**：
 
@@ -400,7 +420,7 @@
 
 ### 10. DD Pipeline — 阶段编排（Meta-Skill）
 
-**现状**：[prompts/diligence.md](prompts/diligence.md) 定义了八步顺序、5 个贯穿性问题、阶段契约表（最小输入/必填产物/放行条件/阻断条件）、Committee 触发规则、DD 记录生命周期。
+**现状**：[orchestration/diligence/SKILL.md](orchestration/diligence/SKILL.md) 定义了七步顺序、5 个贯穿性问题、阶段契约（最小输入/必填产物/放行条件/阻断条件）、Committee 触发规则、DD 记录生命周期。
 
 **对照外部参考**：
 
@@ -455,7 +475,7 @@
 | `skills/risk/SKILL.md` | 四类必填 + 选填 + 行为标用户自查；新增 Critical 触发示例 |
 | `skills/challenge/SKILL.md` | 反例增加独立削弱结论的质量要求；裁决增加用户覆盖机制 |
 | `skills/documentation/SKILL.md` | 新增"写入时机"段 |
-| `skills/committee/SKILL.md` | 冲突与阻断新增 2v2 僵局处理规则 |
+| `orchestration/committee/SKILL.md` | 冲突与阻断新增 2v2 僵局处理规则 |
 | `prompts/dd_pipeline.md` | 契约表前增加 Skill 优先级声明；八步后增加 DD 深度分级引用；Committee 触发段增加不适用记录规则 |
 
 Validation 和 Decision 两个 Skill 未做修改（四方全票保留）。

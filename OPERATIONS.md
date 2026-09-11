@@ -2,9 +2,9 @@
 
 这份手册回答日常「什么时候读什么、按什么顺序做、结果写哪」。建议先读完 [README.md](README.md) 和 [ARCHITECTURE.md](ARCHITECTURE.md)，再读本文。
 
-**它不是可执行规则的权威源。** 强制规则以 `prompts/` 与 `skills/` 正文为准。设计原因已在 [ARCHITECTURE.md](ARCHITECTURE.md)，本文只管怎么用。
+**它不是可执行规则的权威源。** 强制规则以 `orchestration/`、`skills/` 与 `database/` 下的契约正文为准。设计原因已在 [ARCHITECTURE.md](ARCHITECTURE.md)，本文只管怎么用。
 
-DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，七步为 Research → … → Decision。本文只写操作场景与数据落盘，不再展开逐步细则。
+DD 顺序的权威源：[orchestration/diligence/SKILL.md](orchestration/diligence/SKILL.md)，七步为 Research → … → Decision。本文只写操作场景与数据落盘，不再展开逐步细则。
 
 ---
 
@@ -23,8 +23,8 @@ DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，七步为
 
 ### 与助手协作时
 
-1. [AGENTS.md](AGENTS.md) 先判断目的后读该路线下一步。`[building]` 读 `building.md`；`[learning]` 读 `learning.md`；`[diligence]` 读 `diligence.md`。后两路线文内再读 `evidence_standards.md`。
-2. 改 README、STATUS、ARCHITECTURE、OPERATIONS、knowledge 等对人说明时读 `prompts/docs_style.md`
+1. [AGENTS.md](AGENTS.md) 先判断目的，再读该路线指定的正文。`[building]` 读编排正文 `orchestration/building/SKILL.md`；`[learning]` 读编排正文 `orchestration/learning/SKILL.md`；`[invest]` 读编排正文 `orchestration/diligence/SKILL.md` 与 `skills/evidence/SKILL.md`；构造 IPS 改读 `orchestration/ips_setup/SKILL.md`，种子核验与来源登记改读 `workflow/seed_ingest.md` 与 `workflow/register.md`。
+2. 改 README、STATUS、ARCHITECTURE、OPERATIONS、knowledge 等对人说明时读 `skills/docs/SKILL.md`
 3. 涉及投资行动时：本次用到的 `skills/*/SKILL.md`
 4. 场景入口：对应 `workflow/*.md` + 本文相关场景节
 5. 开场先判断目的并列出本轮将 Read 的文件，见 AGENTS.md「先判断目的」，再动手
@@ -43,10 +43,12 @@ DD 顺序的权威源：[prompts/diligence.md](prompts/diligence.md)，七步为
 | 组合复核 | [workflow/portfolio_review.md](workflow/portfolio_review.md) | 文内「§10 场景四：组合复核」 |
 | 再平衡 | [workflow/rebalance.md](workflow/rebalance.md) | 文内「§11 场景五：再平衡」 |
 | 补齐骨架数据 | [database/README.md](database/README.md) | 文内「§14 当前初始化顺序」 |
-| 初始化 IPS / 目标配置 | [workflow/ips_setup.md](workflow/ips_setup.md)、[IPS Setup Skill](skills/ips_setup/SKILL.md) | 文内「§14 当前初始化顺序」 |
+| 核验观察池种子 / 写产品基础与动态数据 | [workflow/seed_ingest.md](workflow/seed_ingest.md) | 文内「§14 当前初始化顺序」阶段 3 |
+| 登记来源 / 保存材料摘录 | [workflow/register.md](workflow/register.md) | 文内「§12.1 隐私、来源与备份」 |
+| 初始化 IPS / 目标配置 | [workflow/ips_setup.md](workflow/ips_setup.md)、[IPS Setup Skill](orchestration/ips_setup/SKILL.md) | 文内「§14 当前初始化顺序」 |
 | 首次搭建系统 | — | 文内「§14」；README → 本文就绪条件 → 初始化顺序 |
 | 数据更正 / 修复 | — | 文内「§17 常见错误与恢复」 |
-| 修改 Prompt / Skill / 规则 | [prompts/building.md](prompts/building.md)、[PROJECT.md](PROJECT.md) | 文内「§15 维护项目本身」+「§17」验证流程 |
+| 修改规则 / Skill / 编排 | [orchestration/building/SKILL.md](orchestration/building/SKILL.md)、[PROJECT.md](PROJECT.md) | 文内「§15 维护项目本身」+「§17」验证流程 |
 
 ---
 
@@ -70,7 +72,7 @@ PIOS 目前是文件驱动：
 2. Agent 读取项目规则和相关 Skill；须实际 Read，见上文协作清单。
 3. 一起收集和核验数据。
 4. 结果写入 Markdown、CSV 或 YAML。
-5. 涉及投资行动时按 [Diligence 七步](prompts/diligence.md) 过审。
+5. 涉及投资行动时按 [Diligence 七步](orchestration/diligence/SKILL.md) 过审。
 6. 成交后更新持仓和决策日志。
 7. 定期复核组合，并把新认识积累进知识、数据、模型或工作流。
 
@@ -80,14 +82,7 @@ PIOS 目前是文件驱动：
 
 ### 1.1 DD 深度分级
 
-权威顺序与停止条件见 [diligence.md](prompts/diligence.md)。深度只在这里约定：
-
-| 路径 | 适用 | 要求 |
-|---|---|---|
-| **完整七步** | 新标的、首次买入、加仓超原计划、卖出、调仓、改目标、产品排序 | 各 Skill 全文；新资产暴露、首次买入、改目标、重大再平衡或 ETF 排序同时加载Committee Skill；Modeling 在 draft 阶段只做字段对比与否决项，不自动评分 |
-| **轻量路径** | 已有**有效轻量定投 Decision** 的例行买入，且标的与金额边界未变 | 仍过七个检查点，可写简短；关键动态数据须在最大允许时效内；Challenge 仍按 Skill 全文；落盘可追加原 Decision Log |
-
-**有效轻量定投 Decision** 必须同时具备：`valid_until` 或等价到期日、允许的 `product_id` 列表、单笔金额上限、频率上限、失效/复核触发器，且 IPS 与目标配置仍有效。任一缺失、过期、改标的、超原计划金额/频率，或关键动态数据过期 → 回退完整七步。
+完整七步与轻量路径的判据见 [orchestration/diligence/SKILL.md](orchestration/diligence/SKILL.md)「深度分级」；本轮走哪条路径见对应场景卡片。
 
 场景入口：[buy_etf.md](workflow/buy_etf.md)、[sell_etf.md](workflow/sell_etf.md)、[dca.md](workflow/dca.md)、[rebalance.md](workflow/rebalance.md)、[portfolio_review.md](workflow/portfolio_review.md)。
 
@@ -132,7 +127,7 @@ decision_log/2026-07-27-dca.md
 
 ### 4.1 Claude Code
 
-从项目根目录开始。[CLAUDE.md](CLAUDE.md) 要求先读 [AGENTS.md](AGENTS.md)，再按「先判断目的」读该路线下一步；改文档时另加 `docs_style`。任务相关时再读 Skill。这是约定，不是运行时强制。
+从项目根目录开始。[CLAUDE.md](CLAUDE.md) 要求先读 [AGENTS.md](AGENTS.md)，再按「先判断目的」读该路线指定的编排与能力单元；改文档时另加 `skills/docs/SKILL.md`。这是约定，不是运行时强制。
 
 可以直接提出：
 
@@ -146,7 +141,7 @@ decision_log/2026-07-27-dca.md
 
 ```text
 请先读取当前持仓、目标配置和 workflow/buy_etf.md，
-再按 prompts/diligence.md 执行 DD；完整或轻量见 OPERATIONS「DD 深度分级」。
+再按 orchestration/diligence/SKILL.md 执行 DD；完整或轻量见该文件「深度分级」。
 关键动态数据无法验证时停止，不要补造结论。
 ```
 
@@ -154,12 +149,12 @@ decision_log/2026-07-27-dca.md
 
 ### 4.2 Cursor
 
-Cursor 通过 `.cursor/rules/agents.mdc` 注入，只指向 `AGENTS.md`，不复制正文；通过 `.cursor/skills/` 发现 Skill。可执行正文只在根目录 `prompts/` 和 `skills/`。Agent 须实际 Read 正文；单靠引用链接不会自动展开全文。
+Cursor 通过 `.cursor/rules/agents.mdc` 注入，只指向 `AGENTS.md`，不复制正文；通过 `.cursor/skills/` 发现能力单元与编排。可执行正文只在根目录 `orchestration/`、`skills/`、`vendor/`、`workflow/` 与 `database/`。Agent 须实际 Read 正文；单靠引用链接不会自动展开全文。
 
 若回答没有体现规则，明确要求：
 
 ```text
-先读取 AGENTS.md、prompts/diligence.md 和本任务涉及的所有 SKILL.md，
+先读取 AGENTS.md、orchestration/diligence/SKILL.md 和本任务涉及的所有 SKILL.md，
 列出本次将执行的阶段，再开始研究。持仓/目标不足时标明「cannot act」。
 ```
 
@@ -168,7 +163,7 @@ Cursor 通过 `.cursor/rules/agents.mdc` 注入，只指向 `AGENTS.md`，不复
 识别 `AGENTS.md` 的工具可以直接读它。其他工具须在请求里手动指定：
 
 ```text
-先读取 AGENTS.md，并按其中引用的 prompts 和 skills 执行。
+先读取 AGENTS.md，并按其中「先判断目的」指向的编排与能力单元执行。
 开场先列出将读文件与阶段。
 ```
 
@@ -182,7 +177,7 @@ Cursor 通过 `.cursor/rules/agents.mdc` 注入，只指向 `AGENTS.md`，不复
 
 - 只更新知识或事实：Research + Validation 即可。
 - 只做字段对照、不形成产品排序或投资建议：可停在 Research、Validation，必要时做 Modeling 字段对比。
-- 形成产品排序，或可能影响买入、卖出、持有、定投、调仓：走完 [Diligence 七步](prompts/diligence.md)。
+- 形成产品排序，或可能影响买入、卖出、持有、定投、调仓：走完 [Diligence 七步](orchestration/diligence/SKILL.md)。
 
 ### 5.2 创建研究记录
 
@@ -256,7 +251,7 @@ ETF 查找顺序是人读提示，执行以 Research Skill 为准：
 本小节不展开逐步细则。
 
 1. 复制 [DD 模板](templates/dd_record.md)。
-2. 按 [Diligence 七步](prompts/diligence.md) 顺序执行；深度见文内「§1.1 DD 深度分级」。
+2. 按 [Diligence 七步](orchestration/diligence/SKILL.md) 顺序执行；深度见该文件「深度分级」。
 3. 每步操作以对应 [Skill](skills/) 为准；索引见 [AGENTS.md](AGENTS.md)。
 4. 操作落盘要点：
    - **Modeling**：当前模型草案，只做字段对比与否决项，不自动输出买入评分；见 [etf_model_v0.1](database/screening/etf_model_v0.1.md)。
@@ -293,7 +288,7 @@ PIOS 不负责下单。实际交易只能由用户在券商系统完成。成交
 
 ### 8.1 `holdings.csv`
 
-路径：本地操作文件 [database/portfolio/holdings.csv](database/portfolio/holdings.csv)（不入库）。没有该文件时按 [`prompts/csv_schema.md`](prompts/csv_schema.md) 生成表头。列名以该文件为准。
+路径：本地操作文件 [database/portfolio/holdings.csv](database/portfolio/holdings.csv)（不入库）。没有该文件时按 [`database/csv_schema.md`](database/csv_schema.md) 生成表头。列名以该文件为准。
 
 当前采用追加快照：一次成交或组合更新 → 为受影响的 `holding_id` 追加新行 → 查询时取该 `holding_id` 最新适用时点。
 
@@ -410,13 +405,13 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 5. 检查集中度、相关性、流动性和最大可承受损失。
 6. 读原 Decision Log，检查原始逻辑和失效条件。
 7. 更新费用、税务、法规和产品状态。
-8. 对继续持有、追加、减少和不行动分别按 [Diligence 七步](prompts/diligence.md) 过审；走完整路径，见「§1.1」。
+8. 对继续持有、追加、减少和不行动分别按 [Diligence 七步](orchestration/diligence/SKILL.md) 过审；走完整路径，见「§1.1」。
 9. 结果写入 `reports/`，复核结论写入 Decision Log。
 10. 触发调整时进入再平衡流程。
 
 ## 11. 场景五：再平衡
 
-使用 [再平衡工作流](workflow/rebalance.md)。再平衡属于调仓，须按 [diligence.md](prompts/diligence.md) 走完整七步。
+使用 [再平衡工作流](workflow/rebalance.md)。再平衡属于调仓，须按 [DD 编排](orchestration/diligence/SKILL.md) 走完整七步。
 
 1. 确认目标配置仍然有效。
 2. 统一估值时点计算实际配置。
@@ -456,7 +451,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ## 13. 停止条件
 
-出现以下情况时暂停行动。与 [diligence.md](prompts/diligence.md) 一致，此处作操作备忘：
+出现以下情况时暂停行动。与 [DD 编排](orchestration/diligence/SKILL.md) 一致，此处作操作备忘：
 
 - 关键数据缺失、产品身份冲突、来源冲突未解决、动态数据过期、公式无法复算、关键动态无合格双来源、未关闭的关键 `warning`
 - 模型阈值未确认却试图输出精确排名
@@ -476,7 +471,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 1. 填写并批准 [investment_policy.md](database/portfolio/investment_policy.md)，使 IPS（Investment Policy Statement，投资政策）状态为 `active`。
    - **最低完成标准**：目的、风险承受能力、应急现金要求、约束条件、报告币种 5 节非空；IPS ID 已分配；有批准记录。
    - **批准留痕方式**：用户在对话中明确批准后，Agent 将 `approved_at` 与 `approval_evidence` 写入 IPS frontmatter，不建 Decision Log、不走七步；详见该文件「批准记录的留痕方式」。
-   - **构造方式**：对话式构造读 [workflow/ips_setup.md](workflow/ips_setup.md) 与 [skills/ips_setup/SKILL.md](skills/ips_setup/SKILL.md)，含收集顺序与质量标准。
+   - **构造方式**：对话式构造读 [workflow/ips_setup.md](workflow/ips_setup.md) 与 [orchestration/ips_setup/SKILL.md](orchestration/ips_setup/SKILL.md)，含收集顺序与质量标准。
    - IPS 状态仍为 `draft` 时 cannot act。
 
 **阶段 2（可并行）**
@@ -508,13 +503,15 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 ### 修改规则
 
-- 加载协议与建设协作 → `prompts/building.md`
-- 知识调研身份与分档 → `prompts/learning.md`
+- 建设协作五步与写文件约束 → `orchestration/building/SKILL.md`
+- 路线判断、开场加载与知识调研分档 → `AGENTS.md`
 - 会话怎么回答 → `AGENTS.md`
-- 人读文档文风 → `prompts/docs_style.md`
-- 证据规范 → `prompts/evidence_standards.md`
-- Diligence 七步与停止条件 → `prompts/diligence.md`
+- 人读文档文风 → `skills/docs/SKILL.md`
+- 证据规范 → `skills/evidence/SKILL.md`
+- Diligence 七步与停止条件 → `orchestration/diligence/SKILL.md`
 - 某项能力怎么做 → 对应 `skills/<name>/SKILL.md`
+- 某个编排怎么走 → 对应 `orchestration/<name>/SKILL.md`
+- CSV 列名 → `database/csv_schema.md`
 
 改完后检查 `AGENTS.md`、`CLAUDE.md`；Cursor 入口仍为 `.cursor/rules/agents.mdc` 指向 `AGENTS.md`。
 
@@ -550,7 +547,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 
 1. **持仓数据写错**：不要直接修改旧行。追加新行，填写 `supersedes_record_id` 指向被更正行，`correction_reason` 记录原因。
 2. **Decision Log 写错**：追加 `amendment` 段，标注修正时间和原因；不覆盖原记录。
-3. **规则文件（Prompt/Skill）误改**：`git diff` 查看变更 → `git checkout -- <file>` 恢复。若变更已提交，`git revert`。
+3. **规则文件（编排/Skill/契约）误改**：`git diff` 查看变更 → `git checkout -- <file>` 恢复。若变更已提交，`git revert`。
 4. **整个文件误删**：`git checkout -- <file>` 恢复。若已 `git rm` 并提交，`git revert <commit>`。
 
 ### Decision Log 写入中断
@@ -573,7 +570,7 @@ allocation_id,allocation_set_id,ips_id,approval_decision_id,effective_from,asset
 2. 在 Decision Log 中追加 `correction` 记录：时间、范围、原因。
 3. 已写入的文件通过 git revert 回退。
 
-### 漏读 Skill 或 Prompt
+### 漏读编排、Skill 或契约
 
 1. 发现后立即暂停当前阶段。
 2. 补读遗漏文件。

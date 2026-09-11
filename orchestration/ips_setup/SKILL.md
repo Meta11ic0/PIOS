@@ -5,9 +5,9 @@ description: 通过对话构造个人投资政策声明 IPS 与初始目标配�
 
 # IPS Setup
 
-本 Skill 管 IPS 的首次构造、批准落盘与初始目标配置集。政策内容只能由用户决定：Agent 提问、结构化、检验可复核性，不代设投资目标、风险承受或配置比例。
+本 Skill 管 IPS 的首次构造、批准落盘与初始目标配置集。政策内容只能由用户决定：Agent 提问、结构化、检验可复核性；投资目标、风险承受与配置比例由用户给出。
 
-修订已生效（`status: active`）的 IPS 属于政策变更，不走本 Skill：改走 [prompts/diligence.md](../../prompts/diligence.md) 完整七步，触发 [skills/committee/SKILL.md](../committee/SKILL.md)，单独形成 Decision。
+修订已生效（`status: active`）的 IPS 属于政策变更，改走 [orchestration/diligence/SKILL.md](../diligence/SKILL.md) 完整七步，触发 [orchestration/committee/SKILL.md](../committee/SKILL.md)，单独形成 Decision。
 
 ## 对话收集顺序
 
@@ -25,10 +25,10 @@ description: 通过对话构造个人投资政策声明 IPS 与初始目标配�
 
 每条目标与约束须可观察、可复核；不可复核的表述退回用户改写：
 
-- 成功定义给出可检验的口径，不得停留在「收益高、感觉不错」。
+- 成功定义给出可检验的口径，例如具体收益率、金额或期限。
 - 风险承受须绑定量化口径，例如最大回撤百分比、最大可承受损失相对年收入的比例。
 - 期限、金额、币种写明确数值，或写「未定」并说明原因。
-- 约束之间不得冲突；发现冲突当场向用户指出并请其裁决。
+- 约束之间保持一致；发现冲突当场向用户指出并请其裁决。
 
 ## 一致性检查
 
@@ -43,5 +43,5 @@ description: 通过对话构造个人投资政策声明 IPS 与初始目标配�
 1. 将确认后的内容填入 [investment_policy.md](../../database/portfolio/investment_policy.md)，分配 `ips_id` 与 `version`，填 `created_at`。
 2. 呈现 IPS 全文，请用户逐节确认。
 3. 用户在对话中明确批准（说清批准的是哪个版本）后：`status` 改 `active`，写 `approved_at`、`approval_evidence`（引用用户消息与时间），`approval_decision_id` 填 `ips-approval:<ips_id>`。
-4. 提示用户 git commit 留痕；Agent 在没有收到明确指令之前不执行 git 操作。
-5. 初始目标配置集写入 [target_allocation.csv](../../database/portfolio/target_allocation.csv)，`approval_decision_id` 填同一引用；权重规则见 [OPERATIONS.md](../../OPERATIONS.md)「目标配置」。写入 CSV 时列名以 [prompts/csv_schema.md](../../prompts/csv_schema.md) 为准。
+4. 提示用户 git commit 留痕；Agent 的 git 操作以用户明确指令为准。
+5. 初始目标配置集写入 [target_allocation.csv](../../database/portfolio/target_allocation.csv)，`approval_decision_id` 填同一引用；权重规则见 [OPERATIONS.md](../../OPERATIONS.md)「目标配置」。写入 CSV 时列名以 [database/csv_schema.md](../../database/csv_schema.md) 为准。

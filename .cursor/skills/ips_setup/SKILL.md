@@ -5,6 +5,6 @@ description: 通过对话构造个人投资政策声明 IPS 与初始目标配�
 
 # IPS Setup（引用层）
 
-本 Skill 正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+本 Skill 正文维护于项目根目录，此处只保留指向正文的指针。
 
-任务相关时须 **Read** [`skills/ips_setup/SKILL.md`](../../../skills/ips_setup/SKILL.md)，再按该文件全文执行。
+任务相关时须 **Read** [`orchestration/ips_setup/SKILL.md`](../../../orchestration/ips_setup/SKILL.md)，再按该文件全文执行。

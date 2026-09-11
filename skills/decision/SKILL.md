@@ -5,7 +5,7 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 # Decision
 
-决策输入必须包含：目标与约束、已验证事实、模型结果、风险报告、Challenge 裁决和当前组合状态。关键输入缺失时不得输出 act，按缺口落到 research 或 wait，不补造结论。
+决策输入必须包含：目标与约束、已验证事实、模型结果、风险报告、Challenge 裁决和当前组合状态。关键输入缺失时按缺口落到 `research` 或 `wait`。
 
 ## `act` 硬门禁
 
@@ -13,8 +13,8 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 1. IPS 状态为 `active`，有批准记录（留痕方式见 `database/portfolio/investment_policy.md`），必填约束已填。
 2. 存在与该 IPS 绑定的有效目标配置集 `allocation_set_id`。
-3. 持仓与关键产品动态事实未超过最大允许时效；过期关键项视为 `unknown`，阻断 `act`。
-4. Validation 无关键 `fail`/`unknown`、无未关闭的关键 `warning`；Risk 无 `Critical`；Challenge 非 `revise` / `reject`；Committee 触发场景已通过或已记录不适用理由。
+3. 持仓与关键产品动态事实在最大允许时效内；过期关键项视为 `unknown`，阻断 `act`。
+4. Validation 关键项为 `pass`，或为已关闭的关键 `warning`（附关闭证据）；Risk 等级为 `Low` / `Medium` / `High`；Challenge 裁决为 `pass`；Committee 触发场景已通过或已记录不适用理由。
 5. 适用例外均已批准、未过期、已关联 `decision_id` 与关闭条件。
 
 ## 四结论
@@ -26,7 +26,7 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 
 ## 决策粒度
 
-一次 Decision 只承载一类决策。修改目标配置属于政策变更，执行买入、卖出、调仓属于行动；两类决策分别形成 Decision、分别记录，改目标不得挂靠行动 Decision。普通再平衡只把实际配置拉回现有目标区间，不改目标本身。
+一次 Decision 只承载一类决策。修改目标配置属于政策变更，执行买入、卖出、调仓属于行动；两类决策分别形成 Decision、分别记录；改目标单独形成一个 Decision。普通再平衡只把实际配置拉回现有目标区间，不改目标本身。
 
 ## 镜像测试
 
@@ -57,6 +57,6 @@ description: 综合研究、模型、风险和反方审查形成可执行、可�
 7. 执行检查项
 8. 下次复核日期或触发事件
 
-建议必须服从整体资产配置，不因短期新闻或单一指标改变长期规则。决策完成后调用 documentation，写入 Decision Log，记录 `frozen_at` 与内容哈希。过程评估只能在冻结后追加，且须先于结果评估。
+建议必须服从整体资产配置，长期规则只在 IPS 与目标配置的复核周期内调整。决策完成后写入 Decision Log，记录 `frozen_at` 与内容哈希。过程评估只能在冻结后追加，且须先于结果评估。
 
-Agent 不接入券商、不代下单。用户自行在券商操作，成交后告知明细，Agent 更新持仓与 Decision Log。
+Agent 的产物止于结论与执行前核对清单，下单由用户在券商完成；成交后用户告知明细，Agent 更新持仓与 Decision Log。

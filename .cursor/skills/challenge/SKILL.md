@@ -5,6 +5,6 @@ description: 对投资结论进行强制反方审查，寻找反例、替代方�
 
 # Challenge（引用层）
 
-本 Skill 正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+本 Skill 正文维护于项目根目录，此处只保留指向正文的指针。
 
 任务相关时须 **Read** [`skills/challenge/SKILL.md`](../../../skills/challenge/SKILL.md)，再按该文件全文执行。

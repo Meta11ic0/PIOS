@@ -5,6 +5,6 @@ description: 去除文本中的 AI 生成痕迹。适用于编辑或审阅文本
 
 # humanizer-zh（引用层）
 
-本 Skill 正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+本 Skill 正文维护于项目根目录，此处只保留指向正文的指针。
 
-任务相关时须 **Read** [`skills/humanizer-zh/SKILL.md`](../../../skills/humanizer-zh/SKILL.md)，再按该文件全文执行。
+任务相关时须 **Read** [`vendor/humanizer-zh/SKILL.md`](../../../vendor/humanizer-zh/SKILL.md)，再按该文件全文执行。

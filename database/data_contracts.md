@@ -1,6 +1,6 @@
 # 数据契约与校验
 
-本文件定义 PIOS 本地 CSV/YAML 数据集的最小契约。列名与顺序以 [`../prompts/csv_schema.md`](../prompts/csv_schema.md) 为准。它补充而不替代 [`products/schema.yaml`](products/schema.yaml)、各工作流和 [Validation Skill](../skills/validation/SKILL.md)。
+本文件定义 PIOS 本地 CSV/YAML 数据集的最小契约。列名与顺序以 [`csv_schema.md`](csv_schema.md) 为准。它补充而不替代 [`products/schema.yaml`](products/schema.yaml)、各工作流和 [Validation Skill](../skills/validation/SKILL.md)。
 
 ## 通用约定
 

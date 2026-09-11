@@ -61,7 +61,7 @@ scope:
 
 # Committee：适用时
 
-适用触发：新资产暴露、首次买入、修改 IPS 或目标配置、重大再平衡、产品排序。不适用时写明理由。按 skills/committee/SKILL.md 的统一输出填写；信息丰富度 `C` 不得进入 `act`。
+适用触发：新资产暴露、首次买入、修改 IPS 或目标配置、重大再平衡、产品排序。不适用时写明理由。按 orchestration/committee/SKILL.md 的统一输出填写；信息丰富度 `C` 不得进入 `act`。
 
 ```text
 committee_id:

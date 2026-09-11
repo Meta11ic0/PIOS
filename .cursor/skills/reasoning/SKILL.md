@@ -5,6 +5,6 @@ description: 将投资目标、资产配置、市场背景和产品事实连接�
 
 # Reasoning（引用层）
 
-本 Skill 正文维护于项目根目录，**不得在此文件重复维护两份正文**。
+本 Skill 正文维护于项目根目录，此处只保留指向正文的指针。
 
 任务相关时须 **Read** [`skills/reasoning/SKILL.md`](../../../skills/reasoning/SKILL.md)，再按该文件全文执行。

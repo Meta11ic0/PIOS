@@ -18,7 +18,7 @@
 | 6. 原始材料蒸馏 | 缺失 | [raw_material/README.md](raw_material/README.md)、[sources.csv](database/sources.csv) | 先登记 `source_id`，再保存合规摘录；经 Validation 后分流。 |
 | 7. 组合估值与偏离 | 缺失 | [组合数据集](database/portfolio/) | 补齐统一估值时点、报告币种、现金流与配置偏离快照。 |
 | 8. 筛选运行输入 | 缺失 | [runs 模板](database/screening/runs/_template.yaml) | 使用已核验生产数据生成字段比较 run；排除 `runs/demo/`。 |
-| 9. Committee 输入包 | 缺失 | [Committee Skill](skills/committee/SKILL.md) | 补齐 IPS、组合、候选动作和已核验资料后再使用。 |
+| 9. Committee 输入包 | 缺失 | [Committee Skill](orchestration/committee/SKILL.md) | 补齐 IPS、组合、候选动作和已核验资料后再使用。 |
 
 ## 待复核
 
